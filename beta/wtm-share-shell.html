@@ -215,8 +215,29 @@ textarea.fld{min-height:82px;resize:vertical}
 .entry .cmt{color:var(--paper-400);font-size:14.5px}
 .empty{color:var(--paper-600);padding:26px 0;font-size:14.5px}
 
+/* ── access gate ── */
+#gate{position:fixed;inset:0;z-index:500;background:var(--ink-900);display:flex;
+      align-items:center;justify-content:center;padding:24px}
+.gate-card{max-width:440px;width:100%;border:1px solid var(--stop);border-radius:var(--r-md);
+           background:var(--ink-800);padding:32px 26px}
+.gate-ico{width:32px;height:32px;stroke:var(--stop);stroke-width:1.6;fill:none;margin-bottom:16px;display:block}
+.gate-card h2{font-size:22px;margin-bottom:12px}
+.gate-card p{color:var(--paper-400);font-size:14.5px;margin-bottom:14px}
+.gate-card p b{color:var(--stop)}
+.gate-card .btn{width:100%;justify-content:center;padding:14px;margin-top:8px}
+
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto}}
 </style>
+
+<div id="gate" role="dialog" aria-modal="true" aria-labelledby="gate-title">
+  <div class="gate-card">
+    <svg class="gate-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M10.3 3.9 2.8 17a2 2 0 0 0 1.7 3h15a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
+    <h2 id="gate-title">This link is yours alone.</h2>
+    <p>WTM beta access is invite-only. This link was shared with <b>you</b>, specifically.</p>
+    <p>Forwarding, posting, or otherwise redistributing it to anyone it wasn't sent to is grounds for a <b>permanent ban</b> from WTM.</p>
+    <button class="btn btn-primary" onclick="passGate()" autofocus>I understand — continue</button>
+  </div>
+</div>
 
 <nav>
   <div class="nav-in">
@@ -371,6 +392,13 @@ textarea.fld{min-height:82px;resize:vertical}
 </div>
 
 <script>
+document.body.classList.add('locked');
+function passGate(){
+  document.getElementById('gate').remove();
+  document.body.classList.remove('locked');
+  note('passed_gate');
+}
+
 const APP_SRC=__APP_SRC__;
 
 /* ── demo frames, loaded on demand ── */

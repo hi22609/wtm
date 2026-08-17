@@ -299,5 +299,44 @@ begin
             ||coalesce(offenders,'none')||')', offenders is null);
 end $$;
 
+-- H18 admin_ban_user / admin_unban_user: locked to service_role, actually enforce
+do $$
+declare v_target uuid := (select id from public.profiles where username='member3');
+        v_inviter uuid := (select invited_by from public.profiles where username='member3');
+begin
+  perform t('H18 admin_ban_user not callable by authenticated',
+            has_function_privilege('authenticated','public.admin_ban_user(uuid,text)','EXECUTE') = false);
+  perform t('H18 admin_ban_user not callable by anon',
+            has_function_privilege('anon','public.admin_ban_user(uuid,text)','EXECUTE') = false);
+  perform t('H18 admin_unban_user not callable by authenticated',
+            has_function_privilege('authenticated','public.admin_unban_user(uuid)','EXECUTE') = false);
+
+  perform public.admin_ban_user(v_target, 'shared the beta invite link publicly');
+  perform t('H18 admin_ban_user actually flips is_banned',
+            (select is_banned from public.profiles where id = v_target) = true);
+  perform t('H18 admin_ban_user records who, when and why',
+            (select banned_reason from public.profiles where id = v_target) = 'shared the beta invite link publicly'
+            and (select banned_at from public.profiles where id = v_target) is not null);
+  perform t('H18 banning through admin_ban_user still opens a chain review on the inviter',
+            exists(select 1 from public.reports r
+                    where r.reason like 'chain_review%' and r.target_id = v_inviter));
+
+  perform public.admin_unban_user(v_target);
+  perform t('H18 admin_unban_user clears is_banned and the ban fields',
+            (select is_banned = false and banned_at is null and banned_reason is null
+               from public.profiles where id = v_target));
+end $$;
+
+-- H19 a ban with no reason is rejected, not silently accepted
+do $$
+begin
+  begin
+    perform public.admin_ban_user((select id from public.profiles where username='member3'), '   ');
+    perform t('H19 admin_ban_user rejects a blank reason', false);
+  exception when others then
+    perform t('H19 admin_ban_user rejects a blank reason ('||sqlerrm||')', sqlerrm = 'ban_reason_required');
+  end;
+end $$;
+
 drop function t(text, boolean);
 drop table tkv;
