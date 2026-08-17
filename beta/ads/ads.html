@@ -1,0 +1,192 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>WTM ad creatives</title>
+<style>
+__FONTS__
+
+/* Same tokens as the product. An ad that does not use the product's palette is
+   an ad for a different product. */
+:root{
+  --ink-900:#0B0E14; --ink-800:#12161F; --ink-700:#1A1F2B; --ink-600:#262C3A;
+  --paper-100:#E8EAF0; --paper-400:#8A93A6; --paper-600:#77849D;
+  --signal:#FF9E3D; --signal-ink:#0B0E14;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#222;font-family:'WTM Sans',system-ui,sans-serif}
+
+/* Each creative is an exact pixel canvas. The screenshot tool clips to these
+   boxes, so what you see here is byte-for-byte what gets exported. */
+.ad{position:relative;overflow:hidden;background:var(--ink-900);color:var(--paper-100);
+    display:flex;flex-direction:column;justify-content:space-between;margin:24px auto}
+.story   {width:1080px;height:1920px;padding:150px 96px}
+/* Story canvases are far taller than their content, so the block floats to the
+   optical centre instead of stranding a third of the frame empty under it. */
+.story > div:first-child{margin-top:auto;margin-bottom:auto}
+.portrait{width:1080px;height:1350px;padding:110px 92px}
+.square  {width:1080px;height:1080px;padding:96px 88px}
+
+.mark{font-family:'WTM Display','WTM Sans',sans-serif;font-weight:700;letter-spacing:.04em;line-height:1;
+      font-size:52px;color:var(--paper-100)}
+.mark i{color:var(--signal);font-style:normal}
+
+.eyebrow{font-family:'WTM Mono',monospace;letter-spacing:.2em;text-transform:uppercase;
+         color:var(--signal);font-size:24px;display:flex;align-items:center;gap:16px}
+.eyebrow .pip{width:14px;height:14px;border-radius:50%;background:var(--signal);flex:none}
+
+h1{font-family:'WTM Display','WTM Sans',sans-serif;font-weight:700;line-height:.98;
+   letter-spacing:-.02em;text-wrap:balance}
+.story h1{font-size:132px}
+.portrait h1{font-size:112px}
+.square h1{font-size:96px}
+h1 em{font-style:normal;color:var(--signal)}
+
+.sub{color:var(--paper-400);line-height:1.45;max-width:22ch}
+.story .sub{font-size:40px;margin-top:44px}
+.portrait .sub{font-size:34px;margin-top:36px}
+.square .sub{font-size:30px;margin-top:30px}
+
+.foot{display:flex;align-items:flex-end;justify-content:space-between;gap:24px}
+.url{font-family:'WTM Mono',monospace;color:var(--paper-600);letter-spacing:.04em}
+.story .url{font-size:28px}
+.portrait .url,.square .url{font-size:24px}
+
+/* The sodium rule: a hairline carrying one amber bloom, like a streetlight
+   seen down a long block. Carried over from the product so the ads and the
+   app read as one thing. */
+.rule{position:relative;height:2px;background:var(--ink-600);border:0}
+.rule::after{content:'';position:absolute;top:-2px;left:22%;width:320px;height:6px;
+  transform:translateX(-50%);background:linear-gradient(90deg,transparent,var(--signal),transparent);
+  filter:blur(1px)}
+
+/* A dead group chat, drawn rather than screenshotted, so it is ours to ship. */
+.chat{display:flex;flex-direction:column;gap:22px;margin:56px 0}
+.msg{max-width:78%;padding:26px 32px;border-radius:28px;font-size:34px;line-height:1.3}
+.them{background:var(--ink-700);color:var(--paper-100);border-bottom-left-radius:8px;align-self:flex-start}
+.me{background:var(--ink-600);color:var(--paper-100);border-bottom-right-radius:8px;align-self:flex-end}
+.silence{font-family:'WTM Mono',monospace;font-size:26px;color:var(--paper-600);
+         letter-spacing:.06em;align-self:center;padding:18px 0}
+
+.tag{display:inline-flex;align-items:center;gap:14px;border:2px solid var(--ink-600);
+     border-radius:14px;padding:18px 28px;font-size:28px;color:var(--paper-400)}
+.tag b{color:var(--signal);font-weight:700}
+
+.pillrow{display:flex;gap:18px;flex-wrap:wrap;margin-top:40px}
+.pill{border:2px solid var(--signal);border-radius:999px;padding:16px 34px;
+      font-size:30px;font-weight:700;color:var(--signal)}
+.pill.solid{background:var(--signal);color:var(--signal-ink);border-color:var(--signal)}
+
+.big-num{font-family:'WTM Display','WTM Sans',sans-serif;font-weight:700;
+         font-size:200px;line-height:.9;color:var(--signal);letter-spacing:-.03em}
+</style>
+
+<!-- ═══ 1 · story · the dead group chat ═══════════════════════════════════ -->
+<div class="ad story" id="ad-groupchat-story">
+  <div>
+    <div class="eyebrow"><span class="pip"></span>Pittsburgh</div>
+    <div class="chat">
+      <div class="msg them">yo wyd tonight</div>
+      <div class="msg me">idk wyd</div>
+      <div class="msg them">idk</div>
+      <div class="silence">seen 9:14 PM</div>
+    </div>
+    <h1>Everybody asks.<br><em>Nobody answers.</em></h1>
+    <p class="sub">WTM shows you what is actually happening tonight, within walking distance.</p>
+  </div>
+  <div>
+    <hr class="rule">
+    <div class="foot" style="margin-top:40px">
+      <span class="mark">WT<i>M</i></span>
+      <span class="url">whatsthemove.app</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 2 · story · invite-only ═══════════════════════════════════════════ -->
+<div class="ad story" id="ad-invite-story">
+  <div>
+    <div class="eyebrow"><span class="pip"></span>Invite only</div>
+    <h1>You can't<br>download<br>your way <em>in</em>.</h1>
+    <p class="sub">Somebody already in has to let you in. Their name stays attached to yours.</p>
+    <div class="pillrow">
+      <span class="pill solid">Just Us</span>
+      <span class="pill">The Scene</span>
+    </div>
+  </div>
+  <div>
+    <hr class="rule">
+    <div class="foot" style="margin-top:40px">
+      <span class="mark">WT<i>M</i></span>
+      <span class="url">whatsthemove.app</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 3 · story · tonight, mapped ═══════════════════════════════════════ -->
+<div class="ad story" id="ad-map-story">
+  <div>
+    <div class="eyebrow"><span class="pip"></span>Live map</div>
+    <h1>Tonight,<br><em>mapped.</em></h1>
+    <p class="sub">Lawrenceville, the Strip, Mt. Washington, North Park. Every move on one screen, sorted by what is filling up fastest.</p>
+    <div class="pillrow">
+      <span class="tag"><b>8</b> moves live</span>
+      <span class="tag"><b>3</b> friends out</span>
+    </div>
+  </div>
+  <div>
+    <hr class="rule">
+    <div class="foot" style="margin-top:40px">
+      <span class="mark">WT<i>M</i></span>
+      <span class="url">whatsthemove.app</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 4 · square · the two categories ═══════════════════════════════════ -->
+<div class="ad square" id="ad-categories-square">
+  <div>
+    <div class="eyebrow"><span class="pip"></span>Two kinds of night</div>
+    <h1><em>Just Us</em><br>or<br><em>The Scene</em>.</h1>
+    <p class="sub">Four people at somebody's place, or a room that is already full. Pick one.</p>
+  </div>
+  <div class="foot">
+    <span class="mark">WT<i>M</i></span>
+    <span class="url">whatsthemove.app</span>
+  </div>
+</div>
+
+<!-- ═══ 5 · portrait · scarcity counter ═══════════════════════════════════ -->
+<div class="ad portrait" id="ad-invites-portrait">
+  <div>
+    <div class="eyebrow"><span class="pip"></span>Pittsburgh beta</div>
+    <div class="big-num">3</div>
+    <h1 style="margin-top:24px">invites,<br>per person.</h1>
+    <p class="sub">That is the whole growth plan. If you are reading this, somebody has to spend one on you.</p>
+  </div>
+  <div>
+    <hr class="rule">
+    <div class="foot" style="margin-top:36px">
+      <span class="mark">WT<i>M</i></span>
+      <span class="url">whatsthemove.app</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 6 · story · schools ═══════════════════════════════════════════════ -->
+<div class="ad story" id="ad-school-story">
+  <div>
+    <div class="eyebrow"><span class="pip"></span>North Allegheny</div>
+    <h1>Your school<br>already has<br>a <em>group chat</em>.</h1>
+    <p class="sub">It has never once told you where to be. This does.</p>
+    <div class="pillrow">
+      <span class="pill solid">Friday, 7 PM</span>
+      <span class="pill">Newman Stadium</span>
+    </div>
+  </div>
+  <div>
+    <hr class="rule">
+    <div class="foot" style="margin-top:40px">
+      <span class="mark">WT<i>M</i></span>
+      <span class="url">whatsthemove.app</span>
+    </div>
+  </div>
+</div>
