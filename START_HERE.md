@@ -5,7 +5,9 @@ You've been added to WTM. This page is the five minutes of context that saves yo
 **First thing to know:** WTM lives in two folders, `beta/` and `wtm/`, and they are almost
 entirely separate from each other. Everything else is documentation.
 
-Work happens on `main` unless you're on a feature branch.
+Work happens on `main`, and you push straight to it — no pull request. Pull first so you
+don't land on top of whoever else is in here. `main` is what the live demo builds from, so
+anything you push is public within a minute.
 
 ---
 

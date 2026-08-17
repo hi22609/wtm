@@ -59,7 +59,8 @@ Everything else in `WTM_REPORTS/` is a dated snapshot and is labelled as such.
 that can generate a bill. If the right fix costs money, it gets written up with the price and
 the alternative rather than done.
 
-**Nothing deploys itself.** No pushes to the default branch, no deploys, no production data.
+**`main` is live.** Pushing to `main` rebuilds and publishes the demo within about a minute,
+and the repo is public — so no keys, no tokens, no production data, ever.
 
 ## Provenance
 
