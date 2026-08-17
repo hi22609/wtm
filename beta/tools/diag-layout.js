@@ -153,6 +153,30 @@ const {chromium} = require('playwright-core');
     return {bad, leaked: leaked ? [...new Set(leaked)] : []};
   });
 
+  // ── the app must not contradict the published schedule ───────────────────
+  // The move copy and the pulse row both name the student-section theme. They
+  // had said "white out" for the opener, which is the 10/2 theme — 8/28 is
+  // beach. Anything that names a theme has to match NA_SEASON.
+  const season = await f.evaluate(() => {
+    const g = NA_SEASON[NA_NEXT];
+    const t = g.theme.toLowerCase();
+    const themes = NA_SEASON.map(x => x.theme.toLowerCase());
+    const wrong = [];
+    const check = (where, text) => {
+      if (!text) return;
+      const low = text.toLowerCase();
+      // a theme is named, but not the one belonging to this game
+      const named = themes.filter(x => low.includes(x));
+      if (named.length && !named.includes(t))
+        wrong.push({where, says: named, shouldBe: g.theme});
+    };
+    check('m9.desc', (MOVES.find(m => m.id === 'm9') || {}).desc);
+    PULSE.forEach((p, i) => {
+      if (p.go && p.go.id === 'm9') {check('PULSE[' + i + '].sub', p.sub); check('PULSE[' + i + '].head', p.head);}
+    });
+    return {wrong, games: NA_SEASON.length};
+  });
+
   // ── the map screen, as before ─────────────────────────────────────────────
   await f.click('#scr-moves .tab:nth-child(2)'); await page.waitForTimeout(1000);
   const map = await f.evaluate(() => {
@@ -187,6 +211,9 @@ const {chromium} = require('playwright-core');
   ok('every icon renders as a glyph, not as text',
      icons.bad.length === 0 && icons.leaked.length === 0,
      JSON.stringify(icons.bad.concat(icons.leaked)).replace('[]', ''));
+  ok('the featured game names its real theme', season.wrong.length === 0,
+     season.wrong.length ? JSON.stringify(season.wrong) : '');
+  ok('the season carries all ten Fridays', season.games === 10, 'got ' + season.games);
   ok('map controls sit above the tab bar',
      map.ctrls !== 'MISSING' && map.tabbar !== 'MISSING' && map.ctrls.bottom <= map.tabbar.top,
      map.ctrls === 'MISSING' ? 'ctrls MISSING' : '');

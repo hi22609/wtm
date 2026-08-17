@@ -83,6 +83,11 @@ Added 2026-08-17 on `fix/beta-story-rings-fab-overlap`, after the defect pass:
   five people existed, and "Fire given 31" never changed no matter how many you gave. Badges
   unlock off real state and the locked ones say what earns them. Saved spots and a real
   activity log, fed by the same `demoEvt` calls that already existed at every action.
+- **NA Football 2026** — the ten published student-section themes, from the `@barstoolna`
+  graphic Michael sent. A "Friday nights" card leads with the next game and the full schedule
+  is one tap behind it. This also corrected a real error: the app had the 8/28 opener as a
+  **white out**, which is the 10/2 Canon-McMillan theme — 8/28 is **beach**. Asserted now, so
+  nothing that names a theme can disagree with the schedule.
 - **The share page shows the app it actually is** — three features it never mentioned, and the
   cast rename fixed where it had leaked into public copy.
 

@@ -401,6 +401,27 @@ input,textarea{-webkit-user-select:text;user-select:text}
 .pulse-go .ico{width:15px;height:15px;stroke:var(--text3);stroke-width:1.8}
 .pulse-toggle{cursor:pointer;color:var(--signal)}
 
+/* ── NA FOOTBALL ── */
+.season-next{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r-md);padding:14px 16px;margin-bottom:20px;cursor:pointer;transition:border-color var(--t)}
+.season-next:active{border-color:var(--signal)}
+.season-next-top{display:flex;align-items:baseline;gap:10px}
+.season-date{font-family:'WTM Mono',ui-monospace,monospace;font-size:12px;font-weight:800;color:var(--signal);letter-spacing:.5px}
+.season-opp{font-size:16px;font-weight:800;letter-spacing:-.2px;color:var(--text1);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.season-theme{display:flex;align-items:center;gap:7px;margin-top:7px;font-size:13.5px;font-weight:700;color:var(--text1);text-transform:uppercase;letter-spacing:.6px}
+/* The theme colour is the content — what to wear — so it is a small dot rather
+   than a fill, and every swatch is muted to sit inside the one-accent palette. */
+.season-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;border:0.5px solid var(--border2)}
+.season-sub{font-family:'WTM Mono',ui-monospace,monospace;font-size:10.5px;color:var(--text3);margin-top:7px;text-transform:uppercase;letter-spacing:.3px}
+.season-toggle{cursor:pointer;color:var(--signal)}
+.season-list{display:flex;flex-direction:column}
+.season-row{display:grid;grid-template-columns:44px 1fr auto;align-items:center;gap:10px;padding:11px 2px;border-bottom:0.5px solid var(--border2)}
+.season-row:last-child{border-bottom:none}
+.season-row.is-next{background:color-mix(in srgb,var(--signal) 8%,transparent);border-radius:var(--r-sm);padding-left:8px;padding-right:8px}
+.season-row-d{font-family:'WTM Mono',ui-monospace,monospace;font-size:11.5px;font-weight:800;color:var(--text3)}
+.season-row.is-next .season-row-d{color:var(--signal)}
+.season-row-o{font-size:13.5px;font-weight:700;color:var(--text1);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.season-row-t{display:flex;align-items:center;gap:6px;font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;color:var(--text2);white-space:nowrap}
+
 /* ── TABBAR / FAB ── */
 .tabbar{height:var(--tab-h);padding-bottom:var(--safe-b);padding-top:10px;background:color-mix(in srgb,var(--ink-900) 94%,transparent);backdrop-filter:blur(28px);border-top:0.5px solid var(--border2);display:flex;align-items:flex-start;justify-content:space-around;flex-shrink:0;z-index:30;position:relative}
 .tab{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:4px 4px;border-radius:var(--r-sm);flex:1;min-width:0}
@@ -742,7 +763,7 @@ input,textarea{-webkit-user-select:text;user-select:text}
 <script>
 // ══════════════════ DATA ══════════════════
 const MOVES=[
- {id:'m9',title:'NA vs North Hills',cat:'scene',emoji:'🎉',grad:['#2B3A2E','#101710'],loc:'Newman Stadium',addr:'10375 Perry Hwy, Wexford',time:'Fri Aug 28 · 7 PM',lat:40.6285,lng:-80.0645,att:412,max:900,hot:true,host:'NA Student Section',hostAv:'av2',desc:'The one everybody circles. Student section is a white out. Gates at 6, and if you are not in by 6:30 you are watching from the track.'},
+ {id:'m9',title:'NA vs North Hills',cat:'scene',emoji:'🎉',grad:['#2B3A2E','#101710'],loc:'Newman Stadium',addr:'10375 Perry Hwy, Wexford',time:'Fri Aug 28 · 7 PM',lat:40.6285,lng:-80.0645,att:412,max:900,hot:true,host:'NA Student Section',hostAv:'av2',desc:'The one everybody circles. Student section is beach for the opener. Gates at 6, and if you are not in by 6:30 you are watching from the track.'},
  {id:'m11',title:'Tailgate before NA/NH',cat:'justu',emoji:'🎮',grad:['#3A3730','#141310'],loc:'Wexford',addr:'Address drops when you lock in',time:'Fri Aug 28 · 4:30 PM',lat:40.6262,lng:-80.0601,att:11,max:16,hot:false,private:true,host:'Cole',hostAv:'av2',desc:'Someone is grilling before the game. Small on purpose. Walk over together at 6.'},
  {id:'m12',title:'After the game, North Park',cat:'scene',emoji:'🎉',grad:['#2F4433','#111710'],loc:'North Park',addr:'Pearce Mill Rd boathouse lot',time:'Fri Aug 28 · 10 PM',lat:40.5978,lng:-80.0069,att:63,max:150,hot:true,host:'Reese',hostAv:'av3',desc:'Wherever it ends up after Newman, it starts here. Lot fills fast, park up by the boathouse.'},
  {id:'m10',title:'North Park Loop Ride',cat:'outdoor',emoji:'🌿',grad:['#2F4433','#111710'],loc:'North Park',addr:'Pearce Mill Rd boathouse lot',time:'Saturday · 10 AM',lat:40.5978,lng:-80.0069,att:9,max:20,hot:false,host:'Reese',hostAv:'av3',desc:'Five mile lake loop, easy pace, nobody gets dropped. Coffee after at the boathouse.'},
@@ -813,6 +834,28 @@ const MSGS={
 };
 // Every move in MOVES needs an entry. A move without one renders 0/0/0 under a
 // card that says 412 people are going, which is how m9 shipped.
+// ══════════════════ NA FOOTBALL ══════════════════
+// The 2026 student-section themes, as published. Ten Fridays, and for most of
+// the school the theme is the actual question — you know you are going, you
+// need to know what to wear. `vs` is home at Newman, `at` is away.
+//
+// `swatch` is the theme's real colour, kept muted so ten of them in a column
+// read as data rather than as ten competing accents. Content, not chrome.
+const NA_SEASON=[
+ {d:'8/28', theme:'Beach',    opp:'North Hills',      home:true,  swatch:'#C9A26B'},
+ {d:'9/4',  theme:'Blackout', opp:'Upper St. Clair',  home:true,  swatch:'#1A1A1E'},
+ {d:'9/11', theme:'USA',      opp:'Woodland Hills',   home:true,  swatch:'#8E4A52'},
+ {d:'9/18', theme:'Neon',     opp:'Hempfield',        home:true,  swatch:'#A8B84A'},
+ {d:'9/25', theme:'Gold out', opp:'Pine-Richland',    home:false, swatch:'#B8912F'},
+ {d:'10/2', theme:'White out',opp:'Canon-McMillan',   home:true,  swatch:'#D8DAE0'},
+ {d:'10/9', theme:'Camo',     opp:'Central Catholic', home:false, swatch:'#5E6647'},
+ {d:'10/16',theme:'Pink out', opp:'Seneca Valley',    home:true,  swatch:'#B4638A'},
+ {d:'10/23',theme:'Jersey',   opp:'Mt. Lebanon',      home:false, swatch:'#7C8698'},
+ {d:'10/30',theme:'Groutfit', opp:'Norwin',           home:false, swatch:'#6E7278'},
+];
+// The opener is the one the app is currently sitting on.
+const NA_NEXT=0;
+
 // ══════════════════ CITY PULSE ══════════════════
 // The news layer. Not a feed of articles — the four or five things about
 // tonight in Pittsburgh that change what you'd actually do: weather that kills
@@ -821,7 +864,7 @@ const MSGS={
 // `kind` picks the icon and the accent; `go` is what it opens.
 const PULSE=[
  {kind:'weather',head:'Clear and 71 through midnight',sub:'No rain until Sunday. Everything outdoor is on.',src:'NWS Pittsburgh',ago:38*60e3},
- {kind:'hot',    head:'NA vs North Hills is the biggest night this month',sub:'412 locked in. Student section is a white out — gates at 6.',src:'WTM',ago:52*60e3,go:{t:'move',id:'m9'}},
+ {kind:'hot',    head:'NA vs North Hills is the biggest night this month',sub:'412 locked in. Beach for the opener — gates at 6.',src:'WTM',ago:52*60e3,go:{t:'move',id:'m9'}},
  {kind:'venue',  head:'Mr. Smalls added a second show',sub:'The first one sold out in a day. All ages, doors at 7.',src:'Mr. Smalls',ago:2*3600e3,go:{t:'spot',id:'sp29'}},
  {kind:'road',   head:'Butler St is down to one lane past 40th',sub:'Give the Bar Crawl an extra ten minutes if you are driving.',src:'PennDOT',ago:3*3600e3,go:{t:'move',id:'m3'}},
  {kind:'new',    head:'6 new spots added around the city',sub:'Live music, late eats and the walled garden in Point Breeze.',src:'WTM',ago:5*3600e3,go:{t:'spot',id:'sp20'}},
@@ -1401,10 +1444,40 @@ function buildFeed(){
   let html='';
   // Only on the unfiltered feed: when someone has narrowed to a category or is
   // searching, they asked for moves, not for the city desk.
-  if(!S.activeCat&&!S.search)html+=pulseHTML();
+  if(!S.activeCat&&!S.search)html+=pulseHTML()+seasonHTML();
   if(hot.length){html+=`<div class="section-header"><div class="section-label"><span class="pulse-dot"></span>Trending now</div><div class="section-count">${hot.length} moves</div></div>`+hot.map(buildCard).join('');}
   if(other.length){html+=`<div class="section-header"><div class="section-label">Tonight</div><div class="section-count">${other.length} moves</div></div>`+other.map(buildCard).join('');}
   feed.innerHTML=html;
+}
+// Friday nights. Leads with the next game because that is the one anyone is
+// deciding about; the rest of the season is one tap behind it.
+function seasonHTML(){
+  const g=NA_SEASON[NA_NEXT];
+  return`<div class="section-header"><div class="section-label">Friday nights</div>
+      <div class="section-count season-toggle" data-act="season-all">Full schedule</div></div>
+    <div class="season-next" data-act="open" data-arg="m9">
+      <div class="season-next-top">
+        <span class="season-date">${g.d}</span>
+        <span class="season-opp">${g.home?'vs':'@'} ${g.opp}</span>
+      </div>
+      <div class="season-theme"><span class="season-dot" style="background:${g.swatch}"></span>${g.theme}</div>
+      <div class="season-sub">Newman Stadium · gates at 6 · 412 locked in</div>
+    </div>`;
+}
+function openSeason(){
+  document.getElementById('sheet-body').innerHTML=`
+    <div class="sheet-title">NA Football 2026</div>
+    <div class="sheet-desc">Ten Fridays and what the student section is wearing for each one. Home games are at Newman.</div>
+    <div class="season-list">
+      ${NA_SEASON.map((g,i)=>`
+        <div class="season-row${i===NA_NEXT?' is-next':''}">
+          <span class="season-row-d">${g.d}</span>
+          <span class="season-row-o">${g.home?'vs':'@'} ${g.opp}</span>
+          <span class="season-row-t"><span class="season-dot" style="background:${g.swatch}"></span>${g.theme}</span>
+        </div>`).join('')}
+    </div>`;
+  document.getElementById('sheet-overlay').classList.add('open');
+  document.getElementById('sheet').classList.add('open');
 }
 function pulseHTML(){
   const open=S.pulseOpen;
@@ -1641,6 +1714,7 @@ document.addEventListener('click',e=>{
   else if(act==='ask-eg'){submitAsk(arg);}
   else if(act==='ask-open'){openSpot(arg);}
   else if(act==='spot-open'){openSpot(arg);}
+  else if(act==='season-all'){openSeason();e.stopPropagation();}
   else if(act==='pulse-toggle'){S.pulseOpen=!S.pulseOpen;buildFeed();e.stopPropagation();}
   else if(act==='spot-cat'){
     S.spotCat=arg||null;
