@@ -158,20 +158,8 @@ const PROVIDERS = [
   { name: 'Carto Positron',      url: 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json' },
 ];
 
-// The WTM palette, applied over whatever the provider ships. Every road, park
-// and label already exists in the tiles; this only recolours them.
-const PAINT = {
-  land:    '#F2EFE7',
-  water:   '#A9D2F0',
-  park:    '#C8E2B0',
-  road:    '#FFFFFF',
-  roadCase:'#E2DDCF',
-  major:   '#FDF6DE',
-  majorCase:'#E8D9A8',
-  building:'#E5E1D6',
-  label:   '#7C8698',
-  labelHalo:'#FFFFFF',
-};
+const PAINT={land:'#F0EBE0',water:'#A6CDE0',park:'#C6DCAE',road:'#FFFFFF',
+  building:'#E4DED0',label:'#8A8578',halo:'#FFFFFF'};
 
 const map = new maplibregl.Map({
   container: 'map',
@@ -200,46 +188,86 @@ map.on('error', (e) => {
   }
 });
 
-// ── Restyle to the WTM palette ──────────────────────────────────────────────
-// Rather than hand-authoring a full style, walk the provider's layers and
-// recolour by layer id and source-layer. This survives provider differences:
-// anything unmatched keeps the provider's own colour instead of disappearing.
-function restyle() {
-  const layers = map.getStyle().layers || [];
-  for (const layer of layers) {
-    const id = (layer.id || '').toLowerCase();
-    const sl = (layer['source-layer'] || '').toLowerCase();
-    try {
-      if (layer.type === 'background') {
-        map.setPaintProperty(layer.id, 'background-color', PAINT.land);
-      } else if (/water|ocean|sea|river|lake/.test(id + sl) && layer.type === 'fill') {
-        map.setPaintProperty(layer.id, 'fill-color', PAINT.water);
-      } else if (/water|river|stream|canal/.test(id + sl) && layer.type === 'line') {
-        map.setPaintProperty(layer.id, 'line-color', PAINT.water);
-      } else if (/park|wood|forest|grass|golf|pitch|garden|landcover|landuse/.test(id + sl) && layer.type === 'fill') {
-        map.setPaintProperty(layer.id, 'fill-color', PAINT.park);
-        map.setPaintProperty(layer.id, 'fill-opacity', 0.75);
-      } else if (/building/.test(id + sl)) {
-        if (layer.type === 'fill') {
-          map.setPaintProperty(layer.id, 'fill-color', PAINT.building);
-          map.setPaintProperty(layer.id, 'fill-opacity', 0.85);
-        } else if (layer.type === 'fill-extrusion') {
-          map.setPaintProperty(layer.id, 'fill-extrusion-color', PAINT.building);
-        }
-      } else if (layer.type === 'line' && /motorway|trunk|primary/.test(id)) {
-        map.setPaintProperty(layer.id, 'line-color', /case|outline|casing/.test(id) ? PAINT.majorCase : PAINT.major);
-      } else if (layer.type === 'line' && /road|street|highway|transport|bridge|tunnel/.test(id + sl)) {
-        map.setPaintProperty(layer.id, 'line-color', /case|outline|casing/.test(id) ? PAINT.roadCase : PAINT.road);
-      } else if (layer.type === 'symbol') {
-        if (layer.layout && layer.layout['text-field']) {
-          map.setPaintProperty(layer.id, 'text-color', PAINT.label);
-          map.setPaintProperty(layer.id, 'text-halo-color', PAINT.labelHalo);
-          map.setPaintProperty(layer.id, 'text-halo-width', 1.4);
-        }
-        // Snap keeps POI icon clutter down so its own pins read first.
-        if (/poi|shop|amenity/.test(id + sl)) map.setLayoutProperty(layer.id, 'visibility', 'none');
+// ── Restyle ─────────────────────────────────────────────────────────────────
+function restyle(){
+  const layers=map.getStyle().layers||[];
+  for(const L of layers){
+    const id=(L.id||'').toLowerCase(), sl=(L['source-layer']||'').toLowerCase(), k=id+' '+sl;
+    const hide=()=>map.setLayoutProperty(L.id,'visibility','none');
+    try{
+      // ── Background ──
+      if(L.type==='background'){ map.setPaintProperty(L.id,'background-color',PAINT.land); continue; }
+
+      // ── Text and icons ──
+      // Snap keeps neighbourhood and city names and drops the rest. Street
+      // names are the single biggest reason a map reads as a tool rather than
+      // a place, so they go first.
+      if(L.type==='symbol'){
+        const isPlace=/place/.test(sl) && !/house|number/.test(k);
+        if(!isPlace){ hide(); continue; }
+        map.setPaintProperty(L.id,'text-color',PAINT.label);
+        map.setPaintProperty(L.id,'text-halo-color',PAINT.halo);
+        map.setPaintProperty(L.id,'text-halo-width',2);
+        try{ map.setLayoutProperty(L.id,'icon-image',undefined); }catch(e){}
+        continue;
       }
-    } catch { /* provider lacks this property; keep its own value */ }
+
+      // ── Things Snap has none of ──
+      if(/boundary|admin|ferry|aerialway|pier|rail|train|subway|tram|aeroway|runway|taxiway/.test(k)){ hide(); continue; }
+
+      // ── Water ──
+      if(/water|ocean|sea|river|lake|bay/.test(k)){
+        if(L.type==='fill') map.setPaintProperty(L.id,'fill-color',PAINT.water);
+        else if(L.type==='line'){ map.setPaintProperty(L.id,'line-color',PAINT.water); map.setPaintProperty(L.id,'line-width',1.2); }
+        continue;
+      }
+
+      // ── Green ──
+      if(/park|wood|forest|grass|golf|pitch|garden|cemetery|scrub|meadow/.test(k) && L.type==='fill'){
+        map.setPaintProperty(L.id,'fill-color',PAINT.park);
+        map.setPaintProperty(L.id,'fill-opacity',.9);
+        map.setPaintProperty(L.id,'fill-outline-color',PAINT.park);
+        continue;
+      }
+
+      // ── Every other landuse tint ──
+      // Residential, commercial, industrial, hospital, school. OSM shades them
+      // all differently and it turns the city into a patchwork. Snap's land is
+      // one flat colour.
+      // Fills only: "residential" is also an OSM road class, and hiding it here
+      // would delete most of the street grid.
+      if(/landuse|landcover|residential|commercial|industrial|hospital|school|university|retail|military/.test(k)
+         && (L.type==='fill'||L.type==='fill-extrusion')){ hide(); continue; }
+
+      // ── Buildings ──
+      // Present, but barely. 3D extrusions go entirely — they are the single
+      // most "Google Earth" thing on the map.
+      if(/building/.test(k)){
+        if(L.type==='fill-extrusion'){ hide(); continue; }
+        if(L.type==='fill'){
+          map.setPaintProperty(L.id,'fill-color',PAINT.building);
+          map.setPaintProperty(L.id,'fill-opacity',['interpolate',['linear'],['zoom'],13,0,15,.35,17,.55]);
+          try{ map.setPaintProperty(L.id,'fill-outline-color','rgba(0,0,0,0)'); }catch(e){}
+        }
+        continue;
+      }
+
+      // ── Roads ──
+      // One colour, no casings, near-uniform hairlines. OSM's road hierarchy —
+      // yellow motorways, orange trunks, white residentials — is what makes a
+      // map look like a road atlas. Snap flattens it so the street grid reads
+      // as texture rather than as information.
+      if(L.type==='line'){
+        if(/case|casing|outline/.test(id)){ hide(); continue; }
+        const major=/motorway|trunk|primary/.test(k);
+        map.setPaintProperty(L.id,'line-color',PAINT.road);
+        map.setPaintProperty(L.id,'line-opacity',.95);
+        map.setPaintProperty(L.id,'line-width', major
+          ? ['interpolate',['linear'],['zoom'],10,1.4,13,3,15,6,17,12]
+          : ['interpolate',['linear'],['zoom'],10,.5,13,1.4,15,3,17,7]);
+        continue;
+      }
+    }catch(e){ /* provider lacks this property; leave its own value alone */ }
   }
 }
 

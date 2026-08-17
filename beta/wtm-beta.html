@@ -2319,9 +2319,11 @@ const TILE_PROVIDERS=[
   'https://tiles.openfreemap.org/styles/liberty',
   'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json',
 ];
-const GL_PAINT={land:'#F2EFE7',water:'#A9D2F0',park:'#C8E2B0',road:'#FFFFFF',
-  roadCase:'#E2DDCF',major:'#FDF6DE',majorCase:'#E8D9A8',building:'#E5E1D6',
-  label:'#7C8698',halo:'#FFFFFF'};
+// Warm, pale, low-contrast on purpose: the basemap is a backdrop, not the
+// subject. Nothing here is saturated enough to compete with an amber pin or a
+// friend's face.
+const GL_PAINT={land:'#F0EBE0',water:'#A6CDE0',park:'#C6DCAE',road:'#FFFFFF',
+  building:'#E4DED0',label:'#8A8578',halo:'#FFFFFF'};
 let glMap=null, glTried=false;
 
 async function tryRealMap(){
@@ -2361,38 +2363,94 @@ async function tryRealMap(){
   glMap.once('load',addGLMarkers);
 }
 
-// Recolour the provider's own layers rather than hand-authoring a style, so
-// anything unmatched keeps the provider's colour instead of disappearing.
+// What makes Snap Map look like Snap Map is not colour, it is subtraction.
+// OpenStreetMap ships a navigation basemap: every street name, every shop, every
+// road class in a different weight, house numbers, transit, admin borders. Tint
+// all of that and you still have a navigation map, just beige — which is exactly
+// what this used to do.
+//
+// So this deletes rather than recolours. What survives: land, water, green,
+// hairline roads, faint buildings, and neighbourhood names. Everything else is
+// turned off, because the subject of this screen is the pins.
 function restyleGL(){
   const layers=glMap.getStyle().layers||[];
   for(const L of layers){
-    const id=(L.id||'').toLowerCase(), sl=(L['source-layer']||'').toLowerCase(), k=id+sl;
+    const id=(L.id||'').toLowerCase(), sl=(L['source-layer']||'').toLowerCase(), k=id+' '+sl;
+    const hide=()=>glMap.setLayoutProperty(L.id,'visibility','none');
     try{
-      if(L.type==='background') glMap.setPaintProperty(L.id,'background-color',GL_PAINT.land);
-      else if(/water|ocean|sea|river|lake/.test(k)&&L.type==='fill') glMap.setPaintProperty(L.id,'fill-color',GL_PAINT.water);
-      else if(/water|river|stream|canal/.test(k)&&L.type==='line') glMap.setPaintProperty(L.id,'line-color',GL_PAINT.water);
-      else if(/park|wood|forest|grass|golf|pitch|garden|landcover|landuse/.test(k)&&L.type==='fill'){
+      // ── Background ──
+      if(L.type==='background'){ glMap.setPaintProperty(L.id,'background-color',GL_PAINT.land); continue; }
+
+      // ── Text and icons ──
+      // Snap keeps neighbourhood and city names and drops the rest. Street
+      // names are the single biggest reason a map reads as a tool rather than
+      // a place, so they go first.
+      if(L.type==='symbol'){
+        const isPlace=/place/.test(sl) && !/house|number/.test(k);
+        if(!isPlace){ hide(); continue; }
+        glMap.setPaintProperty(L.id,'text-color',GL_PAINT.label);
+        glMap.setPaintProperty(L.id,'text-halo-color',GL_PAINT.halo);
+        glMap.setPaintProperty(L.id,'text-halo-width',2);
+        try{ glMap.setLayoutProperty(L.id,'icon-image',undefined); }catch(e){}
+        continue;
+      }
+
+      // ── Things Snap has none of ──
+      if(/boundary|admin|ferry|aerialway|pier|rail|train|subway|tram|aeroway|runway|taxiway/.test(k)){ hide(); continue; }
+
+      // ── Water ──
+      if(/water|ocean|sea|river|lake|bay/.test(k)){
+        if(L.type==='fill') glMap.setPaintProperty(L.id,'fill-color',GL_PAINT.water);
+        else if(L.type==='line'){ glMap.setPaintProperty(L.id,'line-color',GL_PAINT.water); glMap.setPaintProperty(L.id,'line-width',1.2); }
+        continue;
+      }
+
+      // ── Green ──
+      if(/park|wood|forest|grass|golf|pitch|garden|cemetery|scrub|meadow/.test(k) && L.type==='fill'){
         glMap.setPaintProperty(L.id,'fill-color',GL_PAINT.park);
-        glMap.setPaintProperty(L.id,'fill-opacity',.75);
+        glMap.setPaintProperty(L.id,'fill-opacity',.9);
+        glMap.setPaintProperty(L.id,'fill-outline-color',GL_PAINT.park);
+        continue;
       }
-      else if(/building/.test(k)){
-        if(L.type==='fill'){glMap.setPaintProperty(L.id,'fill-color',GL_PAINT.building);glMap.setPaintProperty(L.id,'fill-opacity',.85);}
-        else if(L.type==='fill-extrusion') glMap.setPaintProperty(L.id,'fill-extrusion-color',GL_PAINT.building);
-      }
-      else if(L.type==='line'&&/motorway|trunk|primary/.test(id))
-        glMap.setPaintProperty(L.id,'line-color',/case|outline|casing/.test(id)?GL_PAINT.majorCase:GL_PAINT.major);
-      else if(L.type==='line'&&/road|street|highway|transport|bridge|tunnel/.test(k))
-        glMap.setPaintProperty(L.id,'line-color',/case|outline|casing/.test(id)?GL_PAINT.roadCase:GL_PAINT.road);
-      else if(L.type==='symbol'){
-        if(L.layout&&L.layout['text-field']){
-          glMap.setPaintProperty(L.id,'text-color',GL_PAINT.label);
-          glMap.setPaintProperty(L.id,'text-halo-color',GL_PAINT.halo);
-          glMap.setPaintProperty(L.id,'text-halo-width',1.4);
+
+      // ── Every other landuse tint ──
+      // Residential, commercial, industrial, hospital, school. OSM shades them
+      // all differently and it turns the city into a patchwork. Snap's land is
+      // one flat colour.
+      // Fills only: "residential" is also an OSM road class, and hiding it here
+      // would delete most of the street grid.
+      if(/landuse|landcover|residential|commercial|industrial|hospital|school|university|retail|military/.test(k)
+         && (L.type==='fill'||L.type==='fill-extrusion')){ hide(); continue; }
+
+      // ── Buildings ──
+      // Present, but barely. 3D extrusions go entirely — they are the single
+      // most "Google Earth" thing on the map.
+      if(/building/.test(k)){
+        if(L.type==='fill-extrusion'){ hide(); continue; }
+        if(L.type==='fill'){
+          glMap.setPaintProperty(L.id,'fill-color',GL_PAINT.building);
+          glMap.setPaintProperty(L.id,'fill-opacity',['interpolate',['linear'],['zoom'],13,0,15,.35,17,.55]);
+          try{ glMap.setPaintProperty(L.id,'fill-outline-color','rgba(0,0,0,0)'); }catch(e){}
         }
-        // Keep POI clutter down so WTM's own pins read first, same as Snap.
-        if(/poi|shop|amenity/.test(k)) glMap.setLayoutProperty(L.id,'visibility','none');
+        continue;
       }
-    }catch(e){ /* provider lacks this property */ }
+
+      // ── Roads ──
+      // One colour, no casings, near-uniform hairlines. OSM's road hierarchy —
+      // yellow motorways, orange trunks, white residentials — is what makes a
+      // map look like a road atlas. Snap flattens it so the street grid reads
+      // as texture rather than as information.
+      if(L.type==='line'){
+        if(/case|casing|outline/.test(id)){ hide(); continue; }
+        const major=/motorway|trunk|primary/.test(k);
+        glMap.setPaintProperty(L.id,'line-color',GL_PAINT.road);
+        glMap.setPaintProperty(L.id,'line-opacity',.95);
+        glMap.setPaintProperty(L.id,'line-width', major
+          ? ['interpolate',['linear'],['zoom'],10,1.4,13,3,15,6,17,12]
+          : ['interpolate',['linear'],['zoom'],10,.5,13,1.4,15,3,17,7]);
+        continue;
+      }
+    }catch(e){ /* provider lacks this property; leave its own value alone */ }
   }
 }
 
