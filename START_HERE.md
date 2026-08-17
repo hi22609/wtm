@@ -81,9 +81,11 @@ paid service, no metered API, no managed database, nothing that can generate a b
 right fix costs money, don't do it — write it up in `DECISIONS_FOR_MICHAEL.md` with the price
 and the alternative instead.
 
-**Push straight to `main`.** No branch, no pull request. Pull first so you don't land on top of
-whoever else is working. `main` is what the live demo builds from, so anything you push is
-public within about a minute, and the repo is public: no keys, no tokens, no production data.
+**Never push to `main`, never deploy, never touch production data.** Work on a feature branch
+and let Michael merge it. `main` is what the live demo builds from, so a push to it is public
+within about a minute — that is a deploy, and a deploy is his call, not an agent's. Pull before
+you push so you don't land on top of whoever else is working. The repo is public: no keys, no
+tokens, no production data, ever.
 
 ## A habit worth copying
 

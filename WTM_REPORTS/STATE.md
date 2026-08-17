@@ -85,12 +85,16 @@ Actions"**, which is what publishes the demo with a real vector map.
 that can generate a bill. If the right fix costs money, write it up in
 `DECISIONS_FOR_MICHAEL.md` with the price and the alternative instead of doing it.
 
-**Push straight to `main`.** No pull request needed — Michael and his collaborator work in
-the same room and review out loud. Pull before you push so you don't land on top of someone.
+**Never push to `main` directly, never deploy, never touch production data.** Work on a
+feature branch. Michael merges it — reviewing out loud in the room is still review, and it
+still happens before the merge, not after.
 
-Note what that means: `main` is what the live demo builds from, so anything you push to it is
-public within about a minute. Never touch production data, and never commit a key, token or
-password — the repo is public.
+This file said the opposite for part of 2026-08-17: *"Push straight to `main`. No pull request
+needed."* That was wrong and is corrected here and in `START_HERE.md`. `main` is what the live
+demo builds from, so a push to it is public within about a minute — pushing to `main` **is**
+deploying, and deploying is Michael's call, not an agent's. Pull before you push so you don't
+land on top of whoever else is working, and never commit a key, token or password: the repo
+is public.
 
 ## Live artifacts
 
