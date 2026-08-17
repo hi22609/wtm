@@ -21,6 +21,8 @@ const VIEWS = [
       const page = await b.newPage({ viewport: { width: v.width, height: v.height }, colorScheme: theme });
       page.setDefaultTimeout(8000);
       await page.goto(URL, { timeout: 15000 });
+    await page.locator('#gate button').click({ timeout: 5000 }).catch(() => {});
+      await page.locator('#gate button').click({ timeout: 5000 }).catch(() => {});
       await page.waitForTimeout(700);
       await page.evaluate(() => document.querySelectorAll('.reveal').forEach(e => e.classList.add('in')));
       await page.waitForTimeout(200);

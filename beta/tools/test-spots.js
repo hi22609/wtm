@@ -13,6 +13,10 @@ const { chromium } = require('playwright-core');
     errs.push('CON: ' + t.slice(0, 140));
   });
   await page.goto('file://' + __dirname + '/../dist/wtm-share.html', { timeout: 15000 });
+  // Dismiss the invite-only gate, which covers the page until it is.
+  await page.waitForSelector('#gate button', { timeout: 5000 });
+  await page.click('#gate button');
+  await page.waitForTimeout(400);
   await page.waitForTimeout(600);
   await page.click('nav button.btn-primary'); await page.waitForTimeout(1100);
   let f = null;

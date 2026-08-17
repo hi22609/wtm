@@ -5,6 +5,9 @@ const {chromium} = require('playwright-core');
   page.setDefaultTimeout(6000);
   await page.goto('file://'+__dirname+'/../dist/wtm-share.html',{timeout:15000});
   await page.waitForTimeout(600);
+  // Dismiss the invite-only gate, which covers the page until it is.
+  await page.waitForSelector('#gate button',{timeout:5000});
+  await page.click('#gate button'); await page.waitForTimeout(400);
   await page.click('nav button.btn-primary'); await page.waitForTimeout(1100);
   let f=null;
   for(const fr of page.frames()){if(fr===page.mainFrame())continue;if(await fr.locator('button.wlc-btn').count()>0){f=fr;break;}}

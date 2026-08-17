@@ -16,6 +16,10 @@ const {chromium} = require('playwright-core');
   });
   await page.goto('file://'+__dirname+'/../dist/wtm-share.html',{timeout:15000});
   await page.waitForTimeout(700);
+  // The invite-only gate covers the page until it is dismissed, so every click
+  // below is unreachable while it is up. This is also the assertion that it IS
+  // up: if the gate ever stops rendering, this click fails and the run goes red.
+  await page.click('#gate button'); await page.waitForTimeout(400);
   await page.click('nav button.btn-primary'); await page.waitForTimeout(1100);
   let frame=null;
   for(const f of page.frames()){if(f===page.mainFrame())continue;if(await f.locator('button.wlc-btn').count()>0){frame=f;break;}}
