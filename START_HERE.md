@@ -81,8 +81,9 @@ paid service, no metered API, no managed database, nothing that can generate a b
 right fix costs money, don't do it — write it up in `DECISIONS_FOR_MICHAEL.md` with the price
 and the alternative instead.
 
-**Never push to `master`, never deploy, never touch production data.** Branch off
-`overnight/2026-08-12` and commit there. No force pushes, no history rewriting.
+**Push straight to `main`.** No branch, no pull request. Pull first so you don't land on top of
+whoever else is working. `main` is what the live demo builds from, so anything you push is
+public within about a minute, and the repo is public: no keys, no tokens, no production data.
 
 ## A habit worth copying
 
