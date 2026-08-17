@@ -164,17 +164,23 @@ input,textarea{-webkit-user-select:text;user-select:text}
 .card.scene-card{border-color:rgba(217,70,239,.3)}
 .card-cover{height:220px;position:relative;overflow:hidden}
 .card-cover-grad{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(6,5,13,.08) 0%,transparent 40%,rgba(6,5,13,.97) 100%)}
-.card-badges{position:absolute;top:14px;left:14px;display:flex;gap:6px;flex-wrap:wrap}
+.card-badges{position:absolute;top:14px;left:14px;display:flex;gap:6px;flex-wrap:wrap;
+  /* Stops short of the attendee counter pinned at top:14px right:14px. Without
+     this the badges wrap underneath it and the two render on top of each other. */
+  max-width:calc(100% - 132px)}
 .badge{font-size:11px;font-weight:800;padding:5px 10px;border-radius:var(--r-md);letter-spacing:.2px;backdrop-filter:blur(16px)}
 .badge-hot{background:color-mix(in srgb,var(--signal) 90%,transparent);color:#fff}
-.badge-private{background:rgba(245,158,11,.85);color:#1A0A00}
-.badge-scene{background:rgba(217,70,239,.85);color:#fff}
-.badge-justu{background:rgba(245,158,11,.85);color:#1A0A00}
+.badge-private{background:rgba(6,5,13,.65);color:var(--text2);border:0.5px solid rgba(238,234,250,.18)}
+/* The Scene used to be magenta, which put a second accent on the busiest
+   screen in the app. Amber is the only accent; The Scene reads as the loud
+   option by being filled, Just Us by being outlined. */
+.badge-scene{background:color-mix(in srgb,var(--signal) 92%,transparent);color:var(--signal-ink)}
+.badge-justu{background:rgba(6,5,13,.55);color:var(--signal);border:1px solid color-mix(in srgb,var(--signal) 55%,transparent)}
 .badge-cat{background:rgba(6,5,13,.65);color:var(--text2);border:0.5px solid rgba(238,234,250,.15)}
 .card-att{font-family:'WTM Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums;position:absolute;top:14px;right:14px;display:flex;align-items:center;gap:5px;background:rgba(6,5,13,.72);backdrop-filter:blur(16px);border-radius:var(--r-md);padding:5px 11px;font-size:12px;font-weight:700;color:var(--text1);transition:transform .3s}
 .card-att.bump{transform:scale(1.15)}
 .att-bar{width:32px;height:3px;background:rgba(238,234,250,.12);border-radius:var(--r-sm);overflow:hidden}
-.att-fill{height:100%;background:var(--violet);border-radius:var(--r-sm);transition:width .5s}
+.att-fill{height:100%;background:var(--signal);border-radius:var(--r-sm);transition:width .5s}
 .att-fill.full{background:var(--red)}
 .att-fill.warn{background:var(--justu)}
 .card-cover-bottom{position:absolute;bottom:14px;left:16px;right:14px}
@@ -499,7 +505,7 @@ input,textarea{-webkit-user-select:text;user-select:text}
 <div id="scr-moves" class="scr">
   <div class="topbar">
     <div class="topbar-left">
-      <div class="topbar-loc">📍 Pittsburgh, PA</div>
+      <div class="topbar-loc"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z"/><circle cx="12" cy="10" r="2.6"/></svg> Pittsburgh, PA</div>
       <div class="topbar-title">What's The Move</div>
     </div>
     <div class="topbar-right">
@@ -807,6 +813,8 @@ const ICO={
  '🛝':'<path d="M4 21c0-6 3-9 7-9h4"/><path d="M15 5h5v7h-5z"/><path d="M17.5 12v3"/><path d="M2 21h6"/>',
  '🤝':'<path d="M7 13 4 10l4-4 3 2h2l3-2 4 4-3 3"/><path d="m7 13 3 3 2-1 2 2 3-4"/><path d="M12 8v2"/>',
  '📍':'<path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z"/><circle cx="12" cy="10" r="2.6"/>',
+ '🔥':'<path d="M12 21a6 6 0 0 0 6-6c0-4-3-6-3-9 0 0-3 1.5-3 5 0-1.5-1-3-2.5-3.5C10.8 9.5 6 11 6 15a6 6 0 0 0 6 6z"/><path d="M12 21a2.6 2.6 0 0 0 2.6-2.6c0-1.7-1.3-2.6-1.3-3.9 0 0-1.3.6-1.3 2.2 0-.8-.6-1.5-1.3-1.7-.2 1-.9 1.9-.9 3.4A2.6 2.6 0 0 0 12 21z"/>',
+ '⚡':'<path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12z"/>',
  '✨':'<path d="m12 3 1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/><path d="M18 16.5 18.7 18.3 20.5 19l-1.8.7L18 21.5l-.7-1.8L15.5 19l1.8-.7z"/>',
  // Interface glyphs. Same reasoning as the categories: a magnifying glass drawn
  // by Android is a different shape from one drawn by iOS, and neither is ours.
@@ -1169,11 +1177,14 @@ function buildCard(m){
   const myR=S.myRxn[m.id]||{};
   const cat=CATS.find(c=>c.id===m.cat);
   const badges=[];
-  if(m.hot)badges.push(`<span class="badge badge-hot">🔥 Trending</span>`);
+  if(m.hot)badges.push(`<span class="badge badge-hot">${ico('🔥')} Trending</span>`);
   if(m.private)badges.push(`<span class="badge badge-private">${ico('🔒')} Private</span>`);
   if(m.cat==='scene')badges.push(`<span class="badge badge-scene">The Scene</span>`);
   if(m.cat==='justu')badges.push(`<span class="badge badge-justu">Just Us</span>`);
-  badges.push(`<span class="badge badge-cat">${ico(cat?.emoji)} ${cat?.label||'Move'}</span>`);
+  // The Scene and Just Us already have their own badge above, so pushing the
+  // generic one too rendered the same words twice on the same card.
+  if(m.cat!=='scene'&&m.cat!=='justu')
+    badges.push(`<span class="badge badge-cat">${ico(cat?.emoji)} ${cat?.label||'Move'}</span>`);
   return`<div class="card${m.hot?' hot':''}${m.private?' private':''}${m.cat==='scene'?' scene-card':''}" data-act="open" data-arg="${m.id}">
     <div class="card-cover" style="background:linear-gradient(145deg,${m.grad[0]},${m.grad[1]})">
       <div class="card-cover-grad"></div>
@@ -1182,12 +1193,12 @@ function buildCard(m){
       <div class="card-cover-bottom"><div class="card-time-tag">${m.time}</div><div class="card-title">${m.title}</div></div>
     </div>
     <div class="card-body">
-      <div class="card-meta"><span class="meta-pill">📍 ${m.loc}</span><span class="meta-sep"></span><span class="meta-pill" style="color:${pct>=90?'var(--red)':pct>=70?'var(--justu)':'inherit'}">${pct}% full</span></div>
+      <div class="card-meta"><span class="meta-pill">${ico('📍')} ${m.loc}</span><span class="meta-sep"></span><span class="meta-pill" style="color:${pct>=90?'var(--red)':pct>=70?'var(--justu)':'inherit'}">${pct}% full</span></div>
       ${friendsRowHTML(m.id)}
       <div class="card-actions">
         <div class="hype-row">
-          <button class="hype-btn${myR.fire?' fired':''}" data-act="rxn" data-arg="${m.id}-fire">🔥</button><span class="hype-ct">${rxn.fire}</span>
-          <button class="hype-btn${myR.hype?' fired':''}" data-act="rxn" data-arg="${m.id}-hype">⚡</button><span class="hype-ct">${rxn.hype}</span>
+          <button class="hype-btn${myR.fire?' fired':''}" data-act="rxn" data-arg="${m.id}-fire">${ico('🔥')}</button><span class="hype-ct">${rxn.fire}</span>
+          <button class="hype-btn${myR.hype?' fired':''}" data-act="rxn" data-arg="${m.id}-hype">${ico('⚡')}</button><span class="hype-ct">${rxn.hype}</span>
           <button class="hype-btn${myR.there?' fired':''}" data-act="rxn" data-arg="${m.id}-there">${ico('👀')}</button><span class="hype-ct">${rxn.there}</span>
         </div>
         <button class="${rsvpClass(m.id)}" data-act="rsvp" data-arg="${m.id}">${rsvpLabel(m.id)}</button>
@@ -1227,7 +1238,7 @@ function openSheet(mid){
     <div class="sheet-cover" style="background:linear-gradient(145deg,${m.grad[0]},${m.grad[1]})">${ico(m.emoji)}</div>
     <div class="sheet-title">${m.title}</div>
     <div class="sheet-meta">
-      <span class="meta-pill">📍 ${m.loc}</span><span class="meta-sep"></span>
+      <span class="meta-pill">${ico('📍')} ${m.loc}</span><span class="meta-sep"></span>
       <span class="meta-pill">${ico('🕘')} ${m.time}</span><span class="meta-sep"></span>
       <span class="meta-pill" style="color:${pct>=90?'var(--red)':pct>=70?'var(--justu)':'var(--text2)'}">${m.att}/${m.max} going</span>
     </div>
@@ -1257,8 +1268,8 @@ function openSheet(mid){
     <div class="sheet-sec">
       <div class="sheet-sec-label">Reactions</div>
       <div class="hype-row">
-        <button class="hype-btn${myR.fire?' fired':''}" data-act="rxn" data-arg="${mid}-fire" style="font-size:22px;padding:10px 12px">🔥</button><span class="hype-ct" style="font-size:14px">${rxn.fire}</span>
-        <button class="hype-btn${myR.hype?' fired':''}" data-act="rxn" data-arg="${mid}-hype" style="font-size:22px;padding:10px 12px">⚡</button><span class="hype-ct" style="font-size:14px">${rxn.hype}</span>
+        <button class="hype-btn${myR.fire?' fired':''}" data-act="rxn" data-arg="${mid}-fire" style="font-size:22px;padding:10px 12px">${ico('🔥')}</button><span class="hype-ct" style="font-size:14px">${rxn.fire}</span>
+        <button class="hype-btn${myR.hype?' fired':''}" data-act="rxn" data-arg="${mid}-hype" style="font-size:22px;padding:10px 12px">${ico('⚡')}</button><span class="hype-ct" style="font-size:14px">${rxn.hype}</span>
         <button class="hype-btn${myR.there?' fired':''}" data-act="rxn" data-arg="${mid}-there" style="font-size:22px;padding:10px 12px">${ico('👀')}</button><span class="hype-ct" style="font-size:14px">${rxn.there}</span>
       </div>
     </div>
