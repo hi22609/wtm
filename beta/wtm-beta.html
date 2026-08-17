@@ -367,6 +367,18 @@ input,textarea{-webkit-user-select:text;user-select:text}
 .tabbar{height:var(--tab-h);padding-bottom:var(--safe-b);padding-top:10px;background:color-mix(in srgb,var(--ink-900) 94%,transparent);backdrop-filter:blur(28px);border-top:0.5px solid var(--border2);display:flex;align-items:flex-start;justify-content:space-around;flex-shrink:0;z-index:30;position:relative}
 .tab{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:4px 4px;border-radius:var(--r-sm);flex:1;min-width:0}
 .tab-icon{width:23px;height:23px;fill:none;stroke:var(--paper-600);stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;transition:stroke var(--t)}
+/* Category icons. Sized in em so they inherit whatever font-size the emoji they
+   replaced was using, and coloured with currentColor so they pick up the state
+   of whatever they sit inside without a single extra rule. */
+.dot{width:7px;height:7px;border-radius:50%;background:var(--paper-600);
+     display:inline-block;margin-right:7px;vertical-align:.05em;flex:none}
+.dot.on{background:var(--ok);box-shadow:0 0 0 3px color-mix(in srgb,var(--ok) 22%,transparent)}
+.ico{width:1em;height:1em;fill:none;stroke:currentColor;stroke-width:1.7;
+     stroke-linecap:round;stroke-linejoin:round;vertical-align:-.14em;flex:none}
+/* Stroke scales with the icon, so at 60px the same 1.7 reads as a marker pen.
+   Thin it back down where the icon is displayed large. */
+.sheet-cover .ico{stroke-width:1.15}
+.story-inner .ico,.profile-move-icon .ico{stroke-width:1.5}
 .tab-label{font-size:9.5px;white-space:nowrap;font-weight:700;letter-spacing:.3px;color:var(--text3);text-transform:uppercase}
 .tab.active .tab-label{color:var(--signal)}
 .tab.active .tab-icon{stroke:var(--signal)}
@@ -494,7 +506,7 @@ input,textarea{-webkit-user-select:text;user-select:text}
   <div class="live-bar"><div class="live-dot"></div><div class="live-label">LIVE</div><div class="live-text" id="ticker-text">41 people locked in across Pittsburgh right now</div></div>
   <div class="stories" id="stories"></div>
   <div class="search-bar">
-    <span class="search-icon">🔍</span>
+    <span class="search-icon"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></span>
     <input class="search-input" id="search-in" placeholder="Search moves, venues, vibes…" oninput="onSearch(this.value)">
     <span class="search-clear" id="search-clear" onclick="clearSearch()">✕</span>
   </div>
@@ -760,6 +772,57 @@ const TICKER_POOL=[
 // ══════════════════ SPOTS ══════════════════
 // Real Pittsburgh places. `tags` are what people actually say when they want
 // the place; the finder matches against these, not against the name.
+// ── Category iconography ────────────────────────────────────────────────────
+// These used to be emoji. Emoji are drawn by the operating system, so the same
+// category looked like a different product on an iPhone, a Pixel and a laptop,
+// and none of the three looked like WTM. These are drawn here, in the same
+// stroke language as the tab bar, so a category looks the same everywhere and
+// looks like it belongs to this app.
+//
+// Keyed by the emoji they replace, so the data below is untouched: every spot
+// and move keeps the field it already had, and only the render changes.
+const ICO={
+ '🎵':'<path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/>',
+ '🍕':'<path d="M4 20 20 4"/><path d="M4 20c0-8.8 7.2-16 16-16"/><path d="M4 20h.01"/><circle cx="11" cy="12" r="1.1"/><circle cx="14.5" cy="8.5" r="1.1"/>',
+ '🍺':'<path d="M6 8h8v11a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2z"/><path d="M14 11h2a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2h-2"/><path d="M6 8c0-2 1.3-3 3-3 .4-1.3 1.5-2 3-2s2.6.9 3 2"/>',
+ '🌿':'<path d="M11 20c0-6 3-10 9-11 0 6-3 10-9 11z"/><path d="M11 20c-4 0-7-3-7-7 0-3 2-5 5-5"/><path d="M11 20v-6"/>',
+ '🎨':'<path d="M12 21a9 9 0 1 1 9-9c0 2-1.6 3-3 3h-1.5a2 2 0 0 0-1.4 3.4A1.8 1.8 0 0 1 12 21z"/><circle cx="7.5" cy="12" r="1.1"/><circle cx="10" cy="8" r="1.1"/><circle cx="15" cy="8.5" r="1.1"/>',
+ '🏀':'<circle cx="12" cy="12" r="9"/><path d="M12 3v18"/><path d="M5 6.5c4 3 4 8 0 11"/><path d="M19 6.5c-4 3-4 8 0 11"/>',
+ '🎮':'<path d="M8 10h8a5 5 0 0 1 4.9 4l.7 4a2 2 0 0 1-3.4 1.8L15 17H9l-3.2 2.8A2 2 0 0 1 2.4 18l.7-4A5 5 0 0 1 8 10z"/><path d="M7 13v2M6 14h2"/><circle cx="16" cy="14" r=".9"/><path d="M9 10V7a3 3 0 0 1 6 0"/>',
+ '🎉':'<path d="M4 21 9 8l7 7z"/><path d="M14 3v2M18 6l1.5-1.5M19 11h2"/><path d="M13.5 5.5a3 3 0 0 0 4 4"/>',
+ '🛹':'<path d="M3 9h18"/><path d="M3 9c0-1.1.9-2 2-2h14a2 2 0 0 1 2 2v1H3z"/><circle cx="7.5" cy="15" r="2"/><circle cx="16.5" cy="15" r="2"/><path d="M6.5 13V11M17.5 13V11"/>',
+ '🌆':'<path d="M3 20h18"/><path d="M5 20V9l4-3v14"/><path d="M9 20V12l5-2v10"/><path d="M14 20V7l5 2v11"/><path d="M7 12h.01M11 15h.01M16 13h.01"/>',
+ '🏚':'<path d="M3 21h18"/><path d="M5 21V7l7-4 7 4v14"/><path d="M9 21v-6h6v6"/><path d="M12 3v4M8 11l3 2M16 10l-3 3"/>',
+ '🌇':'<path d="M3 19h18"/><circle cx="12" cy="12" r="4"/><path d="M12 4v2M4.9 6.9l1.4 1.4M19.1 6.9l-1.4 1.4M2 12h2M20 12h2"/><path d="M5 16h4M15 16h4"/>',
+ '🌳':'<path d="M12 21v-6"/><path d="M12 15a6 6 0 0 0 1.6-11.8A5 5 0 0 0 5.2 8 4 4 0 0 0 7 15z"/><path d="M9.5 18h5"/>',
+ '🏊':'<path d="M2 17c2 0 2-1.5 4-1.5S8 17 10 17s2-1.5 4-1.5S16 17 18 17s2-1.5 4-1.5"/><path d="M2 21c2 0 2-1.5 4-1.5S8 21 10 21s2-1.5 4-1.5S16 21 18 21s2-1.5 4-1.5"/><circle cx="17" cy="6" r="2"/><path d="M6 13l4-3 3 2 3-3"/>',
+ '📷':'<path d="M3 8h3l1.5-2h9L18 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.4"/>',
+ '🚲':'<circle cx="6" cy="16" r="4"/><circle cx="18" cy="16" r="4"/><path d="M6 16 10 7h5"/><path d="m10 7 5 9"/><path d="M14 7h3"/>',
+ '🛝':'<path d="M4 21c0-6 3-9 7-9h4"/><path d="M15 5h5v7h-5z"/><path d="M17.5 12v3"/><path d="M2 21h6"/>',
+ '🤝':'<path d="M7 13 4 10l4-4 3 2h2l3-2 4 4-3 3"/><path d="m7 13 3 3 2-1 2 2 3-4"/><path d="M12 8v2"/>',
+ '📍':'<path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z"/><circle cx="12" cy="10" r="2.6"/>',
+ '✨':'<path d="m12 3 1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/><path d="M18 16.5 18.7 18.3 20.5 19l-1.8.7L18 21.5l-.7-1.8L15.5 19l1.8-.7z"/>',
+ // Interface glyphs. Same reasoning as the categories: a magnifying glass drawn
+ // by Android is a different shape from one drawn by iOS, and neither is ours.
+ '\u{1F50D}':'<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>',
+ '\u{1F3D9}':'<path d="M3 21h18"/><path d="M5 21V8l5-3v16"/><path d="M10 21V11l5-2v12"/><path d="M15 21V9l4 2v10"/>',
+ '\u{1F512}':'<rect x="4" y="10.5" width="16" height="10.5" rx="2"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/>',
+ '\u{1F440}':'<path d="M2 12s3.6-6 10-6 10 6 10 6-3.6 6-10 6-10-6-10-6z"/><circle cx="12" cy="12" r="2.8"/>',
+ '\u{1F9ED}':'<circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5.5-5.5 2 2-5.5z"/>',
+ '\u{1F558}':'<circle cx="12" cy="12" r="9"/><path d="M12 7v5.2l3.2 2"/>',
+ '\u{27A4}':'<path d="M4 12h14"/><path d="m12 6 6 6-6 6"/>',
+ '\u{1F303}':'<path d="M3 20h18"/><path d="M5 20V10l4-2v12"/><path d="M9 20V13l5-2v9"/><path d="M14 20V9l5 2v9"/><circle cx="17.5" cy="5" r="2"/>',
+ '\u{1F3B6}':'<path d="M9 18V6l11-2v12"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/><path d="M9 10l11-2"/>',
+ '\u{1F942}':'<path d="M9 3h6l-1 6a2 2 0 0 1-4 0z"/><path d="M12 9v8"/><path d="M8 21h8"/><path d="M17 4l2 2-3 3"/>',
+ '\u{1F4F8}':'<path d="M3 8h3l1.5-2h9L18 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.4"/><path d="M18 5.5h2"/>',
+};
+// Falls back to the original character if a category ever ships without an icon,
+// so a new category renders as it used to rather than as a blank box.
+function ico(e){
+  const d=ICO[e];
+  return d?`<svg class="ico" viewBox="0 0 24 24" aria-hidden="true">${d}</svg>`:(e||'');
+}
+
 const SPOTS=[
  {id:'sp1',name:'West Penn Skatepark',cat:'skate',emoji:'🛹',lat:40.4560,lng:-79.9718,
   area:'Polish Hill',addr:'450 30th St',fires:41,crowd:'medium',best:'afternoon',lit:true,free:true,indoor:false,
@@ -809,6 +872,10 @@ const SPOTS=[
   area:'Millvale',addr:'Riverfront Park trailhead',fires:21,crowd:'low',best:'morning',lit:false,free:true,indoor:false,
   tags:['chill','bike','run','river','trail','quiet','flat','walk'],
   blurb:'Flat paved trail right on the Allegheny. Quiet enough to hear the water.'},
+ {id:'sp13',name:'Heinz Lofts',cat:'urbex',emoji:'🏚',lat:40.4574,lng:-79.9856,
+  area:'North Shore',addr:'300 Heinz St',fires:37,crowd:'low',best:'afternoon',lit:false,free:true,indoor:false,
+  tags:['urbex','industrial','abandoned','factory','brick','photo','heinz','architecture'],
+  blurb:'The old Heinz plant. Half of it is apartments now, half of it never got finished. Residents live here, so the lived-in side is not yours to wander.'},
 ];
 const SPOT_CATS={skate:'Skate',view:'Views',urbex:'Urbex',photo:'Photo',chill:'Chill',swim:'Water',sunset:'Sunset'};
 
@@ -881,7 +948,7 @@ function confettiTick(){
     requestAnimationFrame(dr);}
   rs();dr();window.addEventListener('resize',rs);
 })();
-document.getElementById('wlc-vibes').innerHTML=CATS.slice(0,6).map(c=>`<div class="wlc-vibe" onclick="toggleVibe(this,'${c.id}')">${c.emoji} ${c.label}</div>`).join('');
+document.getElementById('wlc-vibes').innerHTML=CATS.slice(0,6).map(c=>`<div class="wlc-vibe" onclick="toggleVibe(this,'${c.id}')">${ico(c.emoji)} ${c.label}</div>`).join('');
 function toggleVibe(el,id){el.classList.toggle('sel');S.vibes.has(id)?S.vibes.delete(id):S.vibes.add(id);}
 
 // ══════════════════ LIVE ENGINE ══════════════════
@@ -957,7 +1024,7 @@ function updateBadge(){const b=document.getElementById('notif-badge');b.textCont
 function buildStories(){
   document.getElementById('stories').innerHTML=STORIES.map(s=>`
     <div class="story" onclick="openStory('${s.id}')">
-      <div class="story-ring${S.seenStories.has(s.id)?' seen':''}"><div class="story-inner" style="background:linear-gradient(145deg,${s.grad[0]},${s.grad[1]})">${s.emoji}</div></div>
+      <div class="story-ring${S.seenStories.has(s.id)?' seen':''}"><div class="story-inner" style="background:linear-gradient(145deg,${s.grad[0]},${s.grad[1]})">${ico(s.emoji)}</div></div>
       <div class="story-name">${s.name}</div>
     </div>`).join('');
 }
@@ -967,7 +1034,7 @@ function openStory(sid){
   demoEvt('watched_story');
   curSlide=0;S.seenStories.add(sid);
   document.getElementById('story-viewer').classList.add('open');
-  document.getElementById('sv-av').textContent=curStory.emoji;
+  document.getElementById('sv-av').innerHTML=ico(curStory.emoji);
   document.getElementById('sv-av').style.background=`linear-gradient(145deg,${curStory.grad[0]},${curStory.grad[1]})`;
   document.getElementById('sv-name').textContent=curStory.name;
   document.getElementById('sv-time').textContent='tonight';
@@ -978,7 +1045,7 @@ function openStory(sid){
 function renderSlide(){
   const sl=curStory.slides[curSlide];
   document.getElementById('sv-body').style.background=`linear-gradient(160deg,${curStory.grad[0]},${curStory.grad[1]})`;
-  document.getElementById('sv-emoji').textContent=curStory.emoji;
+  document.getElementById('sv-emoji').innerHTML=ico(curStory.emoji);
   document.getElementById('sv-title').textContent=sl.title;
   document.getElementById('sv-sub').textContent=sl.sub;
   // progress
@@ -1011,7 +1078,7 @@ function closeNotif(){document.getElementById('notif-panel').classList.remove('o
 
 // ══════════════════ CREATE ══════════════════
 function openCreate(){
-  document.getElementById('create-cats').innerHTML=CATS.map(c=>`<div class="create-cat${S.createCat===c.id?' sel':''}" onclick="selCreateCat(this,'${c.id}')">${c.emoji} ${c.label}</div>`).join('');
+  document.getElementById('create-cats').innerHTML=CATS.map(c=>`<div class="create-cat${S.createCat===c.id?' sel':''}" onclick="selCreateCat(this,'${c.id}')">${ico(c.emoji)} ${c.label}</div>`).join('');
   document.getElementById('create-overlay').classList.add('open');
   document.getElementById('create-panel').classList.add('open');
 }
@@ -1065,12 +1132,12 @@ function friendsRowHTML(mid){
 
 // ══════════════════ FEED ══════════════════
 function buildFeed(){
-  document.getElementById('cat-row').innerHTML=CATS.map(c=>`<div class="cat${S.activeCat===c.id?' active':''}" data-cat="${c.id}" onclick="setCat('${c.id}')"><span>${c.emoji}</span>${c.label}</div>`).join('');
+  document.getElementById('cat-row').innerHTML=CATS.map(c=>`<div class="cat${S.activeCat===c.id?' active':''}" data-cat="${c.id}" onclick="setCat('${c.id}')"><span>${ico(c.emoji)}</span>${c.label}</div>`).join('');
   let moves=[...MOVES];
   if(S.activeCat)moves=moves.filter(m=>m.cat===S.activeCat);
   if(S.search)moves=moves.filter(m=>m.title.toLowerCase().includes(S.search)||m.loc.toLowerCase().includes(S.search)||(CATS.find(c=>c.id===m.cat)?.label||'').toLowerCase().includes(S.search));
   const feed=document.getElementById('feed');
-  if(!moves.length){feed.innerHTML=`<div class="feed-empty"><div class="feed-empty-icon">${S.search?'🔍':'🏙'}</div>${S.search?`Nothing matching "${S.search}" right now`:'Nothing in this category tonight'}</div>`;return;}
+  if(!moves.length){feed.innerHTML=`<div class="feed-empty"><div class="feed-empty-icon">${ico(S.search?'🔍':'🏙')}</div>${S.search?`Nothing matching "${S.search}" right now`:'Nothing in this category tonight'}</div>`;return;}
   const hot=moves.filter(m=>m.hot),other=moves.filter(m=>!m.hot);
   let html='';
   if(hot.length){html+=`<div class="section-header"><div class="section-label"><span class="pulse-dot"></span>Trending now</div><div class="section-count">${hot.length} moves</div></div>`+hot.map(buildCard).join('');}
@@ -1085,10 +1152,10 @@ function buildCard(m){
   const cat=CATS.find(c=>c.id===m.cat);
   const badges=[];
   if(m.hot)badges.push(`<span class="badge badge-hot">🔥 Trending</span>`);
-  if(m.private)badges.push(`<span class="badge badge-private">🔒 Private</span>`);
+  if(m.private)badges.push(`<span class="badge badge-private">${ico('🔒')} Private</span>`);
   if(m.cat==='scene')badges.push(`<span class="badge badge-scene">The Scene</span>`);
   if(m.cat==='justu')badges.push(`<span class="badge badge-justu">Just Us</span>`);
-  badges.push(`<span class="badge badge-cat">${cat?.emoji||'✨'} ${cat?.label||'Move'}</span>`);
+  badges.push(`<span class="badge badge-cat">${ico(cat?.emoji)} ${cat?.label||'Move'}</span>`);
   return`<div class="card${m.hot?' hot':''}${m.private?' private':''}${m.cat==='scene'?' scene-card':''}" data-act="open" data-arg="${m.id}">
     <div class="card-cover" style="background:linear-gradient(145deg,${m.grad[0]},${m.grad[1]})">
       <div class="card-cover-grad"></div>
@@ -1103,7 +1170,7 @@ function buildCard(m){
         <div class="hype-row">
           <button class="hype-btn${myR.fire?' fired':''}" data-act="rxn" data-arg="${m.id}-fire">🔥</button><span class="hype-ct">${rxn.fire}</span>
           <button class="hype-btn${myR.hype?' fired':''}" data-act="rxn" data-arg="${m.id}-hype">⚡</button><span class="hype-ct">${rxn.hype}</span>
-          <button class="hype-btn${myR.there?' fired':''}" data-act="rxn" data-arg="${m.id}-there">👀</button><span class="hype-ct">${rxn.there}</span>
+          <button class="hype-btn${myR.there?' fired':''}" data-act="rxn" data-arg="${m.id}-there">${ico('👀')}</button><span class="hype-ct">${rxn.there}</span>
         </div>
         <button class="${rsvpClass(m.id)}" data-act="rsvp" data-arg="${m.id}">${rsvpLabel(m.id)}</button>
       </div>
@@ -1136,18 +1203,18 @@ function openSheet(mid){
     <div style="flex:1;margin-left:10px"><div style="font-size:13px;font-weight:800;color:var(--blaze)">${frNames.join(', ')}</div>
     <div style="font-size:11px;color:color-mix(in srgb,var(--signal) 50%,transparent);font-weight:600;margin-top:2px">already locked in</div></div></div></div>`:'';
 
-  const photos=['🌃','🎶','🥂','📸'].map((e,i)=>`<div class="sheet-photo" style="background:linear-gradient(${135+i*40}deg,${m.grad[0]}66,${m.grad[1]})">${e}</div>`).join('');
+  const photos=['🌃','🎶','🥂','📸'].map((e,i)=>`<div class="sheet-photo" style="background:linear-gradient(${135+i*40}deg,${m.grad[0]}66,${m.grad[1]})">${ico(e)}</div>`).join('');
 
   document.getElementById('sheet-body').innerHTML=`
-    <div class="sheet-cover" style="background:linear-gradient(145deg,${m.grad[0]},${m.grad[1]})">${m.emoji}</div>
+    <div class="sheet-cover" style="background:linear-gradient(145deg,${m.grad[0]},${m.grad[1]})">${ico(m.emoji)}</div>
     <div class="sheet-title">${m.title}</div>
     <div class="sheet-meta">
       <span class="meta-pill">📍 ${m.loc}</span><span class="meta-sep"></span>
-      <span class="meta-pill">🕘 ${m.time}</span><span class="meta-sep"></span>
+      <span class="meta-pill">${ico('🕘')} ${m.time}</span><span class="meta-sep"></span>
       <span class="meta-pill" style="color:${pct>=90?'var(--red)':pct>=70?'var(--justu)':'var(--text2)'}">${m.att}/${m.max} going</span>
     </div>
     ${m.addr?`<div style="display:flex;align-items:center;gap:8px;background:var(--bg3);border:0.5px solid var(--border);border-radius:var(--r-md);padding:10px 14px;margin-bottom:14px">
-      <span style="font-size:15px">🧭</span>
+      <span style="font-size:15px">${ico('🧭')}</span>
       <span style="font-size:13.5px;font-weight:700;color:var(--text1);letter-spacing:-.1px">${m.private&&!S.rsvps.has(mid)?'Address drops when you lock in':m.addr}</span>
     </div>`:''}
     <div class="sheet-desc">${m.desc}</div>
@@ -1159,7 +1226,7 @@ function openSheet(mid){
     <div class="sa-row">
       <button class="sa sa-going${S.rsvps.has(mid)?' is-going':''}" data-act="rsvp" data-arg="${mid}">${rsvpLabel(mid)}</button>
       <button class="sa sa-share" data-act="share" data-arg="${mid}">Tell friends</button>
-      <button class="sa-dir" data-act="dir" data-arg="${mid}">🧭</button>
+      <button class="sa-dir" data-act="dir" data-arg="${mid}">${ico('🧭')}</button>
     </div>
     <div class="vibe-meter">
       <div class="sheet-sec-label" style="margin-bottom:0">Vibe check</div>
@@ -1174,13 +1241,13 @@ function openSheet(mid){
       <div class="hype-row">
         <button class="hype-btn${myR.fire?' fired':''}" data-act="rxn" data-arg="${mid}-fire" style="font-size:22px;padding:10px 12px">🔥</button><span class="hype-ct" style="font-size:14px">${rxn.fire}</span>
         <button class="hype-btn${myR.hype?' fired':''}" data-act="rxn" data-arg="${mid}-hype" style="font-size:22px;padding:10px 12px">⚡</button><span class="hype-ct" style="font-size:14px">${rxn.hype}</span>
-        <button class="hype-btn${myR.there?' fired':''}" data-act="rxn" data-arg="${mid}-there" style="font-size:22px;padding:10px 12px">👀</button><span class="hype-ct" style="font-size:14px">${rxn.there}</span>
+        <button class="hype-btn${myR.there?' fired':''}" data-act="rxn" data-arg="${mid}-there" style="font-size:22px;padding:10px 12px">${ico('👀')}</button><span class="hype-ct" style="font-size:14px">${rxn.there}</span>
       </div>
     </div>
     <div class="sheet-sec">
       <div class="sheet-sec-label">Group chat · live</div>
       <div class="msg-list">${msgs}</div>
-      <div class="chat-input-row"><input class="chat-in" id="chat-in-${mid}" placeholder="Say something…"><div class="chat-send" data-act="chat-send" data-arg="${mid}">➤</div></div>
+      <div class="chat-input-row"><input class="chat-in" id="chat-in-${mid}" placeholder="Say something…"><div class="chat-send" data-act="chat-send" data-arg="${mid}">${ico('➤')}</div></div>
     </div>`;
   document.getElementById('sheet-overlay').classList.add('open');
   document.getElementById('sheet').classList.add('open');
@@ -1197,8 +1264,8 @@ function buildFriends(){
       <div class="friend-av ${f.av}">${f.init}<div class="friend-on-dot ${f.online?'on':'off'}"></div></div>
       <div class="friend-info">
         <div class="friend-name">${f.name}</div>
-        <div class="friend-status">${f.online?'🟢':'⚫'} ${f.status}</div>
-        ${gm.length?`<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px">${gm.map(m=>`<div class="friend-going-tag" data-act="open" data-arg="${m.id}">${m.emoji} ${m.title.length>24?m.title.slice(0,22)+'…':m.title}</div>`).join('')}</div>`:''}
+        <div class="friend-status"><i class="dot${f.online?' on':''}"></i>${f.status}</div>
+        ${gm.length?`<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px">${gm.map(m=>`<div class="friend-going-tag" data-act="open" data-arg="${m.id}">${ico(m.emoji)} ${m.title.length>24?m.title.slice(0,22)+'…':m.title}</div>`).join('')}</div>`:''}
       </div>
     </div>`;}).join('')+`</div>`;
 }
@@ -1210,7 +1277,7 @@ function buildProfile(){
   document.getElementById('ps-tonight').textContent=myMoves.length;
   document.getElementById('profile-moves').innerHTML=myMoves.length?myMoves.map(m=>`
     <div class="profile-move-row">
-      <div class="profile-move-icon" style="background:linear-gradient(135deg,${m.grad[0]},${m.grad[1]})">${m.emoji}</div>
+      <div class="profile-move-icon" style="background:linear-gradient(135deg,${m.grad[0]},${m.grad[1]})">${ico(m.emoji)}</div>
       <div class="profile-move-info"><div class="profile-move-title">${m.title}<span class="profile-move-badge">Going ✓</span></div><div class="profile-move-meta">📍 ${m.loc} · ${m.time}</div></div>
     </div>`).join(''):`<div class="profile-empty">Nothing locked in yet. Go find a move</div>`;
   document.getElementById('profile-activity').innerHTML=`
@@ -1262,11 +1329,11 @@ document.addEventListener('click',e=>{
     }
     e.stopPropagation();
   }
-  else if(act==='share'){toast('Link copied 🔗 Send it to the group chat');e.stopPropagation();}
+  else if(act==='share'){toast('Link copied. Send it to the group chat');e.stopPropagation();}
   else if(act==='dir'){
     const mv=MOVES.find(x=>x.id===arg);
     if(mv&&mv.private&&!S.rsvps.has(arg))toast('Lock in first to get the address');
-    else toast('Directions to '+((mv&&mv.addr)||'the move')+' 🧭');
+    else toast('Directions to '+((mv&&mv.addr)||'the move'));
     e.stopPropagation();
   }
   else if(act==='follow'){el.textContent='Following ✓';el.style.color='var(--violet2)';toast('You\'ll get notified when they drop moves');e.stopPropagation();}
@@ -1838,7 +1905,7 @@ function tryTap(px,py){
   for(const p of pins){
     if((px-p.x)**2+(py-p.y)**2<=p.r*p.r){
       if(p.id)openSheet(p.id);
-      else if(p.friend)toast(`${p.friend} is out right now 🟢`);
+      else if(p.friend)toast(`${p.friend} is out right now`);
       return;
     }
   }
@@ -2229,7 +2296,7 @@ function buildAsk(){
       + Object.entries(counts).sort((a,b)=>b[1]-a[1]).map(([cat,n])=>{
           const sample=SPOTS.find(sp=>sp.cat===cat);
           return `<button class="ask-chip ask-browse-chip" data-act="ask-eg" data-arg="${cat}">`
-               + `<span>${sample.emoji}</span>${SPOT_CATS[cat]||cat}`
+               + `<span>${ico(sample.emoji)}</span>${SPOT_CATS[cat]||cat}`
                + `<span class="ask-browse-n">${n}</span></button>`;
         }).join('')
       + `</div>`;
@@ -2262,7 +2329,7 @@ function submitAsk(q){
 function askCard(r){
   const s=r.sp;
   return `<button class="ask-card" data-act="ask-open" data-arg="${s.id}">
-    <span class="ask-card-emoji">${s.emoji}</span>
+    <span class="ask-card-emoji">${ico(s.emoji)}</span>
     <span class="ask-card-body">
       <span class="ask-card-name">${s.name}</span>
       <span class="ask-card-meta">${s.area} · ${r.mi.toFixed(1)} mi</span>
@@ -2275,7 +2342,7 @@ function openSpot(id){
   const s=SPOTS.find(x=>x.id===id); if(!s)return;
   const km=kmBetween(ME.lat,ME.lng,s.lat,s.lng), mi=(km*0.621371).toFixed(1);
   document.getElementById('sheet-body').innerHTML=`
-    <div class="sheet-cover" style="background:linear-gradient(145deg,#3A4356,#1A1F2B)">${s.emoji}</div>
+    <div class="sheet-cover" style="background:linear-gradient(145deg,#3A4356,#1A1F2B)">${ico(s.emoji)}</div>
     <div class="sheet-title">${s.name}</div>
     <div class="sheet-meta">
       <span class="meta-pill">${s.area}</span><span class="meta-sep"></span>
@@ -2283,7 +2350,7 @@ function openSpot(id){
       <span class="meta-pill">${s.fires} saves</span>
     </div>
     <div style="display:flex;align-items:center;gap:8px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r-sm);padding:10px 14px;margin-bottom:14px">
-      <span style="font-size:15px">🧭</span>
+      <span style="font-size:15px">${ico('🧭')}</span>
       <span style="font-size:13.5px;font-weight:700">${s.addr}</span>
     </div>
     <div class="sheet-desc">${s.blurb}</div>
@@ -2476,7 +2543,7 @@ function addGLMarkers(){
   MOVES.forEach(m=>{
     const fr=friendsForMove(m.id).length;
     const node=glEl(`<div class="glpin${m.hot?' hot':''}">
-      <div class="glpin-card">${fr?'<span class="glpin-fr"></span>':''}<span>${m.emoji}</span>`
+      <div class="glpin-card">${fr?'<span class="glpin-fr"></span>':''}<span>${ico(m.emoji)}</span>`
       +`<span>${m.title.length>20?m.title.slice(0,18)+'…':m.title}</span></div>`
       +`<div class="glpin-stem"></div><div class="glpin-dot"></div></div>`);
     node.addEventListener('click',ev=>{ev.stopPropagation();openSheet(m.id);});
@@ -2493,5 +2560,5 @@ function addGLMarkers(){
 
 // ══════════════════ INIT ══════════════════
 buildFeed();buildStories();buildFriends();buildAsk();updateBadge();
-document.getElementById('create-cats').innerHTML=CATS.map(c=>`<div class="create-cat" onclick="selCreateCat(this,'${c.id}')">${c.emoji} ${c.label}</div>`).join('');
+document.getElementById('create-cats').innerHTML=CATS.map(c=>`<div class="create-cat" onclick="selCreateCat(this,'${c.id}')">${ico(c.emoji)} ${c.label}</div>`).join('');
 </script>
