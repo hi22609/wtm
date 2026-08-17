@@ -6,7 +6,8 @@ This is the one file that is kept current. Everything else in `WTM_REPORTS/` is 
 snapshot of what was known on the night it was written, and some of it has since been
 overtaken. Where an older report contradicts this file, **this file is right.**
 
-Read this first. Then `DECISIONS_FOR_MICHAEL.md` for what is still open.
+Read this first. Then `OPEN_DEFECTS.md` for what is visibly wrong right now, and
+`DECISIONS_FOR_MICHAEL.md` for what is still open.
 
 ---
 
