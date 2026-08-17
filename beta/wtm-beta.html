@@ -270,6 +270,10 @@ input,textarea{-webkit-user-select:text;user-select:text}
   padding:6px 10px;box-shadow:0 3px 10px rgba(20,16,10,.28);white-space:nowrap;
   font:700 12.5px/1 'WTM Sans',system-ui,sans-serif;color:#22262E;border:1.5px solid transparent}
 .glpin.hot .glpin-card{border-color:var(--signal)}
+/* The pin icon carries the category at a glance, so it runs larger than the
+   label next to it and takes the amber only when the move is hot. */
+.glpin-card .ico{width:15px;height:15px;stroke-width:1.9;color:#4A5262}
+.glpin.hot .glpin-card .ico{color:var(--signal)}
 .glpin-stem{width:2px;height:9px;background:rgba(20,16,10,.32);margin:0 auto}
 .glpin-dot{width:11px;height:11px;border-radius:50%;background:#63708A;border:2.5px solid #fff;
   margin:0 auto;box-shadow:0 1px 4px rgba(20,16,10,.4)}
@@ -688,6 +692,8 @@ input,textarea{-webkit-user-select:text;user-select:text}
 <script>
 // ══════════════════ DATA ══════════════════
 const MOVES=[
+ {id:'m9',title:'NA vs Seneca Valley',cat:'scene',emoji:'🎉',grad:['#2B3A2E','#101710'],loc:'Newman Stadium',addr:'10375 Perry Hwy, Wexford',time:'Friday · 7 PM',lat:40.6285,lng:-80.0645,att:212,max:900,hot:true,host:'NA Student Section',hostAv:'av2',desc:'Senior night. Student section is white out, get there by 6:30 or you are standing on the track.'},
+ {id:'m10',title:'North Park Loop Ride',cat:'outdoor',emoji:'🌿',grad:['#2F4433','#111710'],loc:'North Park',addr:'Pearce Mill Rd boathouse lot',time:'Saturday · 10 AM',lat:40.5978,lng:-80.0069,att:9,max:20,hot:false,host:'Ana P.',hostAv:'av3',desc:'Five mile lake loop, easy pace, nobody gets dropped. Coffee after at the boathouse.'},
  {id:'m1',title:'Mt. Washington Rooftop Session',cat:'music',emoji:'🎵',grad:['#2C4A63','#101822'],loc:'Mt. Washington',addr:'1435 Grandview Ave',time:'Tonight · 9 PM',lat:40.4392,lng:-80.0165,att:8,max:12,hot:true,host:'Alex M.',hostAv:'av1',desc:'Live beats over the whole skyline. Small group on purpose. No cover, just show up.'},
  {id:'m2',title:'Strip District Night Market',cat:'food',emoji:'🍕',grad:['#5A4632','#1C1510'],loc:'Strip District',addr:'2100 Penn Ave',time:'Tonight · 7 PM',lat:40.4498,lng:-79.9765,att:22,max:80,hot:false,host:'Strip DIY Collective',hostAv:'av6',desc:'Local vendors, street food, outdoor pop-up. Free entry, bring cash.'},
  {id:'m3',title:'Lawrenceville Bar Crawl',cat:'bars',emoji:'🍺',grad:['#2F4A42','#111A17'],loc:'Lawrenceville',addr:'3523 Butler St (start)',time:'Tonight · 10 PM',lat:40.4655,lng:-79.9605,att:41,max:100,hot:true,host:'Mia R.',hostAv:'av3',desc:'Start at Round Corner, end wherever. 5 stops, 1 wristband, $20 covers everything.'},
@@ -872,6 +878,10 @@ const SPOTS=[
   area:'Millvale',addr:'Riverfront Park trailhead',fires:21,crowd:'low',best:'morning',lit:false,free:true,indoor:false,
   tags:['chill','bike','run','river','trail','quiet','flat','walk'],
   blurb:'Flat paved trail right on the Allegheny. Quiet enough to hear the water.'},
+ {id:'sp16',name:'North Park Pump House',cat:'urbex',emoji:'🏚',lat:40.5996,lng:-80.0038,
+  area:'North Park',addr:'Pearce Mill Rd, by the Administration Building',fires:31,crowd:'low',best:'afternoon',lit:false,free:true,indoor:false,
+  tags:['urbex','pump house','abandoned','lake','stone','marshall island','north park','photo','quiet'],
+  blurb:'Stone pump house on the lake, across the water from Marshall Island. Ten minutes from the boathouse and nobody is ever at it.'},
  {id:'sp15',name:'Highland Drive VA',cat:'urbex',emoji:'🏚',lat:40.4795,lng:-79.8925,
   area:'Lincoln-Lemington-Belmar',addr:'7180 Highland Dr',fires:44,crowd:'low',best:'afternoon',lit:false,free:true,indoor:false,
   tags:['urbex','abandoned','hospital','va','veterans','institutional','photo','campus','highland drive'],
