@@ -56,6 +56,9 @@ when written.
 | Two `nearby_moves` overloads; client bound the one without `hot_score` / `crew_going` / `waitlist_count` | One signature; feed returns all three |
 | `profiles` published every member's push token, birthdate and Instagram handle | Own-row only, with a `public_profiles` view for what others may see |
 | "Just Us" and "The Scene" missing from RAW's category enum | Added, and wired into the picker and filter bar |
+| BETA's four story circles were raw `#7C0EBF` / `#10B981` / `#F59E0B` against a fully desaturated feed | Each story now derives its gradient from the move it links to, so it cannot drift off-palette again |
+| BETA's floating `+` covered every card's "I'm in" — measured 39px of a 76px button, and `elementFromPoint` returned the FAB, so the tap went to Create | `+` moved into the topbar, outside the scroll container. The collision is now structurally impossible |
+| Nothing in BETA's suite asserted layout; 7 checks passed green over two elements stacked on top of each other | `tools/diag-layout.js` asserts every interactive element owns its own centre point, swept across scroll offsets. Verified to fail on the pre-fix build |
 
 ## Still open
 

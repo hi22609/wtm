@@ -51,7 +51,7 @@ const {chromium} = require('playwright-core');
   ok.push('search "rooftop" cards: '+(await frame.locator('.card').count()));
   await frame.click('#search-clear'); await page.waitForTimeout(300);
   // create move
-  await frame.click('.fab'); await page.waitForTimeout(400);
+  await frame.click('#btn-create'); await page.waitForTimeout(400);
   await frame.fill('#ci-title','Test Move'); await frame.click('.create-cat:first-child');
   await frame.click('.create-submit'); await page.waitForTimeout(500);
   ok.push('after create, cards: '+(await frame.locator('.card').count()));
