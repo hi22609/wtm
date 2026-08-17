@@ -138,6 +138,21 @@ const {chromium} = require('playwright-core');
     return {missing, mismatched};
   });
 
+  // ── every icon must resolve to a drawn glyph, never to raw text ──────────
+  // ico() falls back to the character it was given, so a typo or a bad escape
+  // renders as literal text on the card rather than failing loudly.
+  const icons = await f.evaluate(() => {
+    const drawn = e => /^<svg/.test(ico(e));
+    const bad = [];
+    SPOTS.forEach(sp => {if (!drawn(sp.emoji)) bad.push({spot: sp.id, emoji: sp.emoji});});
+    MOVES.forEach(m => {if (!drawn(m.emoji)) bad.push({move: m.id, emoji: m.emoji});});
+    CATS.forEach(c => {if (!drawn(c.emoji)) bad.push({cat: c.id, emoji: c.emoji});});
+    NOTIFS.forEach((n, i) => {if (!drawn(n.icon)) bad.push({notif: i, emoji: n.icon});});
+    // anything that reached the DOM as an unrendered escape
+    const leaked = document.body.innerHTML.match(/U000[0-9A-F]{4}/g);
+    return {bad, leaked: leaked ? [...new Set(leaked)] : []};
+  });
+
   // ── the map screen, as before ─────────────────────────────────────────────
   await f.click('#scr-moves .tab:nth-child(2)'); await page.waitForTimeout(1000);
   const map = await f.evaluate(() => {
@@ -169,6 +184,9 @@ const {chromium} = require('playwright-core');
      data.missing.length ? JSON.stringify(data.missing) : '');
   ok('every roster totals the move\'s attendee count', data.mismatched.length === 0,
      data.mismatched.length ? JSON.stringify(data.mismatched) : '');
+  ok('every icon renders as a glyph, not as text',
+     icons.bad.length === 0 && icons.leaked.length === 0,
+     JSON.stringify(icons.bad.concat(icons.leaked)).replace('[]', ''));
   ok('map controls sit above the tab bar',
      map.ctrls !== 'MISSING' && map.tabbar !== 'MISSING' && map.ctrls.bottom <= map.tabbar.top,
      map.ctrls === 'MISSING' ? 'ctrls MISSING' : '');

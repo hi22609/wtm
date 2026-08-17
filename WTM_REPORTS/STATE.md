@@ -65,6 +65,27 @@ when written.
 | The four moves added in `e03ab9c` existed in `MOVES` and no other table — the top card read 412 going, 0 reactions, no attendees | `ALL_GOING` is now the one authored roster; friends-going and each friend's moves derive from it. Asserted |
 | The cast rename left `FRIENDS_LIST.init` behind, so Friends showed "A" for Mike and "D" for Luca | The initial is `name[0]`; the field is gone |
 
+## What BETA has now
+
+Added 2026-08-17 on `fix/beta-story-rings-fab-overlap`, after the defect pass:
+
+- **City pulse** — a news layer at the top of the feed. The four or five things about tonight
+  that change what you'd do: weather holding, a venue adding a show, Butler St down to one lane.
+  Each row taps through to the move or spot it is about. Hidden when you filter or search,
+  because then you asked for moves.
+- **34 spots, browsable** — up from 16, and no longer hidden behind the search box. Category
+  chips filter in place and the list under them is the real catalogue. Two new categories,
+  **Live music** and **Late eats**, wired into the finder's lexicon so "live music tonight" and
+  "somewhere to eat late" both resolve. New spots are real places: West End Overlook, the
+  Mellon Park walled garden, Mr. Smalls, Klavon's, Page Dairy Mart, Primanti's in the Strip.
+- **A profile that keeps score** — every number on it is derived from what you actually did,
+  so it moves while someone is watching. It used to be hardcoded: it claimed 8 friends when
+  five people existed, and "Fire given 31" never changed no matter how many you gave. Badges
+  unlock off real state and the locked ones say what earns them. Saved spots and a real
+  activity log, fed by the same `demoEvt` calls that already existed at every action.
+- **The share page shows the app it actually is** — three features it never mentioned, and the
+  cast rename fixed where it had leaked into public copy.
+
 ## Still open
 
 In `DECISIONS_FOR_MICHAEL.md`, which is current. The short version:

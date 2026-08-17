@@ -274,6 +274,8 @@ input,textarea{-webkit-user-select:text;user-select:text}
 
 .ask-browse{display:flex;flex-wrap:wrap;gap:8px}
 .ask-browse-chip{display:inline-flex;align-items:center;gap:7px}
+.ask-browse-chip.on{border-color:var(--signal);color:var(--signal);background:color-mix(in srgb,var(--signal) 12%,transparent)}
+.ask-browse-chip.on .ico{stroke:var(--signal)}
 .ask-browse-n{font-family:'WTM Mono',ui-monospace,monospace;font-size:11px;color:var(--text3)}
 
 /* real-tile map markers */
@@ -380,6 +382,25 @@ input,textarea{-webkit-user-select:text;user-select:text}
 .chat-send{font-size:20px;cursor:pointer;transition:transform .1s}
 .chat-send:active{transform:scale(1.2)}
 
+/* ── CITY PULSE ── */
+.pulse-wrap{display:flex;flex-direction:column;gap:8px;margin-bottom:20px}
+.pulse-row{display:flex;gap:12px;align-items:flex-start;background:var(--bg2);border:1px solid var(--border);border-left:2.5px solid var(--border);border-radius:var(--r-md);padding:13px 14px;transition:border-color var(--t)}
+.pulse-row[data-act]{cursor:pointer}
+.pulse-row[data-act]:active{border-color:var(--signal)}
+.pulse-hot{border-left-color:var(--signal)}
+.pulse-weather,.pulse-venue,.pulse-road,.pulse-new{border-left-color:var(--border2)}
+.pulse-ico{flex-shrink:0;width:34px;height:34px;border-radius:50%;background:var(--bg3);display:flex;align-items:center;justify-content:center}
+.pulse-ico .ico{width:17px;height:17px;stroke:var(--text2);stroke-width:1.6}
+.pulse-hot .pulse-ico{background:color-mix(in srgb,var(--signal) 16%,transparent)}
+.pulse-hot .pulse-ico .ico{stroke:var(--signal)}
+.pulse-body{min-width:0;flex:1}
+.pulse-head{font-size:14px;font-weight:800;letter-spacing:-.2px;color:var(--text1);line-height:1.3}
+.pulse-sub{font-size:12.5px;font-weight:500;color:var(--text2);margin-top:3px;line-height:1.35}
+.pulse-meta{font-family:'WTM Mono',ui-monospace,monospace;font-size:10px;color:var(--text3);margin-top:6px;text-transform:uppercase;letter-spacing:.3px}
+.pulse-go{flex-shrink:0;align-self:center}
+.pulse-go .ico{width:15px;height:15px;stroke:var(--text3);stroke-width:1.8}
+.pulse-toggle{cursor:pointer;color:var(--signal)}
+
 /* ── TABBAR / FAB ── */
 .tabbar{height:var(--tab-h);padding-bottom:var(--safe-b);padding-top:10px;background:color-mix(in srgb,var(--ink-900) 94%,transparent);backdrop-filter:blur(28px);border-top:0.5px solid var(--border2);display:flex;align-items:flex-start;justify-content:space-around;flex-shrink:0;z-index:30;position:relative}
 .tab{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:4px 4px;border-radius:var(--r-sm);flex:1;min-width:0}
@@ -419,12 +440,14 @@ input,textarea{-webkit-user-select:text;user-select:text}
 .notif-list::-webkit-scrollbar{display:none}
 .notif-item{display:flex;align-items:flex-start;gap:12px;padding:12px 10px;border-radius:var(--r-md);cursor:pointer}
 .notif-item:active{background:var(--bg3)}
-.notif-icon{font-size:22px;flex-shrink:0;width:42px;height:42px;background:var(--bg3);border-radius:50%;display:flex;align-items:center;justify-content:center}
+.notif-icon{flex-shrink:0;width:42px;height:42px;background:var(--bg3);border-radius:50%;display:flex;align-items:center;justify-content:center}
 .notif-content{flex:1;min-width:0}
 .notif-text{font-size:14px;font-weight:600;line-height:1.45}
 .notif-text b{font-weight:800}
 .notif-time{font-family:'WTM Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums;font-size:11px;font-weight:600;color:var(--text3);margin-top:3px}
+.notif-icon .ico{width:20px;height:20px;stroke:var(--text2);stroke-width:1.6}
 .notif-unread .notif-icon{background:color-mix(in srgb,var(--signal) 20%,transparent)}
+.notif-unread .notif-icon .ico{stroke:var(--signal)}
 
 /* ── FRIENDS SCREEN ── */
 #scr-friends{background:var(--bg)}
@@ -460,13 +483,22 @@ input,textarea{-webkit-user-select:text;user-select:text}
 .profile-name{font-family:'WTM Display','WTM Sans',sans-serif;font-size:24px;font-weight:900;letter-spacing:-.7px}
 .profile-handle{font-size:14px;color:var(--text2);margin-top:3px;font-weight:600}
 .streak-card{margin:20px auto 0;max-width:320px;background:linear-gradient(135deg,color-mix(in srgb,var(--signal) 14%,transparent),color-mix(in srgb,var(--signal) 14%,transparent));border:0.5px solid color-mix(in srgb,var(--signal) 30%,transparent);border-radius:var(--r-md);padding:14px 18px;display:flex;align-items:center;gap:14px}
-.streak-fire{font-size:32px}
+.streak-fire{display:flex;align-items:center;justify-content:center}
+.streak-fire .ico{width:30px;height:30px;stroke:var(--signal);stroke-width:1.6}
 .streak-info{text-align:left;flex:1}
 .streak-n{font-family:'WTM Display','WTM Sans',sans-serif;font-size:18px;font-weight:900;letter-spacing:-.4px}
 .streak-l{font-size:12px;color:var(--text2);font-weight:600;margin-top:1px}
-.badges-row{display:flex;gap:10px;justify-content:center;margin-top:16px}
-.pbadge{width:52px;height:52px;border-radius:var(--r-md);background:var(--bg3);border:0.5px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:24px}
-.pbadge.locked{opacity:.3;filter:grayscale(1)}
+.badges-row{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:16px}
+.pbadge-col{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0}
+.pbadge{width:100%;aspect-ratio:1;border-radius:var(--r-md);background:var(--bg3);border:0.5px solid var(--border2);display:flex;align-items:center;justify-content:center}
+.pbadge .ico{width:22px;height:22px;stroke:var(--signal);stroke-width:1.6}
+/* A locked badge that only says "Locked" teaches nothing. Each one carries the
+   thing that earns it, and unlocks from real state while someone is watching.
+   The caption is its own row in the column so five of them cannot collide. */
+.pbadge.locked{background:transparent;border-style:dashed}
+.pbadge.locked .ico{stroke:var(--text3);opacity:.55}
+.pbadge-tip{font-size:8px;line-height:1.25;font-weight:800;letter-spacing:.2px;text-transform:uppercase;text-align:center;color:var(--text3);width:100%;overflow-wrap:anywhere}
+.pbadge-col.earned .pbadge-tip{color:var(--signal)}
 .profile-stats{display:flex;margin-top:20px;border:0.5px solid var(--border2);border-radius:var(--r-md);overflow:hidden}
 .pstat{flex:1;padding:14px 8px;text-align:center;border-right:0.5px solid var(--border2)}
 .pstat:last-child{border-right:none}
@@ -621,29 +653,27 @@ input,textarea{-webkit-user-select:text;user-select:text}
     <div class="profile-name">Jay</div>
     <div class="profile-handle">@jordank · Pittsburgh, PA</div>
     <div class="streak-card">
-      <div class="streak-fire">🔥</div>
+      <div class="streak-fire" id="streak-fire"></div>
       <div class="streak-info">
         <div class="streak-n">6-week streak</div>
         <div class="streak-l">You've made a move every weekend since June</div>
       </div>
     </div>
-    <div class="badges-row">
-      <div class="pbadge" title="First Move">🚀</div>
-      <div class="pbadge" title="Social Butterfly">🦋</div>
-      <div class="pbadge" title="Night Owl">🦉</div>
-      <div class="pbadge locked" title="Locked">💎</div>
-      <div class="pbadge locked" title="Locked">👑</div>
-    </div>
+    <div class="badges-row" id="profile-badges"></div>
     <div class="profile-stats">
       <div class="pstat"><div class="pstat-n" id="ps-moves">24</div><div class="pstat-l">Moves</div></div>
-      <div class="pstat"><div class="pstat-n">8</div><div class="pstat-l">Friends</div></div>
+      <div class="pstat"><div class="pstat-n" id="ps-friends">5</div><div class="pstat-l">Friends</div></div>
       <div class="pstat"><div class="pstat-n" id="ps-tonight">1</div><div class="pstat-l">Tonight</div></div>
-      <div class="pstat"><div class="pstat-n">31</div><div class="pstat-l">Fire given</div></div>
+      <div class="pstat"><div class="pstat-n" id="ps-fire">31</div><div class="pstat-l">Fire given</div></div>
     </div>
   </div>
   <div class="profile-section">
     <div class="profile-sec-title">Your moves tonight</div>
     <div id="profile-moves"></div>
+  </div>
+  <div class="profile-section">
+    <div class="profile-sec-title">Saved spots</div>
+    <div id="profile-saved"></div>
   </div>
   <div class="profile-section">
     <div class="profile-sec-title">Recent activity</div>
@@ -783,6 +813,21 @@ const MSGS={
 };
 // Every move in MOVES needs an entry. A move without one renders 0/0/0 under a
 // card that says 412 people are going, which is how m9 shipped.
+// ══════════════════ CITY PULSE ══════════════════
+// The news layer. Not a feed of articles — the four or five things about
+// tonight in Pittsburgh that change what you'd actually do: weather that kills
+// an outdoor move, a venue selling out, a road closing. Each row points at the
+// move or spot it is about, so reading it is one tap from acting on it.
+// `kind` picks the icon and the accent; `go` is what it opens.
+const PULSE=[
+ {kind:'weather',head:'Clear and 71 through midnight',sub:'No rain until Sunday. Everything outdoor is on.',src:'NWS Pittsburgh',ago:38*60e3},
+ {kind:'hot',    head:'NA vs North Hills is the biggest night this month',sub:'412 locked in. Student section is a white out — gates at 6.',src:'WTM',ago:52*60e3,go:{t:'move',id:'m9'}},
+ {kind:'venue',  head:'Mr. Smalls added a second show',sub:'The first one sold out in a day. All ages, doors at 7.',src:'Mr. Smalls',ago:2*3600e3,go:{t:'spot',id:'sp29'}},
+ {kind:'road',   head:'Butler St is down to one lane past 40th',sub:'Give the Bar Crawl an extra ten minutes if you are driving.',src:'PennDOT',ago:3*3600e3,go:{t:'move',id:'m3'}},
+ {kind:'new',    head:'6 new spots added around the city',sub:'Live music, late eats and the walled garden in Point Breeze.',src:'WTM',ago:5*3600e3,go:{t:'spot',id:'sp20'}},
+];
+const PULSE_ICON={weather:'\u{1F319}',hot:'\u{1F525}',venue:'\u{1F3B6}',road:'\u{1F9ED}',new:'\u{1F4CD}'};
+
 const SEED_RXN={m1:{fire:12,hype:7,there:4},m2:{fire:6,hype:3,there:8},m3:{fire:31,hype:18,there:22},m4:{fire:3,hype:5,there:9},m5:{fire:8,hype:4,there:3},m6:{fire:2,hype:6,there:5},m7:{fire:1,hype:0,there:2},m8:{fire:28,hype:41,there:19},
  m9:{fire:96,hype:74,there:58},m10:{fire:4,hype:2,there:6},m11:{fire:9,hype:5,there:3},m12:{fire:37,hype:29,there:24}};
 // A story has no palette of its own. It borrows the gradient of the move it
@@ -800,7 +845,7 @@ const STORIES=[
    {title:'41 people locked in',sub:'Biggest crawl of the summer. $20 covers everything.'}]},
  {id:'s3',name:'Rooftop Set',emoji:'🎵',moveId:'m1',slides:[
    {title:'Golden hour session',sub:'Live beats over the whole city skyline.'},
-   {title:'4 spots left',sub:'Small group on purpose. Alex and Devon are in.'}]},
+   {title:'4 spots left',sub:'Small group on purpose. Mike and Luca are in.'}]},
  {id:'s4',name:'Night Market',emoji:'🍕',moveId:'m2',slides:[
    {title:'20+ vendors tonight',sub:'Street food, vinyl, vintage. Free entry.'}]},
 ];
@@ -890,6 +935,11 @@ const ICO={
  '\u{1F3B6}':'<path d="M9 18V6l11-2v12"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/><path d="M9 10l11-2"/>',
  '\u{1F942}':'<path d="M9 3h6l-1 6a2 2 0 0 1-4 0z"/><path d="M12 9v8"/><path d="M8 21h8"/><path d="M17 4l2 2-3 3"/>',
  '\u{1F4F8}':'<path d="M3 8h3l1.5-2h9L18 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.4"/><path d="M18 5.5h2"/>',
+ '\u{1F4AC}':'<path d="M21 12a8 8 0 0 1-8 8H7l-4 3v-5.5A8 8 0 0 1 11 4h2a8 8 0 0 1 8 8z"/>',
+ '\u{1F465}':'<path d="M16 20v-1.5a3.5 3.5 0 0 0-3.5-3.5h-5A3.5 3.5 0 0 0 4 18.5V20"/><circle cx="10" cy="8" r="3.5"/><path d="M20 20v-1.5a3.5 3.5 0 0 0-2.6-3.4M15.5 4.6a3.5 3.5 0 0 1 0 6.8"/>',
+ '\u{1F451}':'<path d="M4 18h16"/><path d="m3 7 4.2 3.4L12 4l4.8 6.4L21 7l-1.6 8H4.6z"/>',
+ '\u{1F516}':'<path d="M6 4h12v17l-6-4.2L6 21z"/>',
+ '\u{1F319}':'<path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z"/>',
 };
 // Falls back to the original character if a category ever ships without an icon,
 // so a new category renders as it used to rather than as a blank box.
@@ -963,11 +1013,96 @@ const SPOTS=[
   area:'North Shore',addr:'300 Heinz St',fires:37,crowd:'low',best:'afternoon',lit:false,free:true,indoor:false,
   tags:['urbex','industrial','abandoned','factory','brick','photo','heinz','architecture'],
   blurb:'The old Heinz plant. Half of it is apartments now, half of it never got finished. Residents live here, so the lived-in side is not yours to wander.'},
+
+ {id:'sp17',name:'West End Overlook',cat:'view',emoji:'🌆',lat:40.4468,lng:-80.0353,
+  area:'West End',addr:'Marlow St, Elliott',fires:67,crowd:'low',best:'sunset',lit:true,free:true,indoor:false,
+  tags:['view','views','overlook','skyline','sunset','photo','city view','quiet','parking'],
+  blurb:'The skyline shot everybody else is fighting for on Grandview, with a tenth of the people and somewhere to actually park.'},
+ {id:'sp18',name:'Flagstaff Hill',cat:'chill',emoji:'🌳',lat:40.4380,lng:-79.9450,
+  area:'Schenley Park',addr:'Schenley Dr at Overlook Dr',fires:58,crowd:'medium',best:'evening',lit:false,free:true,indoor:false,
+  tags:['chill','hang','picnic','lawn','grass','study','movie','sunset','oakland','blanket'],
+  blurb:'The big sloped lawn above Oakland. Bring a blanket. In summer they put a screen up and show movies on it.'},
+ {id:'sp19',name:'Point State Park Fountain',cat:'chill',emoji:'🌳',lat:40.4417,lng:-80.0093,
+  area:'Downtown',addr:'601 Commonwealth Pl',fires:74,crowd:'high',best:'evening',lit:true,free:true,indoor:false,
+  tags:['chill','fountain','rivers','downtown','walk','water','photo','fireworks','lit'],
+  blurb:'Where the three rivers meet. Lit at night, and the steps around the fountain are the easiest place downtown to sit with a group.'},
+ {id:'sp20',name:'Mellon Park Walled Garden',cat:'photo',emoji:'📷',lat:40.4523,lng:-79.9200,
+  area:'Point Breeze',addr:'1047 Shady Ave',fires:49,crowd:'low',best:'night',lit:true,free:true,indoor:false,
+  tags:['photo','photos','garden','lights','stars','quiet','date','pretty','secret','night'],
+  blurb:'A walled garden behind the tennis courts with a field of lights strung overhead. Almost nobody knows it is there after dark.'},
+ {id:'sp21',name:'Highland Park Reservoir Loop',cat:'chill',emoji:'🌳',lat:40.4820,lng:-79.9110,
+  area:'Highland Park',addr:'Reservoir Dr',fires:41,crowd:'medium',best:'morning',lit:true,free:true,indoor:false,
+  tags:['chill','walk','run','loop','water','quiet','laps','talk','reservoir'],
+  blurb:'A flat half-mile loop around the water. The walk people actually do when they need to talk about something.'},
+ {id:'sp22',name:'Riverview Park',cat:'view',emoji:'🌆',lat:40.4780,lng:-80.0210,
+  area:'Observatory Hill',addr:'Riverview Ave',fires:26,crowd:'low',best:'night',lit:false,free:true,indoor:false,
+  tags:['view','stars','observatory','dark','quiet','woods','drive','night','telescope'],
+  blurb:'Woods, winding roads and the old Allegheny Observatory at the top. Dark enough that you can actually see stars inside city limits.'},
+ {id:'sp23',name:'Roberto Clemente Bridge',cat:'photo',emoji:'📷',lat:40.4460,lng:-80.0060,
+  area:'North Shore',addr:'6th St at Federal',fires:62,crowd:'medium',best:'sunset',lit:true,free:true,indoor:false,
+  tags:['photo','bridge','yellow','skyline','walk','river','golden hour','game day','instagram'],
+  blurb:'The yellow bridge. Closed to cars on game days, which is when the whole deck turns into a walkway and the light is best.'},
+ {id:'sp24',name:'Duquesne Incline',cat:'view',emoji:'🌆',lat:40.4400,lng:-80.0197,
+  area:'Mt. Washington',addr:'1197 W Carson St',fires:88,crowd:'high',best:'sunset',lit:true,free:false,indoor:true,
+  tags:['view','incline','skyline','ride','tourist','date','sunset','cable car','classic'],
+  blurb:'The wooden cable car up the side of the mountain. Touristy and worth it anyway. Cash or card at the lower station.'},
+ {id:'sp25',name:'Bicycle Heaven',cat:'photo',emoji:'📷',lat:40.4560,lng:-80.0290,
+  area:'Chateau',addr:'1800 Preble Ave',fires:33,crowd:'low',best:'afternoon',lit:true,free:true,indoor:true,
+  tags:['photo','museum','bikes','bicycle','weird','indoor','rainy day','free','collection'],
+  blurb:'The largest bike museum and shop in the world, packed floor to ceiling. Free, indoors, and completely unhinged in the best way.'},
+ {id:'sp26',name:'Frick Environmental Center',cat:'chill',emoji:'🌳',lat:40.4380,lng:-79.9080,
+  area:'Squirrel Hill',addr:'1981 Beechwood Blvd',fires:35,crowd:'low',best:'afternoon',lit:false,free:true,indoor:true,
+  tags:['chill','study','trails','woods','quiet','indoor','wifi','free','nature'],
+  blurb:'Trailhead into Frick with a building you can actually sit inside. Quiet enough to study, and the trails start at the door.'},
+ {id:'sp27',name:'Allegheny Cemetery',cat:'chill',emoji:'🌳',lat:40.4700,lng:-79.9530,
+  area:'Lawrenceville',addr:'4734 Butler St',fires:39,crowd:'low',best:'afternoon',lit:false,free:true,indoor:false,
+  tags:['chill','quiet','walk','history','photo','peaceful','stones','trees','alone'],
+  blurb:'Three hundred acres of hills and old stones in the middle of Lawrenceville. Be respectful and it is the quietest place in the city.'},
+ {id:'sp28',name:'Panther Hollow Lake',cat:'chill',emoji:'🌳',lat:40.4370,lng:-79.9490,
+  area:'Schenley Park',addr:'Panther Hollow Trail',fires:28,crowd:'low',best:'morning',lit:false,free:true,indoor:false,
+  tags:['chill','lake','walk','trail','quiet','woods','bridge','oakland','ducks'],
+  blurb:'Down in the hollow under the bridge. Ten minutes from campus and it does not feel like the city at all.'},
+
+ {id:'sp29',name:'Mr. Smalls Theatre',cat:'music',emoji:'🎶',lat:40.4810,lng:-79.9720,
+  area:'Millvale',addr:'400 Lincoln Ave',fires:71,crowd:'high',best:'night',lit:true,free:false,indoor:true,
+  tags:['music','show','concert','venue','live','band','gig','all ages','church'],
+  blurb:'A converted church with the stage where the altar was. Most shows are all-ages, and the room sounds better than it has any right to.'},
+ {id:'sp30',name:'Stage AE',cat:'music',emoji:'🎶',lat:40.4470,lng:-80.0130,
+  area:'North Shore',addr:'400 North Shore Dr',fires:64,crowd:'high',best:'night',lit:true,free:false,indoor:true,
+  tags:['music','show','concert','venue','live','outdoor','summer','band','big'],
+  blurb:'Indoor room in winter, outdoor lot in summer. The one where the bigger touring names land when they come through.'},
+ {id:'sp31',name:'Thunderbird Café',cat:'music',emoji:'🎶',lat:40.4660,lng:-79.9620,
+  area:'Lawrenceville',addr:'4053 Butler St',fires:44,crowd:'medium',best:'night',lit:true,free:false,indoor:true,
+  tags:['music','show','venue','live','local','band','bar','butler','small'],
+  blurb:'Small room on Butler where local bands play before they are local news. Cheap cover, and you can always see the stage.'},
+
+ {id:'sp32',name:'Klavon\'s Ice Cream Parlor',cat:'eat',emoji:'🍕',lat:40.4520,lng:-79.9880,
+  area:'Strip District',addr:'2801 Penn Ave',fires:57,crowd:'high',best:'evening',lit:true,free:false,indoor:true,
+  tags:['eat','food','ice cream','dessert','date','sundae','sweet','strip','old'],
+  blurb:'A 1920s soda fountain that never got remodelled. Get a sundae at the marble counter and understand why there is a line.'},
+ {id:'sp33',name:'Page Dairy Mart',cat:'eat',emoji:'🍕',lat:40.4270,lng:-79.9700,
+  area:'South Side',addr:'4600 E Carson St',fires:48,crowd:'medium',best:'evening',lit:true,free:false,indoor:false,
+  tags:['eat','food','ice cream','dessert','cheap','walk up','summer','cone','soft serve'],
+  blurb:'Walk-up window at the end of Carson. Open seasonally, cash goes fastest, and the line moves quicker than it looks.'},
+ {id:'sp34',name:'Primanti Bros, Strip District',cat:'eat',emoji:'🍕',lat:40.4510,lng:-79.9840,
+  area:'Strip District',addr:'46 18th St',fires:69,crowd:'high',best:'night',lit:true,free:false,indoor:true,
+  tags:['eat','food','late','sandwich','fries','hungry','after','24 hour','classic'],
+  blurb:'Fries and slaw in the sandwich, and the Strip location keeps the latest hours. Where the night ends more often than it should.'},
 ];
-const SPOT_CATS={skate:'Skate',view:'Views',urbex:'Urbex',photo:'Photo',chill:'Chill',swim:'Water',sunset:'Sunset'};
+const SPOT_CATS={skate:'Skate',view:'Views',urbex:'Urbex',photo:'Photo',chill:'Chill',swim:'Water',sunset:'Sunset',music:'Live music',eat:'Late eats'};
 
 // ══════════════════ STATE ══════════════════
-const S={screen:'scr-welcome',rsvps:new Set(['m3']),waitlists:new Set(),activeCat:null,search:'',myRxn:{},rxn:JSON.parse(JSON.stringify(SEED_RXN)),openMoveId:null,notifOpen:false,createCat:null,seenStories:new Set(),unread:3,vibes:new Set()};
+const S={screen:'scr-welcome',rsvps:new Set(['m3']),waitlists:new Set(),activeCat:null,search:'',myRxn:{},rxn:JSON.parse(JSON.stringify(SEED_RXN)),openMoveId:null,notifOpen:false,createCat:null,seenStories:new Set(),unread:3,vibes:new Set(),
+ saved:new Set(['sp1','sp7']),spotCat:null,activity:[],pulseOpen:false};
+// Your profile is built from this, so it has to be what you actually did. It
+// used to be three hard-coded rows that named Larimer Rooftop Party whether or
+// not you had ever opened it. Seeded with a short history so a fresh demo does
+// not open on an empty list, then appended to by demoEvt on every real action.
+const ACT_SEED=[
+ {n:'joined_move',label:'Lawrenceville Bar Crawl',ago:2*3600e3},
+ {n:'reacted',label:'Larimer Rooftop Party',ago:4*3600e3},
+ {n:'saved_spot',label:'West Penn Skatepark',ago:26*3600e3},
+];
 let mapState={scale:4.4,ox:0,oy:0};
 // Full metro frame: Cranberry down to McKeesport, the airport out to Monroeville
 const BOUNDS={minLat:40.28,maxLat:40.75,minLng:-80.32,maxLng:-79.68};
@@ -991,7 +1126,21 @@ function goScreen(id){
 function switchTab(t){demoEvt('tab_'+t);goScreen({moves:'scr-moves',map:'scr-map',ask:'scr-ask',friends:'scr-friends',profile:'scr-profile'}[t]);}
 function enterApp(){demoEvt('entered');goScreen('scr-moves');startEngine();}
 // Notifies an embedding demo shell about interactions; no-op standalone
-function demoEvt(n){try{if(window.parent!==window)window.parent.postMessage({wtmEvt:n},'*');}catch(e){}}
+// Beacon upstream for the share page's counters, and keep a local copy so the
+// profile can show what you actually did. `label` is what the row reads as.
+function demoEvt(n,label){
+  try{if(window.parent!==window)window.parent.postMessage({wtmEvt:n},'*');}catch(e){}
+  if(label)S.activity.unshift({n,label,at:Date.now()});
+  if(S.activity.length>40)S.activity.length=40;
+}
+// How long ago, in the units a person would say it in.
+function agoLabel(ms){
+  const s=Math.max(0,(Date.now()-ms)/1000);
+  if(s<90)return 'just now';
+  const m=Math.round(s/60);   if(m<60)return m+(m===1?' minute ago':' minutes ago');
+  const h=Math.round(m/60);   if(h<24)return h+(h===1?' hour ago':' hours ago');
+  const d=Math.round(h/24);   return d+(d===1?' day ago':' days ago');
+}
 
 // ══════════════════ TOAST / CONFETTI ══════════════════
 let _tt;
@@ -1137,7 +1286,7 @@ function buildStories(){
 let curStory=null,curSlide=0,storyTimer=null;
 function openStory(sid){
   curStory=STORIES.find(s=>s.id===sid);if(!curStory)return;
-  demoEvt('watched_story');
+  demoEvt('watched_story',curStory.name);
   curSlide=0;S.seenStories.add(sid);
   document.getElementById('story-viewer').classList.add('open');
   document.getElementById('sv-av').innerHTML=ico(curStory.emoji);
@@ -1175,7 +1324,7 @@ function closeStory(){clearInterval(storyTimer);curStory=null;document.getElemen
 // ══════════════════ NOTIF ══════════════════
 function openNotif(){
   document.getElementById('notif-list').innerHTML=NOTIFS.map(n=>`
-    <div class="notif-item${n.unread?' notif-unread':''}"><div class="notif-icon">${n.icon}</div>
+    <div class="notif-item${n.unread?' notif-unread':''}"><div class="notif-icon">${ico(n.icon)}</div>
     <div class="notif-content"><div class="notif-text">${n.text}</div><div class="notif-time">${n.time}</div></div></div>`).join('');
   document.getElementById('notif-panel').classList.add('open');
   S.notifOpen=true;S.unread=0;updateBadge();
@@ -1206,7 +1355,7 @@ function submitCreate(){
   // and the roster is just the host, which is what the sheet should say.
   MOVES.unshift(nm);S.rsvps.add(nm.id);S.rxn[nm.id]={fire:0,hype:0,there:0};
   ALL_GOING[nm.id]=[nm.host];
-  demoEvt('created_move');
+  demoEvt('created_move',nm.title);
   closeCreate();buildFeed();confettiBurst();
   toast('Move posted 🔥 Your friends can see it now');
   document.getElementById('ci-title').value='';document.getElementById('ci-loc').value='';
@@ -1226,7 +1375,7 @@ function doRsvp(mid){
   if(st==='going'){S.rsvps.delete(mid);m.att--;toast('Removed from your moves');}
   else if(st==='waitlisted'){S.waitlists.delete(mid);toast('Off the waitlist');}
   else if(st==='full'){S.waitlists.add(mid);toast("You're on the waitlist");}
-  else{S.rsvps.add(mid);m.att++;confettiBurst();toast("Locked in 🔥");demoEvt('joined_move');}
+  else{S.rsvps.add(mid);m.att++;confettiBurst();toast("Locked in 🔥");demoEvt('joined_move',m.title);}
   buildFeed();
   if(S.openMoveId===mid)openSheet(mid);
 }
@@ -1250,9 +1399,29 @@ function buildFeed(){
   if(!moves.length){feed.innerHTML=`<div class="feed-empty"><div class="feed-empty-icon">${ico(S.search?'🔍':'🏙')}</div>${S.search?`Nothing matching "${S.search}" right now`:'Nothing in this category tonight'}</div>`;return;}
   const hot=moves.filter(m=>m.hot),other=moves.filter(m=>!m.hot);
   let html='';
+  // Only on the unfiltered feed: when someone has narrowed to a category or is
+  // searching, they asked for moves, not for the city desk.
+  if(!S.activeCat&&!S.search)html+=pulseHTML();
   if(hot.length){html+=`<div class="section-header"><div class="section-label"><span class="pulse-dot"></span>Trending now</div><div class="section-count">${hot.length} moves</div></div>`+hot.map(buildCard).join('');}
   if(other.length){html+=`<div class="section-header"><div class="section-label">Tonight</div><div class="section-count">${other.length} moves</div></div>`+other.map(buildCard).join('');}
   feed.innerHTML=html;
+}
+function pulseHTML(){
+  const open=S.pulseOpen;
+  const rows=(open?PULSE:PULSE.slice(0,2)).map(p=>{
+    const act=p.go?(p.go.t==='move'?`data-act="open" data-arg="${p.go.id}"`:`data-act="spot-open" data-arg="${p.go.id}"`):'';
+    return`<div class="pulse-row pulse-${p.kind}" ${act}>
+      <div class="pulse-ico">${ico(PULSE_ICON[p.kind]||'\u{1F4CD}')}</div>
+      <div class="pulse-body">
+        <div class="pulse-head">${p.head}</div>
+        <div class="pulse-sub">${p.sub}</div>
+        <div class="pulse-meta">${p.src} · ${agoLabel(Date.now()-p.ago)}</div>
+      </div>
+      ${p.go?`<div class="pulse-go">${ico('\u{27A4}')}</div>`:''}
+    </div>`;}).join('');
+  return`<div class="section-header"><div class="section-label"><span class="pulse-dot"></span>City pulse</div>
+      <div class="section-count pulse-toggle" data-act="pulse-toggle">${open?'Show less':`All ${PULSE.length}`}</div></div>
+    <div class="pulse-wrap">${rows}</div>`;
 }
 function buildCard(m){
   const pct=Math.min(100,Math.round(m.att/m.max*100));
@@ -1384,19 +1553,57 @@ function buildFriends(){
 }
 
 // ══════════════════ PROFILE ══════════════════
+// Lifetime totals that predate the demo. Everything the demo can observe is
+// added on top, so a stat never sits still while you use the app.
+const PROFILE_BASE={moves:24,fire:31};
+// name, the icon it shows, and what earns it — checked against real state, so
+// the locked ones say what to do and unlock while someone is watching.
+const BADGES=[
+ {id:'first', name:'First Move',      e:'➤',  need:'Lock into any move',            got:()=>S.rsvps.size>=1},
+ {id:'social',name:'Social Butterfly',e:'👥', need:'Be in on 3 moves at once',      got:()=>S.rsvps.size>=3},
+ {id:'owl',   name:'Night Owl',       e:'🌃', need:'Join something after 10 PM',    got:()=>[...S.rsvps].some(id=>/1[01] PM|midnight/i.test((MOVES.find(m=>m.id===id)||{}).time||''))},
+ {id:'scout', name:'Scout',           e:'🧭', need:'Save 3 spots',                  got:()=>S.saved.size>=3},
+ {id:'host',  name:'Host',            e:'👑', need:'Post a move of your own',       got:()=>MOVES.some(m=>m.host==='Jay')},
+];
+const ACT_ICON={joined_move:'➤',reacted:'🔥',sent_chat:'💬',created_move:'🎉',watched_story:'📸',saved_spot:'🧭',submitted_spot:'📍'};
+const ACT_VERB={joined_move:'Locked in',reacted:'Reacted to',sent_chat:'Chatted in',created_move:'Posted',watched_story:'Watched',saved_spot:'Saved',submitted_spot:'Submitted'};
+
 function buildProfile(){
   const myMoves=[...S.rsvps].map(mid=>MOVES.find(m=>m.id===mid)).filter(Boolean);
-  document.getElementById('ps-moves').textContent=24+myMoves.length;
-  document.getElementById('ps-tonight').textContent=myMoves.length;
+  const fireGiven=Object.values(S.myRxn).reduce((n,r)=>n+Object.keys(r).length,0);
+  const set=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v;};
+  set('ps-moves',PROFILE_BASE.moves+myMoves.length);
+  set('ps-tonight',myMoves.length);
+  set('ps-friends',FRIENDS_LIST.length);          // said 8 while five people existed
+  set('ps-fire',PROFILE_BASE.fire+fireGiven);     // said 31 no matter how many you gave
+
+  document.getElementById('streak-fire').innerHTML=ico('🔥');
+  document.getElementById('profile-badges').innerHTML=BADGES.map(b=>{
+    const earned=b.got();
+    return`<div class="pbadge-col${earned?' earned':''}">
+      <div class="pbadge${earned?'':' locked'}" title="${earned?b.name:b.need}">${ico(b.e)}</div>
+      <div class="pbadge-tip">${earned?b.name:b.need}</div></div>`;
+  }).join('');
+
   document.getElementById('profile-moves').innerHTML=myMoves.length?myMoves.map(m=>`
-    <div class="profile-move-row">
+    <div class="profile-move-row" data-act="open" data-arg="${m.id}">
       <div class="profile-move-icon" style="background:linear-gradient(135deg,${m.grad[0]},${m.grad[1]})">${ico(m.emoji)}</div>
-      <div class="profile-move-info"><div class="profile-move-title">${m.title}<span class="profile-move-badge">Going ✓</span></div><div class="profile-move-meta">📍 ${m.loc} · ${m.time}</div></div>
+      <div class="profile-move-info"><div class="profile-move-title">${m.title}<span class="profile-move-badge">Going ✓</span></div><div class="profile-move-meta">${ico('📍')} ${m.loc} · ${m.time}</div></div>
     </div>`).join(''):`<div class="profile-empty">Nothing locked in yet. Go find a move</div>`;
-  document.getElementById('profile-activity').innerHTML=`
-    <div class="profile-move-row"><div class="profile-move-icon" style="background:var(--bg3);font-size:16px">🔥</div><div class="profile-move-info"><div class="profile-move-title">Reacted to Larimer Rooftop Party</div><div class="profile-move-meta">14 minutes ago</div></div></div>
-    <div class="profile-move-row"><div class="profile-move-icon" style="background:var(--bg3);font-size:16px">💬</div><div class="profile-move-info"><div class="profile-move-title">Chatted in Larimer Rooftop Party</div><div class="profile-move-meta">31 minutes ago</div></div></div>
-    <div class="profile-move-row"><div class="profile-move-icon" style="background:var(--bg3);font-size:16px">✓</div><div class="profile-move-info"><div class="profile-move-title">Locked in Lawrenceville Bar Crawl</div><div class="profile-move-meta">2 hours ago</div></div></div>`;
+
+  const savedSpots=[...S.saved].map(id=>SPOTS.find(sp=>sp.id===id)).filter(Boolean);
+  document.getElementById('profile-saved').innerHTML=savedSpots.length?savedSpots.map(sp=>`
+    <div class="profile-move-row" data-act="spot-open" data-arg="${sp.id}">
+      <div class="profile-move-icon" style="background:var(--bg3)">${ico(sp.emoji)}</div>
+      <div class="profile-move-info"><div class="profile-move-title">${sp.name}</div><div class="profile-move-meta">${ico('📍')} ${sp.area} · ${SPOT_CATS[sp.cat]||sp.cat}</div></div>
+    </div>`).join(''):`<div class="profile-empty">No saved spots yet. Find one in Ask</div>`;
+
+  const rows=S.activity.length?S.activity:ACT_SEED.map(a=>({...a,at:Date.now()-a.ago}));
+  document.getElementById('profile-activity').innerHTML=rows.slice(0,8).map(a=>`
+    <div class="profile-move-row">
+      <div class="profile-move-icon" style="background:var(--bg3)">${ico(ACT_ICON[a.n]||'➤')}</div>
+      <div class="profile-move-info"><div class="profile-move-title">${ACT_VERB[a.n]||'Did something in'} ${a.label}</div><div class="profile-move-meta">${agoLabel(a.at)}</div></div>
+    </div>`).join('');
 }
 
 // ══════════════════ EVENTS ══════════════════
@@ -1410,7 +1617,10 @@ document.addEventListener('click',e=>{
     const[mid,type]=arg.split('-');
     const myR=S.myRxn[mid]||{};
     if(myR[type]){S.rxn[mid][type]--;delete myR[type];}
-    else{S.rxn[mid][type]=(S.rxn[mid][type]||0)+1;myR[type]=true;}
+    else{
+      S.rxn[mid][type]=(S.rxn[mid][type]||0)+1;myR[type]=true;
+      demoEvt('reacted',(MOVES.find(m=>m.id===mid)||{}).title||'a move');
+    }
     S.myRxn[mid]=myR;buildFeed();
     if(S.openMoveId===mid)openSheet(mid);
     e.stopPropagation();
@@ -1430,6 +1640,22 @@ document.addEventListener('click',e=>{
   else if(act==='rq-act'){actOnQueue(arg);}
   else if(act==='ask-eg'){submitAsk(arg);}
   else if(act==='ask-open'){openSpot(arg);}
+  else if(act==='spot-open'){openSpot(arg);}
+  else if(act==='pulse-toggle'){S.pulseOpen=!S.pulseOpen;buildFeed();e.stopPropagation();}
+  else if(act==='spot-cat'){
+    S.spotCat=arg||null;
+    document.getElementById('ask-in').value='';
+    renderSpotBrowse();
+    e.stopPropagation();
+  }
+  else if(act==='spot-save'){
+    const sp=SPOTS.find(x=>x.id===arg);
+    if(S.saved.has(arg)){S.saved.delete(arg);toast('Removed from saved');}
+    else{S.saved.add(arg);toast('Saved to your spots');demoEvt('saved_spot',sp?sp.name:'a spot');}
+    openSpot(arg);
+    if(S.screen==='scr-profile')buildProfile();
+    e.stopPropagation();
+  }
   else if(act==='spot-map'){
     const sp=SPOTS.find(x=>x.id===arg);
     if(sp){closeSheet();mapState.scale=9;centerOn(sp.lat,sp.lng);goScreen('scr-map');toast(sp.name);}
@@ -1460,7 +1686,7 @@ document.addEventListener('click',e=>{
       (MSGS[arg]||(MSGS[arg]=[])).push({who:'Jay',av:'av1',text:inp.value.trim()});
       const list=document.querySelector('#sheet-body .msg-list');
       if(list)list.insertAdjacentHTML('beforeend',`<div class="msg"><div class="msg-av av1">J</div><div class="msg-body"><div class="msg-who">Jay</div><div class="msg-text">${inp.value.trim().replace(/</g,'&lt;')}</div></div></div>`);
-      inp.value='';demoEvt('sent_chat');
+      inp.value='';demoEvt('sent_chat',(MOVES.find(m=>m.id===S.openMoveId)||{}).title||'a move');
     }
     e.stopPropagation();
   }
@@ -2193,6 +2419,8 @@ const ASK_LEX={
   photo:['photo','photos','photograph','photography','shoot','shot','pictures','pics','instagram','insta','camera','film'],
   chill:['chill','hang','hangout','relax','sit','kick back','lowkey','low key','picnic','study','vibe out'],
   swim:['swim','swimming','water','lake','river swim','dip','kayak','paddle','beach'],
+  music:['music','show','shows','concert','concerts','gig','band','bands','live music','venue','dj','set','tour','moshing','openers'],
+  eat:['eat','eats','food','hungry','starving','late night food','snack','ice cream','dessert','sweet','sandwich','fries','diner','grub','munchies'],
 };
 // Modifiers that change ranking rather than category.
 const ASK_MOD={
@@ -2433,29 +2661,63 @@ function buildAsk(){
   if(n)n.textContent=SPOT_QUEUE.length?`(${SPOT_QUEUE.length})`:'';
   document.getElementById('ask-examples').innerHTML=
     ASK_EXAMPLES.map(e=>`<button class="ask-chip" data-act="ask-eg" data-arg="${e}">${e}</button>`).join('');
-  // Before the first search, show what there is to search. An empty screen
-  // reads as broken; a category count reads as a map of the collection.
+  // Before the first search, show the catalogue itself rather than a promise of
+  // one. Chips filter in place; the list under them is the actual spots, so 34
+  // spots are browsable without knowing what to type.
   const box=document.getElementById('ask-results');
-  if(box && !box.innerHTML.trim()){
-    const counts={};
-    SPOTS.forEach(sp=>{counts[sp.cat]=(counts[sp.cat]||0)+1;});
-    box.innerHTML=`<div class="ask-count">${SPOTS.length} spots around Pittsburgh</div>`
-      + `<div class="ask-browse">`
-      + Object.entries(counts).sort((a,b)=>b[1]-a[1]).map(([cat,n])=>{
-          const sample=SPOTS.find(sp=>sp.cat===cat);
-          return `<button class="ask-chip ask-browse-chip" data-act="ask-eg" data-arg="${cat}">`
-               + `<span>${ico(sample.emoji)}</span>${SPOT_CATS[cat]||cat}`
-               + `<span class="ask-browse-n">${n}</span></button>`;
-        }).join('')
-      + `</div>`;
-  }
+  if(box && !box.dataset.searched)renderSpotBrowse();
+}
+
+function renderSpotBrowse(){
+  const box=document.getElementById('ask-results');
+  if(!box)return;
+  delete box.dataset.searched;
+  const counts={};
+  SPOTS.forEach(sp=>{counts[sp.cat]=(counts[sp.cat]||0)+1;});
+  const cats=Object.entries(counts).sort((a,b)=>b[1]-a[1]);
+  const active=S.spotCat;
+  const shown=SPOTS.filter(sp=>!active||sp.cat===active)
+                   .slice().sort((a,b)=>b.fires-a.fires);
+  box.innerHTML=
+     `<div class="ask-count">${active?`${shown.length} ${(SPOT_CATS[active]||active).toLowerCase()} spot${shown.length>1?'s':''}`:`${SPOTS.length} spots around Pittsburgh`}</div>`
+    +`<div class="ask-browse">`
+    + `<button class="ask-chip ask-browse-chip${active?'':' on'}" data-act="spot-cat" data-arg="">All<span class="ask-browse-n">${SPOTS.length}</span></button>`
+    + cats.map(([cat,n])=>{
+        const sample=SPOTS.find(sp=>sp.cat===cat);
+        return `<button class="ask-chip ask-browse-chip${active===cat?' on':''}" data-act="spot-cat" data-arg="${cat}">`
+             + `<span>${ico(sample.emoji)}</span>${SPOT_CATS[cat]||cat}`
+             + `<span class="ask-browse-n">${n}</span></button>`;
+      }).join('')
+    +`</div>`
+    + shown.map(browseCard).join('');
+}
+
+// The browse card says where it is, how far, and how many people saved it —
+// enough to choose from without opening anything.
+function browseCard(sp){
+  const mi=(kmBetween(ME.lat,ME.lng,sp.lat,sp.lng)*0.621371).toFixed(1);
+  return `<button class="ask-card" data-act="ask-open" data-arg="${sp.id}">
+    <span class="ask-card-emoji">${ico(sp.emoji)}</span>
+    <span class="ask-card-body">
+      <span class="ask-card-name">${sp.name}</span>
+      <span class="ask-card-meta">${sp.area} · ${mi} mi · ${sp.fires} saves</span>
+      <span class="ask-card-why">
+        <span class="ask-why">${SPOT_CATS[sp.cat]||sp.cat}</span>
+        ${sp.free?'<span class="ask-why">free</span>':''}
+        ${sp.lit?'<span class="ask-why">lit after dark</span>':''}
+        ${sp.indoor?'<span class="ask-why">indoors</span>':''}
+        ${S.saved.has(sp.id)?'<span class="ask-why">saved</span>':''}
+      </span>
+    </span>
+  </button>`;
 }
 
 function submitAsk(q){
   const query=(q!==undefined?q:document.getElementById('ask-in').value).trim();
   const box=document.getElementById('ask-results');
-  if(!query){ box.innerHTML=''; buildAsk(); return; }
+  if(!query){ S.spotCat=null; renderSpotBrowse(); return; }
   document.getElementById('ask-in').value=query;
+  box.dataset.searched='1';
   demoEvt('asked');
   const {results,reason,best}=runAsk(query);
 
@@ -2515,6 +2777,9 @@ function openSpot(id){
     <div class="sa-row">
       <button class="sa sa-going" data-act="spot-map" data-arg="${s.id}">Show on map</button>
       <button class="sa sa-share" data-act="spot-move" data-arg="${s.id}">Start a move here</button>
+    </div>
+    <div class="sa-row" style="margin-top:10px">
+      <button class="sa sa-share" style="width:100%" data-act="spot-save" data-arg="${s.id}">${S.saved.has(s.id)?'Saved ✓':'Save this spot'}</button>
     </div>`;
   document.getElementById('sheet-overlay').classList.add('open');
   document.getElementById('sheet').classList.add('open');
