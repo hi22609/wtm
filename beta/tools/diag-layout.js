@@ -103,6 +103,41 @@ const {chromium} = require('playwright-core');
       .filter(h => moveGrads.size && !moveGrads.has(h))};
   });
 
+  // ── the LIVE ticker must never clip, including strings built at runtime ───
+  const ticker = await f.evaluate(() => {
+    const t = document.getElementById('ticker-text');
+    const bad = [];
+    const longest = 'Reese just locked in After the game, North Park at the boathouse lot';
+    // Fall back to the raw assignment the app used before setTicker existed, so
+    // this assertion still runs — and still fails — against an older build.
+    const put = typeof setTicker === 'function' ? setTicker : s => {t.textContent = s;};
+    for (const s of TICKER_POOL.concat([longest])) {
+      put(s);
+      if (t.scrollWidth > t.clientWidth + 1)
+        bad.push({s, scrollW: t.scrollWidth, clientW: t.clientWidth});
+    }
+    put(TICKER_POOL[0]);
+    return bad;
+  });
+
+  // ── every move needs its own row in each move-keyed table ─────────────────
+  const data = await f.evaluate(() => {
+    const missing = [], mismatched = [];
+    for (const m of MOVES) {
+      const gaps = [];
+      if (!SEED_RXN[m.id]) gaps.push('SEED_RXN');
+      if (!ALL_GOING[m.id]) gaps.push('ALL_GOING');
+      if (gaps.length) {missing.push({move: m.id, title: m.title, gaps}); continue;}
+      // the sheet heads this list with m.att, so the two must agree
+      const roster = ALL_GOING[m.id];
+      const extra = roster.find(n => n.startsWith('+'));
+      const total = roster.filter(n => !n.startsWith('+')).length +
+                    (extra ? parseInt(extra.replace(/\D/g, ''), 10) : 0);
+      if (total !== m.att) mismatched.push({move: m.id, roster: total, att: m.att});
+    }
+    return {missing, mismatched};
+  });
+
   // ── the map screen, as before ─────────────────────────────────────────────
   await f.click('#scr-moves .tab:nth-child(2)'); await page.waitForTimeout(1000);
   const map = await f.evaluate(() => {
@@ -128,6 +163,12 @@ const {chromium} = require('playwright-core');
      covered.length ? JSON.stringify(covered) : '');
   ok('every story borrows a move gradient', palette.offPalette.length === 0,
      palette.offPalette.length ? 'off-palette: ' + palette.offPalette.join(' ') : '');
+  ok('the LIVE ticker never clips', ticker.length === 0,
+     ticker.length ? JSON.stringify(ticker) : '');
+  ok('every move has reactions and a roster', data.missing.length === 0,
+     data.missing.length ? JSON.stringify(data.missing) : '');
+  ok('every roster totals the move\'s attendee count', data.mismatched.length === 0,
+     data.mismatched.length ? JSON.stringify(data.mismatched) : '');
   ok('map controls sit above the tab bar',
      map.ctrls !== 'MISSING' && map.tabbar !== 'MISSING' && map.ctrls.bottom <= map.tabbar.top,
      map.ctrls === 'MISSING' ? 'ctrls MISSING' : '');

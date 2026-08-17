@@ -59,6 +59,11 @@ when written.
 | BETA's four story circles were raw `#7C0EBF` / `#10B981` / `#F59E0B` against a fully desaturated feed | Each story now derives its gradient from the move it links to, so it cannot drift off-palette again |
 | BETA's floating `+` covered every card's "I'm in" — measured 39px of a 76px button, and `elementFromPoint` returned the FAB, so the tap went to Create | `+` moved into the topbar, outside the scroll container. The collision is now structurally impossible |
 | Nothing in BETA's suite asserted layout; 7 checks passed green over two elements stacked on top of each other | `tools/diag-layout.js` asserts every interactive element owns its own centre point, swept across scroll offsets. Verified to fail on the pre-fix build |
+| BETA's LIVE bar and the map's "moves live" pill hardcoded iOS red, which read pink in light mode | Routed through `--signal`; both themes now derive from one token |
+| The LIVE ticker clipped mid-word — "across Pittsburgh ri…" — on 4 of 6 strings | Seeds shortened, and `fitTicker()` trims runtime-built strings at a word boundary |
+| The canvas and vector maps drew OS emoji for the airport, friend faces and every pin label | Drawn primitives and name initials; pin labels are title-only |
+| The four moves added in `e03ab9c` existed in `MOVES` and no other table — the top card read 412 going, 0 reactions, no attendees | `ALL_GOING` is now the one authored roster; friends-going and each friend's moves derive from it. Asserted |
+| The cast rename left `FRIENDS_LIST.init` behind, so Friends showed "A" for Mike and "D" for Luca | The initial is `name[0]`; the field is gone |
 
 ## Still open
 

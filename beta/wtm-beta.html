@@ -98,9 +98,15 @@ input,textarea{-webkit-user-select:text;user-select:text}
 .notif-badge{position:absolute;top:6px;right:6px;min-width:16px;height:16px;background:var(--blaze);border-radius:var(--r-sm);border:2px solid var(--bg);font-size:9px;font-weight:900;color:#fff;display:flex;align-items:center;justify-content:center;padding:0 3px}
 
 /* ── LIVE TICKER ── */
-.live-bar{display:flex;align-items:center;gap:9px;margin:0 18px 12px;background:rgba(255,59,48,.07);border:0.5px solid rgba(255,59,48,.22);border-radius:var(--r-md);padding:9px 14px;flex-shrink:0;overflow:hidden}
-.live-dot{width:7px;height:7px;border-radius:50%;background:var(--red);animation:pulse 1.3s infinite;flex-shrink:0}
-.live-label{font-family:'WTM Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums;font-size:10px;font-weight:900;color:var(--red);letter-spacing:1px;flex-shrink:0}
+/* These held a literal colour: rgba(255,59,48,…), iOS system red. Over the
+   dark background it read as a dark maroon and looked deliberate; over the
+   light background it read as pink — the one pink thing on an otherwise amber
+   screen. Routed through --signal like every other accent, so both themes
+   derive from one token. .map-live-pill carried the same literals and is
+   fixed with it. */
+.live-bar{display:flex;align-items:center;gap:9px;margin:0 18px 12px;background:color-mix(in srgb,var(--signal) 8%,transparent);border:0.5px solid color-mix(in srgb,var(--signal) 24%,transparent);border-radius:var(--r-md);padding:9px 14px;flex-shrink:0;overflow:hidden}
+.live-dot{width:7px;height:7px;border-radius:50%;background:var(--signal);animation:pulse 1.3s infinite;flex-shrink:0}
+.live-label{font-family:'WTM Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums;font-size:10px;font-weight:900;color:var(--signal);letter-spacing:1px;flex-shrink:0}
 .live-text{font-size:12.5px;font-weight:600;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;animation:fadeSwap 4s infinite}
 
 /* ── STORIES ── */
@@ -228,8 +234,8 @@ input,textarea{-webkit-user-select:text;user-select:text}
 #map-canvas:active{cursor:grabbing}
 .map-topbar{position:absolute;top:0;left:0;right:0;z-index:10;padding:52px 20px 30px;display:flex;align-items:center;justify-content:space-between;gap:12px;background:linear-gradient(180deg,rgba(6,5,13,.72) 0%,rgba(6,5,13,.32) 60%,transparent 100%);pointer-events:none}
 .map-title{font-family:'WTM Display','WTM Sans',sans-serif;font-size:22px;font-weight:900;letter-spacing:-.8px;color:#fff;text-shadow:0 1px 8px rgba(0,0,0,.45)}
-.map-live-pill{font-family:'WTM Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums;display:flex;align-items:center;gap:6px;background:rgba(6,5,13,.78);backdrop-filter:blur(16px);border:0.5px solid rgba(255,59,48,.4);border-radius:var(--r-md);padding:6px 12px;font-size:12px;font-weight:700;color:#FF6B5A;pointer-events:auto}
-.map-live-dot{width:6px;height:6px;border-radius:50%;background:#FF3B30;animation:pulse 1.4s infinite}
+.map-live-pill{font-family:'WTM Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums;display:flex;align-items:center;gap:6px;background:rgba(6,5,13,.78);backdrop-filter:blur(16px);border:0.5px solid color-mix(in srgb,var(--signal) 40%,transparent);border-radius:var(--r-md);padding:6px 12px;font-size:12px;font-weight:700;color:var(--signal);pointer-events:auto}
+.map-live-dot{width:6px;height:6px;border-radius:50%;background:var(--signal);animation:pulse 1.4s infinite}
 #scr-map .tabbar{position:absolute;bottom:0;left:0;right:0}
 #map-hint{position:absolute;bottom:calc(var(--tab-h) + var(--safe-b) + 18px);left:50%;transform:translateX(-50%) translateY(12px);background:rgba(6,5,13,.92);backdrop-filter:blur(24px);border:0.5px solid rgba(238,234,250,.14);border-radius:var(--r-md);padding:10px 20px;font-size:13px;font-weight:700;color:var(--text2);opacity:0;transition:opacity .5s,transform .5s;pointer-events:none;z-index:15;white-space:nowrap;max-width:92%}
 #map-hint.visible{opacity:1;transform:translateX(-50%) translateY(0)}
@@ -286,11 +292,12 @@ input,textarea{-webkit-user-select:text;user-select:text}
 .glpin.hot .glpin-dot{background:var(--signal)}
 .glpin-fr{width:8px;height:8px;border-radius:50%;background:var(--signal);flex:none}
 .glface{position:relative;width:42px;height:42px;border-radius:50%;background:#fff;display:flex;
-  align-items:center;justify-content:center;font-size:21px;border:2.5px solid var(--ok);
+  align-items:center;justify-content:center;font:800 16px/1 'WTM Sans',system-ui,sans-serif;
+  color:#3A4356;border:2.5px solid var(--ok);
   cursor:pointer;box-shadow:0 3px 10px rgba(20,16,10,.3);transform:translate(-50%,-50%)}
 .glface-name{position:absolute;top:44px;left:50%;transform:translateX(-50%);background:#fff;
   color:#39424F;font:800 10px/1 'WTM Sans',system-ui,sans-serif;padding:3px 7px;border-radius:7px;white-space:nowrap}
-.glme{width:50px;height:50px;border-color:#4C6B8A;font-size:25px}
+.glme{width:50px;height:50px;border-color:#4C6B8A;font-size:18px;color:#4C6B8A}
 
 /* ── spot submission + review ── */
 .sb-out{margin-top:16px;border-top:1px solid var(--border);padding-top:16px}
@@ -521,7 +528,7 @@ input,textarea{-webkit-user-select:text;user-select:text}
       <button class="icon-btn" onclick="switchTab('profile')" aria-label="Your profile"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M5 20v-1a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v1"/></svg></button>
     </div>
   </div>
-  <div class="live-bar"><div class="live-dot"></div><div class="live-label">LIVE</div><div class="live-text" id="ticker-text">41 people locked in across Pittsburgh right now</div></div>
+  <div class="live-bar"><div class="live-dot"></div><div class="live-label">LIVE</div><div class="live-text" id="ticker-text">41 people locked in across Pittsburgh</div></div>
   <div class="stories" id="stories"></div>
   <div class="search-bar">
     <span class="search-icon"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></span>
@@ -718,18 +725,48 @@ const MOVES=[
  {id:'m7',title:'Smoke & Mario Kart',cat:'justu',emoji:'🎮',grad:['#3A3730','#141310'],loc:'Polish Hill',addr:'Address drops when you lock in',time:'Tonight · 8 PM',lat:40.4562,lng:-79.9650,att:2,max:4,hot:false,private:true,host:'Mike',hostAv:'av1',desc:'Just the boys. Switch, snacks, no outside people. You know who you are.'},
  {id:'m8',title:'Larimer Rooftop Party',cat:'scene',emoji:'🎉',grad:['#4A2F4E','#170F19'],loc:'Larimer',addr:'6510 Larimer Ave, rooftop',time:'Tonight · 11 PM',lat:40.4652,lng:-79.9205,att:34,max:60,hot:true,host:'DJ Nasty C',hostAv:'av5',desc:'DJ Nasty C on the 1s and 2s. Skyline views, open bar the first hour. This is the one.'},
 ];
-const FRIENDS_GOING={m1:['Mike','Luca'],m3:['Mike','Brook'],m5:['Mike','Luca','Quinn'],m6:['Brook'],m7:['Mike'],m8:['Luca','Quinn']};
-const ALL_GOING={m1:['Mike','Luca','Zoe C.','Sam','Riley','Chris L.','Nat W.','Drew K.'],m3:['Jay','Mike','Brook','Pat','+ 37 others'],m5:['Mike','Luca','Quinn','Jay S.','Morgan L.','Jade F.'],m8:['Luca','Quinn','Omar H.','Bob','Cole','Nina','+ 28 others']};
+// The attendee roster is the only place a move's guest list is written down.
+// "Your friends are going" and each friend's own list of moves are both derived
+// from it further down, so they cannot contradict it. They used to be written
+// out by hand three times, and the cast rename left them disagreeing.
+//
+// The names before "+ N others" plus N must equal the move's `att`, because the
+// sheet prints `att` as the heading over this list.
+const ALL_GOING={
+ m1:['Mike','Luca','Zoe C.','Sam','Riley','Chris L.','Nat W.','Drew K.'],
+ m2:['Sam','Riley','Nina','Malik J.','+ 18 others'],
+ m3:['Jay','Mike','Brook','Pat','+ 37 others'],
+ m4:['Reese','Nat W.','Drew K.','Zoe C.','+ 10 others'],
+ m5:['Mike','Luca','Quinn','Jay S.','Morgan L.','Jade F.'],
+ m6:['Brook','Cole','Chris L.','Bob','+ 6 others'],
+ m7:['Mike','Cole'],
+ m8:['Luca','Quinn','Omar H.','Bob','Cole','Nina','+ 28 others'],
+ m9:['Mike','Luca','Brook','Quinn','Cole','Reese','+ 406 others'],
+ m10:['Brook','Reese','Sam','Riley','+ 5 others'],
+ m11:['Mike','Luca','Cole','Bob','Nina','+ 6 others'],
+ m12:['Luca','Brook','Quinn','Reese','Jade F.','Omar H.','+ 57 others'],
+};
 const CATS=[{id:'justu',emoji:'🤝',label:'Just Us'},{id:'scene',emoji:'🎉',label:'The Scene'},{id:'bars',emoji:'🍺',label:'Bars'},{id:'music',emoji:'🎵',label:'Music'},{id:'outdoor',emoji:'🌿',label:'Outdoor'},{id:'sports',emoji:'🏀',label:'Sports'},{id:'food',emoji:'🍕',label:'Food'},{id:'art',emoji:'🎨',label:'Art'}];
 const AV_CLS=['av1','av2','av3','av4','av5','av6'];
+// No `init` field: it was written by hand and the cast rename left it showing
+// "A" for Mike and "D" for Luca on the friends screen. The initial is the name.
 const FRIENDS_LIST=[
- {name:'Mike',init:'A',av:'av1',face:'😎',online:true,status:'Out tonight',going:['m1','m7'],lat:40.4390,lng:-80.0192},
- {name:'Luca',init:'D',av:'av2',face:'🧢',online:true,status:'Ready to roll',going:['m8'],lat:40.4638,lng:-79.9218},
- {name:'Brook',init:'M',av:'av3',face:'💅',online:true,status:'Heading out at 9',going:['m3'],lat:40.4648,lng:-79.9580},
- {name:'Quinn',init:'C',av:'av4',face:'🕺',online:true,status:'Pulling up at 10',going:['m8'],lat:40.4548,lng:-79.9342},
- {name:'Tyler',init:'T',av:'av5',face:'😴',online:false,status:'Working late',going:[],lat:40.4412,lng:-79.9982},
+ {name:'Mike',av:'av1',online:true,status:'Out tonight',lat:40.4390,lng:-80.0192},
+ {name:'Luca',av:'av2',online:true,status:'Ready to roll',lat:40.4638,lng:-79.9218},
+ {name:'Brook',av:'av3',online:true,status:'Heading out at 9',lat:40.4648,lng:-79.9580},
+ {name:'Quinn',av:'av4',online:true,status:'Pulling up at 10',lat:40.4548,lng:-79.9342},
+ {name:'Tyler',av:'av5',online:false,status:'Working late',lat:40.4412,lng:-79.9982},
 ];
-const ME={face:'🤙',lat:40.4408,lng:-79.9995};
+const initialOf=n=>String(n||'?').trim()[0].toUpperCase();
+// Everything below is read out of ALL_GOING rather than restated.
+const FRIEND_NAMES=new Set(FRIENDS_LIST.map(f=>f.name));
+const FRIENDS_GOING=Object.fromEntries(Object.entries(ALL_GOING)
+  .map(([mid,roster])=>[mid,roster.filter(n=>FRIEND_NAMES.has(n))])
+  .filter(([,friends])=>friends.length));
+FRIENDS_LIST.forEach(f=>{
+  f.going=Object.keys(ALL_GOING).filter(mid=>ALL_GOING[mid].includes(f.name));
+});
+const ME={lat:40.4408,lng:-79.9995};
 const NOTIFS=[
  {icon:'🔥',text:'<b>Mike</b> is going to Mt. Washington Rooftop Session',time:'2m ago',unread:true},
  {icon:'⚡',text:'<b>Larimer Rooftop Party</b> is filling up. Only 26 spots left',time:'8m ago',unread:true},
@@ -740,9 +777,14 @@ const NOTIFS=[
 const MSGS={
  m1:[{who:'Mike',av:'av1',text:"Heading up now, who else?"},{who:'Luca',av:'av2',text:"Give me 20"}],
  m3:[{who:'Brook',av:'av3',text:"This gonna go hard fr"},{who:'Mike',av:'av1',text:"Facts, see y'all at 10"}],
- m8:[{who:'Luca',av:'av2',text:"DJ is already setting up 🔥"},{who:'Quinn',av:'av4',text:"Can NOT wait"},{who:'Bob',av:'av6',text:"Be there 11:30 latest"}],
+ m8:[{who:'Luca',av:'av2',text:"DJ is already setting up"},{who:'Quinn',av:'av4',text:"Can NOT wait"},{who:'Bob',av:'av6',text:"Be there 11:30 latest"}],
+ m9:[{who:'Cole',av:'av2',text:"White out, don't show up in navy"},{who:'Reese',av:'av3',text:"Gates at 6. In by 6:30 or you're on the track"}],
+ m12:[{who:'Reese',av:'av3',text:"Boathouse lot, park up top"}],
 };
-const SEED_RXN={m1:{fire:12,hype:7,there:4},m2:{fire:6,hype:3,there:8},m3:{fire:31,hype:18,there:22},m4:{fire:3,hype:5,there:9},m5:{fire:8,hype:4,there:3},m6:{fire:2,hype:6,there:5},m7:{fire:1,hype:0,there:2},m8:{fire:28,hype:41,there:19}};
+// Every move in MOVES needs an entry. A move without one renders 0/0/0 under a
+// card that says 412 people are going, which is how m9 shipped.
+const SEED_RXN={m1:{fire:12,hype:7,there:4},m2:{fire:6,hype:3,there:8},m3:{fire:31,hype:18,there:22},m4:{fire:3,hype:5,there:9},m5:{fire:8,hype:4,there:3},m6:{fire:2,hype:6,there:5},m7:{fire:1,hype:0,there:2},m8:{fire:28,hype:41,there:19},
+ m9:{fire:96,hype:74,there:58},m10:{fire:4,hype:2,there:6},m11:{fire:9,hype:5,there:3},m12:{fire:37,hype:29,there:24}};
 // A story has no palette of its own. It borrows the gradient of the move it
 // points at, so the ring, the avatar and the slide background always read as
 // the same event — and a story can never drift off-palette the way s1/s2/s4
@@ -786,12 +828,16 @@ const SIM_CHATS=[
  {mid:'m1',who:'Riley',av:'av4',text:'sound check done, this is gonna be special'},
  {mid:'m3',who:'Sam',av:'av1',text:'wristbands almost gone fyi'},
 ];
+// One line by design — the bar sits above the feed and a string that wrapped to
+// two lines would change its height mid-swap and shove the whole feed down. So
+// these are written short enough to fit 390px, and fitTicker() below trims the
+// ones built at runtime from move titles, which can be any length.
 const TICKER_POOL=[
- '41 people locked in across Pittsburgh right now',
- 'Larimer Rooftop Party trending in East End 🔥',
+ '41 people locked in across Pittsburgh',
+ 'Larimer Rooftop trending in East End',
  '4 of your friends are out tonight',
- 'Lawrenceville Bar Crawl is 41% full and climbing',
- 'New move just dropped in the Strip District',
+ 'Lawrenceville Bar Crawl is 41% full',
+ 'New move dropped in the Strip District',
  'Peak hours: moves fill fastest 9–11 PM',
 ];
 
@@ -1001,8 +1047,27 @@ function startEngine(){
     tickerIdx=(tickerIdx+1)%TICKER_POOL.length;
     const t=document.getElementById('ticker-text');
     t.style.animation='none';t.offsetHeight;t.style.animation='';
-    t.textContent=TICKER_POOL[tickerIdx];
+    setTicker(TICKER_POOL[tickerIdx]);
   },4000);
+}
+// Trim to the width actually available, at a word boundary. The CSS ellipsis is
+// still there as a backstop, but on its own it cut mid-word — the shipped feed
+// read "…across Pittsburgh ri…". Measured with the element's own computed font
+// so it stays correct if the type scale changes.
+function fitTicker(el,s){
+  const max=el.clientWidth;
+  if(!max)return s;
+  const cs=getComputedStyle(el);
+  const c=fitTicker._c||(fitTicker._c=document.createElement('canvas').getContext('2d'));
+  c.font=`${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
+  if(c.measureText(s).width<=max)return s;
+  const w=s.split(' ');
+  while(w.length>1&&c.measureText(w.join(' ')+'…').width>max)w.pop();
+  return w.join(' ')+'…';
+}
+function setTicker(s){
+  const t=document.getElementById('ticker-text');
+  if(t)t.textContent=fitTicker(t,s);
 }
 function engineTick(){
   const roll=Math.random();
@@ -1136,7 +1201,11 @@ function submitCreate(){
     lat:40.432+Math.random()*.03,lng:-79.995+Math.random()*.05,
     att:1,max:parseInt(document.getElementById('ci-max').value)||10,hot:false,
     host:'Jay',hostAv:'av1',addr:'Address in the group chat',desc:'Fresh move, just dropped. Be early.'};
+  // Seed the same tables every other move has, so a move made in the demo is
+  // not a second class of move with no roster and no reaction counts. att is 1
+  // and the roster is just the host, which is what the sheet should say.
   MOVES.unshift(nm);S.rsvps.add(nm.id);S.rxn[nm.id]={fire:0,hype:0,there:0};
+  ALL_GOING[nm.id]=[nm.host];
   demoEvt('created_move');
   closeCreate();buildFeed();confettiBurst();
   toast('Move posted 🔥 Your friends can see it now');
@@ -1301,11 +1370,11 @@ function closeSheet(){S.openMoveId=null;document.getElementById('sheet-overlay')
 // ══════════════════ FRIENDS SCREEN ══════════════════
 function buildFriends(){
   document.getElementById('online-strip').innerHTML=FRIENDS_LIST.map(f=>`
-    <div class="online-av"><div class="online-av-wrap"><div class="online-circle ${f.av}">${f.init}</div><div class="online-dot ${f.online?'on':'off'}"></div></div><div class="online-name">${f.name.split(' ')[0]}</div></div>`).join('');
+    <div class="online-av"><div class="online-av-wrap"><div class="online-circle ${f.av}">${initialOf(f.name)}</div><div class="online-dot ${f.online?'on':'off'}"></div></div><div class="online-name">${f.name.split(' ')[0]}</div></div>`).join('');
   document.getElementById('friends-list').innerHTML=`<div style="padding-bottom:calc(var(--tab-h) + 24px)">`+FRIENDS_LIST.map(f=>{
     const gm=f.going.map(mid=>MOVES.find(m=>m.id===mid)).filter(Boolean);
     return`<div class="friend-row">
-      <div class="friend-av ${f.av}">${f.init}<div class="friend-on-dot ${f.online?'on':'off'}"></div></div>
+      <div class="friend-av ${f.av}">${initialOf(f.name)}<div class="friend-on-dot ${f.online?'on':'off'}"></div></div>
       <div class="friend-info">
         <div class="friend-name">${f.name}</div>
         <div class="friend-status"><i class="dot${f.online?' on':''}"></i>${f.status}</div>
@@ -1761,8 +1830,20 @@ function drawMap(){
   // airport
   {
     const{x,y}=ll2xy(AIRPORT.lat,AIRPORT.lng,W,H);
-    ctx.font=`${Math.max(13,13*us)}px 'WTM Sans',system-ui,sans-serif`;
-    ctx.fillText('✈️',x,y);
+    // Drawn, not an emoji: canvas has no ico(), and fillText('✈️') hands the
+    // glyph to the OS, so the marker looked like a different product on every
+    // device. A plane in six line segments looks the same everywhere.
+    {
+      const s=Math.max(5,5.5*us);
+      ctx.save();ctx.translate(x,y-2*us);ctx.rotate(-Math.PI/8);
+      ctx.strokeStyle='#8A93A2';ctx.lineWidth=Math.max(1.2,1.4*us);
+      ctx.lineJoin='round';ctx.lineCap='round';
+      ctx.beginPath();
+      ctx.moveTo(0,-s);ctx.lineTo(0,s*.9);            // fuselage
+      ctx.moveTo(-s*1.1,0);ctx.lineTo(s*1.1,0);        // main wing
+      ctx.moveTo(-s*.45,s*.75);ctx.lineTo(s*.45,s*.75);// tailplane
+      ctx.stroke();ctx.restore();
+    }
     ctx.font=`800 ${Math.max(8,8.5*us)}px 'WTM Sans',system-ui,sans-serif`;
     ctx.strokeStyle='rgba(255,255,255,.85)';ctx.lineWidth=2.5;ctx.strokeText('PIT',x,y+13);
     ctx.fillStyle='#8A93A2';ctx.fillText('PIT',x,y+13);
@@ -1849,7 +1930,11 @@ function drawMap(){
 
     // measure label card
     ctx.font=`800 ${11.5*us}px 'WTM Sans',system-ui,sans-serif`;
-    const label=`${m.emoji} ${m.title.length>20?m.title.slice(0,18)+'…':m.title}`;
+    // Title only. This used to lead with m.emoji, which canvas hands to the OS
+    // to draw, so every pin on the fallback map carried a glyph the rest of the
+    // app had already replaced with ico(). The vector map still shows the
+    // category icon, because there it is an SVG and not a font character.
+    const label=m.title.length>20?m.title.slice(0,18)+'…':m.title;
     const tw=ctx.measureText(label).width;
     const pad=9*us,cardH=27*us,cardW=tw+pad*2;
     // keep the card fully on screen instead of letting it clip off the edge
@@ -1902,8 +1987,12 @@ function drawMap(){
     ctx.restore();
     ctx.strokeStyle='#10B981';ctx.lineWidth=2.5*us;
     ctx.beginPath();ctx.arc(x,yy,rad,0,Math.PI*2);ctx.stroke();
-    ctx.font=`${17*us}px 'WTM Sans',system-ui,sans-serif`;ctx.textAlign='center';
-    ctx.fillText(f.face||'🙂',x,yy+6*us);
+    // The initial, which is what every other avatar in the app shows — the
+    // going grid, the chat rows, the friends list. Was an emoji face per
+    // friend, drawn by the OS.
+    ctx.font=`800 ${15*us}px 'WTM Sans',system-ui,sans-serif`;ctx.textAlign='center';
+    ctx.fillStyle='#3A4356';
+    ctx.fillText(initialOf(f.name),x,yy+5.5*us);
     // name tag
     ctx.font=`800 ${9*us}px 'WTM Sans',system-ui,sans-serif`;
     const nm=f.name.split(' ')[0];
@@ -1929,8 +2018,17 @@ function drawMap(){
     ctx.restore();
     ctx.strokeStyle=ME_RING;ctx.lineWidth=3*us;
     ctx.beginPath();ctx.arc(x,y,rad,0,Math.PI*2);ctx.stroke();
-    ctx.font=`${21*us}px 'WTM Sans',system-ui,sans-serif`;ctx.textAlign='center';
-    ctx.fillText(ME.face,x,y+7*us);
+    // A drawn head-and-shoulders rather than an emoji, matching the profile
+    // glyph in the tab bar. The "YOU" tag below already names it.
+    {
+      const s=Math.max(4,4.6*us);
+      ctx.save();ctx.translate(x,y+1*us);
+      ctx.strokeStyle=ME_RING;ctx.lineWidth=Math.max(1.4,1.7*us);
+      ctx.lineCap='round';
+      ctx.beginPath();ctx.arc(0,-s*.45,s*.55,0,Math.PI*2);ctx.stroke();
+      ctx.beginPath();ctx.arc(0,s*1.25,s*1.05,Math.PI*1.15,Math.PI*1.85);ctx.stroke();
+      ctx.restore();
+    }
     ctx.font=`800 ${9.5*us}px 'WTM Sans',system-ui,sans-serif`;
     const nw=ctx.measureText('YOU').width+12*us;
     ctx.fillStyle=ME_RING;
@@ -2600,15 +2698,15 @@ function addGLMarkers(){
     new M.Marker({element:node,anchor:'bottom'}).setLngLat([m.lng,m.lat]).addTo(glMap);
   });
   FRIENDS_LIST.filter(f=>f.online).forEach(f=>{
-    const node=glEl(`<div class="glface">${f.face}<span class="glface-name">${f.name.split(' ')[0]}</span></div>`);
+    const node=glEl(`<div class="glface">${initialOf(f.name)}<span class="glface-name">${f.name.split(' ')[0]}</span></div>`);
     node.addEventListener('click',ev=>{ev.stopPropagation();toast(f.name+' is out right now');});
     new M.Marker({element:node}).setLngLat([f.lng,f.lat]).addTo(glMap);
   });
-  const me=glEl(`<div class="glface glme">${ME.face}<span class="glface-name">You</span></div>`);
+  const me=glEl(`<div class="glface glme">YOU<span class="glface-name">You</span></div>`);
   new M.Marker({element:me}).setLngLat([ME.lng,ME.lat]).addTo(glMap);
 }
 
 // ══════════════════ INIT ══════════════════
-buildFeed();buildStories();buildFriends();buildAsk();updateBadge();
+buildFeed();buildStories();buildFriends();buildAsk();updateBadge();setTicker(TICKER_POOL[0]);
 document.getElementById('create-cats').innerHTML=CATS.map(c=>`<div class="create-cat" onclick="selCreateCat(this,'${c.id}')">${ico(c.emoji)} ${c.label}</div>`).join('');
 </script>
