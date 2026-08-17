@@ -24,7 +24,10 @@ const { chromium } = require('playwright-core');
   await f.click('button.wlc-btn'); await page.waitForTimeout(700);
   await f.click('#scr-moves .tab[onclick*="ask"]'); await page.waitForTimeout(400);
 
-  console.log('queue badge:', (await f.locator('#rq-n').innerText()).trim());
+  // The review queue is a moderator tool and is no longer in the member UI, so
+  // there is no badge to read. This asserts that: if the button ever comes back
+  // to the Ask screen, this count stops being zero and the run goes red.
+  console.log('moderator controls in member UI:', await f.locator('[data-act="rq-open"]').count());
 
   // Submit something that should be flagged
   await f.click('[data-act="sb-open"]'); await page.waitForTimeout(500);
@@ -40,7 +43,9 @@ const { chromium } = require('playwright-core');
   // Review queue, then publish one
   await f.click('#sheet-overlay', { position: { x: 10, y: 10 } }).catch(() => {});
   await page.waitForTimeout(400);
-  await f.click('[data-act="rq-open"]'); await page.waitForTimeout(500);
+  // Reached by URL now, the way a moderator would.
+  await f.evaluate(() => { location.hash = '#review'; });
+  await page.waitForTimeout(600);
   const before = await f.locator('.rq-card').count();
   console.log('queue cards   :', before);
   console.log('verdicts      :', (await f.locator('.rq-verdict').allInnerTexts()).join(', '));

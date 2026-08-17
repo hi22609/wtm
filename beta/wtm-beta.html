@@ -571,7 +571,7 @@ input,textarea{-webkit-user-select:text;user-select:text}
   <div class="ask-chips" id="ask-examples"></div>
   <div class="ask-actions">
     <button class="ask-action" data-act="sb-open">Add a spot</button>
-    <button class="ask-action" data-act="rq-open">Review queue <span id="rq-n"></span></button>
+
   </div>
   <div class="ask-scroll"><div id="ask-results"></div></div>
   <div class="tabbar">
@@ -604,7 +604,7 @@ input,textarea{-webkit-user-select:text;user-select:text}
 <div id="scr-profile" class="scr" style="overflow-y:auto">
   <div class="profile-hero">
     <div class="profile-av">J</div>
-    <div class="profile-name">Jordan K.</div>
+    <div class="profile-name">Jay</div>
     <div class="profile-handle">@jordank · Pittsburgh, PA</div>
     <div class="streak-card">
       <div class="streak-fire">🔥</div>
@@ -699,41 +699,41 @@ input,textarea{-webkit-user-select:text;user-select:text}
 // ══════════════════ DATA ══════════════════
 const MOVES=[
  {id:'m9',title:'NA vs North Hills',cat:'scene',emoji:'🎉',grad:['#2B3A2E','#101710'],loc:'Newman Stadium',addr:'10375 Perry Hwy, Wexford',time:'Fri Aug 28 · 7 PM',lat:40.6285,lng:-80.0645,att:412,max:900,hot:true,host:'NA Student Section',hostAv:'av2',desc:'The one everybody circles. Student section is a white out. Gates at 6, and if you are not in by 6:30 you are watching from the track.'},
- {id:'m11',title:'Tailgate before NA/NH',cat:'justu',emoji:'🎮',grad:['#3A3730','#141310'],loc:'Wexford',addr:'Address drops when you lock in',time:'Fri Aug 28 · 4:30 PM',lat:40.6262,lng:-80.0601,att:11,max:16,hot:false,private:true,host:'Marcus T.',hostAv:'av2',desc:'Someone is grilling before the game. Small on purpose. Walk over together at 6.'},
- {id:'m12',title:'After the game, North Park',cat:'scene',emoji:'🎉',grad:['#2F4433','#111710'],loc:'North Park',addr:'Pearce Mill Rd boathouse lot',time:'Fri Aug 28 · 10 PM',lat:40.5978,lng:-80.0069,att:63,max:150,hot:true,host:'Ana P.',hostAv:'av3',desc:'Wherever it ends up after Newman, it starts here. Lot fills fast, park up by the boathouse.'},
- {id:'m10',title:'North Park Loop Ride',cat:'outdoor',emoji:'🌿',grad:['#2F4433','#111710'],loc:'North Park',addr:'Pearce Mill Rd boathouse lot',time:'Saturday · 10 AM',lat:40.5978,lng:-80.0069,att:9,max:20,hot:false,host:'Ana P.',hostAv:'av3',desc:'Five mile lake loop, easy pace, nobody gets dropped. Coffee after at the boathouse.'},
- {id:'m1',title:'Mt. Washington Rooftop Session',cat:'music',emoji:'🎵',grad:['#2C4A63','#101822'],loc:'Mt. Washington',addr:'1435 Grandview Ave',time:'Tonight · 9 PM',lat:40.4392,lng:-80.0165,att:8,max:12,hot:true,host:'Alex M.',hostAv:'av1',desc:'Live beats over the whole skyline. Small group on purpose. No cover, just show up.'},
+ {id:'m11',title:'Tailgate before NA/NH',cat:'justu',emoji:'🎮',grad:['#3A3730','#141310'],loc:'Wexford',addr:'Address drops when you lock in',time:'Fri Aug 28 · 4:30 PM',lat:40.6262,lng:-80.0601,att:11,max:16,hot:false,private:true,host:'Cole',hostAv:'av2',desc:'Someone is grilling before the game. Small on purpose. Walk over together at 6.'},
+ {id:'m12',title:'After the game, North Park',cat:'scene',emoji:'🎉',grad:['#2F4433','#111710'],loc:'North Park',addr:'Pearce Mill Rd boathouse lot',time:'Fri Aug 28 · 10 PM',lat:40.5978,lng:-80.0069,att:63,max:150,hot:true,host:'Reese',hostAv:'av3',desc:'Wherever it ends up after Newman, it starts here. Lot fills fast, park up by the boathouse.'},
+ {id:'m10',title:'North Park Loop Ride',cat:'outdoor',emoji:'🌿',grad:['#2F4433','#111710'],loc:'North Park',addr:'Pearce Mill Rd boathouse lot',time:'Saturday · 10 AM',lat:40.5978,lng:-80.0069,att:9,max:20,hot:false,host:'Reese',hostAv:'av3',desc:'Five mile lake loop, easy pace, nobody gets dropped. Coffee after at the boathouse.'},
+ {id:'m1',title:'Mt. Washington Rooftop Session',cat:'music',emoji:'🎵',grad:['#2C4A63','#101822'],loc:'Mt. Washington',addr:'1435 Grandview Ave',time:'Tonight · 9 PM',lat:40.4392,lng:-80.0165,att:8,max:12,hot:true,host:'Mike',hostAv:'av1',desc:'Live beats over the whole skyline. Small group on purpose. No cover, just show up.'},
  {id:'m2',title:'Strip District Night Market',cat:'food',emoji:'🍕',grad:['#5A4632','#1C1510'],loc:'Strip District',addr:'2100 Penn Ave',time:'Tonight · 7 PM',lat:40.4498,lng:-79.9765,att:22,max:80,hot:false,host:'Strip DIY Collective',hostAv:'av6',desc:'Local vendors, street food, outdoor pop-up. Free entry, bring cash.'},
- {id:'m3',title:'Lawrenceville Bar Crawl',cat:'bars',emoji:'🍺',grad:['#2F4A42','#111A17'],loc:'Lawrenceville',addr:'3523 Butler St (start)',time:'Tonight · 10 PM',lat:40.4655,lng:-79.9605,att:41,max:100,hot:true,host:'Mia R.',hostAv:'av3',desc:'Start at Round Corner, end wherever. 5 stops, 1 wristband, $20 covers everything.'},
+ {id:'m3',title:'Lawrenceville Bar Crawl',cat:'bars',emoji:'🍺',grad:['#2F4A42','#111A17'],loc:'Lawrenceville',addr:'3523 Butler St (start)',time:'Tonight · 10 PM',lat:40.4655,lng:-79.9605,att:41,max:100,hot:true,host:'Brook',hostAv:'av3',desc:'Start at Round Corner, end wherever. 5 stops, 1 wristband, $20 covers everything.'},
  {id:'m4',title:'Frick Park Dawn Run',cat:'outdoor',emoji:'🌿',grad:['#3C4A31','#141A11'],loc:'Frick Park',addr:'2005 Beechwood Blvd',time:'Tomorrow · 7 AM',lat:40.4378,lng:-79.9015,att:14,max:30,hot:false,host:'Run PGH',hostAv:'av4',desc:'6 mile loop at sunrise, all paces welcome. Coffee at the trailhead after.'},
- {id:'m5',title:'CMU Late Night Studio',cat:'art',emoji:'🎨',grad:['#463356','#16111C'],loc:'Oakland',addr:'5000 Forbes Ave, CFA Building',time:'Tonight · 11 PM',lat:40.4418,lng:-79.9430,att:6,max:8,hot:false,host:'Casey W.',hostAv:'av4',desc:'Open studio, bring your own project. Quiet creative energy, good playlist.'},
- {id:'m6',title:'North Shore Pickup Hoops',cat:'sports',emoji:'🏀',grad:['#5A4030','#1B130E'],loc:'North Shore',addr:'400 North Shore Dr',time:'Tonight · 6 PM',lat:40.4468,lng:-80.0082,att:10,max:14,hot:false,host:'Devon T.',hostAv:'av2',desc:'Full court runs. All levels. Bring water.'},
- {id:'m7',title:'Smoke & Mario Kart',cat:'justu',emoji:'🎮',grad:['#3A3730','#141310'],loc:'Polish Hill',addr:'Address drops when you lock in',time:'Tonight · 8 PM',lat:40.4562,lng:-79.9650,att:2,max:4,hot:false,private:true,host:'Alex M.',hostAv:'av1',desc:'Just the boys. Switch, snacks, no outside people. You know who you are.'},
+ {id:'m5',title:'CMU Late Night Studio',cat:'art',emoji:'🎨',grad:['#463356','#16111C'],loc:'Oakland',addr:'5000 Forbes Ave, CFA Building',time:'Tonight · 11 PM',lat:40.4418,lng:-79.9430,att:6,max:8,hot:false,host:'Quinn',hostAv:'av4',desc:'Open studio, bring your own project. Quiet creative energy, good playlist.'},
+ {id:'m6',title:'North Shore Pickup Hoops',cat:'sports',emoji:'🏀',grad:['#5A4030','#1B130E'],loc:'North Shore',addr:'400 North Shore Dr',time:'Tonight · 6 PM',lat:40.4468,lng:-80.0082,att:10,max:14,hot:false,host:'Luca',hostAv:'av2',desc:'Full court runs. All levels. Bring water.'},
+ {id:'m7',title:'Smoke & Mario Kart',cat:'justu',emoji:'🎮',grad:['#3A3730','#141310'],loc:'Polish Hill',addr:'Address drops when you lock in',time:'Tonight · 8 PM',lat:40.4562,lng:-79.9650,att:2,max:4,hot:false,private:true,host:'Mike',hostAv:'av1',desc:'Just the boys. Switch, snacks, no outside people. You know who you are.'},
  {id:'m8',title:'Larimer Rooftop Party',cat:'scene',emoji:'🎉',grad:['#4A2F4E','#170F19'],loc:'Larimer',addr:'6510 Larimer Ave, rooftop',time:'Tonight · 11 PM',lat:40.4652,lng:-79.9205,att:34,max:60,hot:true,host:'DJ Nasty C',hostAv:'av5',desc:'DJ Nasty C on the 1s and 2s. Skyline views, open bar the first hour. This is the one.'},
 ];
-const FRIENDS_GOING={m1:['Alex M.','Devon T.'],m3:['Alex M.','Mia R.'],m5:['Alex M.','Devon T.','Casey W.'],m6:['Mia R.'],m7:['Alex M.'],m8:['Devon T.','Casey W.']};
-const ALL_GOING={m1:['Alex M.','Devon T.','Zoe C.','Sam B.','Riley P.','Chris L.','Nat W.','Drew K.'],m3:['Jordan K.','Alex M.','Mia R.','Pat O.','+ 37 others'],m5:['Alex M.','Devon T.','Casey W.','Jay S.','Morgan L.','Jade F.'],m8:['Devon T.','Casey W.','Omar H.','Priya S.','Marcus T.','Leila A.','+ 28 others']};
+const FRIENDS_GOING={m1:['Mike','Luca'],m3:['Mike','Brook'],m5:['Mike','Luca','Quinn'],m6:['Brook'],m7:['Mike'],m8:['Luca','Quinn']};
+const ALL_GOING={m1:['Mike','Luca','Zoe C.','Sam','Riley','Chris L.','Nat W.','Drew K.'],m3:['Jay','Mike','Brook','Pat','+ 37 others'],m5:['Mike','Luca','Quinn','Jay S.','Morgan L.','Jade F.'],m8:['Luca','Quinn','Omar H.','Bob','Cole','Nina','+ 28 others']};
 const CATS=[{id:'justu',emoji:'🤝',label:'Just Us'},{id:'scene',emoji:'🎉',label:'The Scene'},{id:'bars',emoji:'🍺',label:'Bars'},{id:'music',emoji:'🎵',label:'Music'},{id:'outdoor',emoji:'🌿',label:'Outdoor'},{id:'sports',emoji:'🏀',label:'Sports'},{id:'food',emoji:'🍕',label:'Food'},{id:'art',emoji:'🎨',label:'Art'}];
 const AV_CLS=['av1','av2','av3','av4','av5','av6'];
 const FRIENDS_LIST=[
- {name:'Alex M.',init:'A',av:'av1',face:'😎',online:true,status:'Out tonight',going:['m1','m7'],lat:40.4390,lng:-80.0192},
- {name:'Devon T.',init:'D',av:'av2',face:'🧢',online:true,status:'Ready to roll',going:['m8'],lat:40.4638,lng:-79.9218},
- {name:'Mia R.',init:'M',av:'av3',face:'💅',online:true,status:'Heading out at 9',going:['m3'],lat:40.4648,lng:-79.9580},
- {name:'Casey W.',init:'C',av:'av4',face:'🕺',online:true,status:'Pulling up at 10',going:['m8'],lat:40.4548,lng:-79.9342},
- {name:'Tyler B.',init:'T',av:'av5',face:'😴',online:false,status:'Working late',going:[],lat:40.4412,lng:-79.9982},
+ {name:'Mike',init:'A',av:'av1',face:'😎',online:true,status:'Out tonight',going:['m1','m7'],lat:40.4390,lng:-80.0192},
+ {name:'Luca',init:'D',av:'av2',face:'🧢',online:true,status:'Ready to roll',going:['m8'],lat:40.4638,lng:-79.9218},
+ {name:'Brook',init:'M',av:'av3',face:'💅',online:true,status:'Heading out at 9',going:['m3'],lat:40.4648,lng:-79.9580},
+ {name:'Quinn',init:'C',av:'av4',face:'🕺',online:true,status:'Pulling up at 10',going:['m8'],lat:40.4548,lng:-79.9342},
+ {name:'Tyler',init:'T',av:'av5',face:'😴',online:false,status:'Working late',going:[],lat:40.4412,lng:-79.9982},
 ];
 const ME={face:'🤙',lat:40.4408,lng:-79.9995};
 const NOTIFS=[
- {icon:'🔥',text:'<b>Alex M.</b> is going to Mt. Washington Rooftop Session',time:'2m ago',unread:true},
+ {icon:'🔥',text:'<b>Mike</b> is going to Mt. Washington Rooftop Session',time:'2m ago',unread:true},
  {icon:'⚡',text:'<b>Larimer Rooftop Party</b> is filling up. Only 26 spots left',time:'8m ago',unread:true},
- {icon:'💬',text:'<b>Devon T.</b>: "DJ is already setting up 🔥" in Larimer Rooftop Party',time:'14m ago',unread:true},
- {icon:'👥',text:'<b>Mia R.</b> and <b>Alex M.</b> are both going to Lawrenceville Bar Crawl',time:'31m ago',unread:false},
+ {icon:'💬',text:'<b>Luca</b>: "DJ is already setting up 🔥" in Larimer Rooftop Party',time:'14m ago',unread:true},
+ {icon:'👥',text:'<b>Brook</b> and <b>Mike</b> are both going to Lawrenceville Bar Crawl',time:'31m ago',unread:false},
  {icon:'🎉',text:'New move nearby: <b>Larimer Rooftop Party</b> is trending',time:'1h ago',unread:false},
 ];
 const MSGS={
- m1:[{who:'Alex M.',av:'av1',text:"Heading up now, who else?"},{who:'Devon T.',av:'av2',text:"Give me 20"}],
- m3:[{who:'Mia R.',av:'av3',text:"This gonna go hard fr"},{who:'Alex M.',av:'av1',text:"Facts, see y'all at 10"}],
- m8:[{who:'Devon T.',av:'av2',text:"DJ is already setting up 🔥"},{who:'Casey W.',av:'av4',text:"Can NOT wait"},{who:'Priya S.',av:'av6',text:"Be there 11:30 latest"}],
+ m1:[{who:'Mike',av:'av1',text:"Heading up now, who else?"},{who:'Luca',av:'av2',text:"Give me 20"}],
+ m3:[{who:'Brook',av:'av3',text:"This gonna go hard fr"},{who:'Mike',av:'av1',text:"Facts, see y'all at 10"}],
+ m8:[{who:'Luca',av:'av2',text:"DJ is already setting up 🔥"},{who:'Quinn',av:'av4',text:"Can NOT wait"},{who:'Bob',av:'av6',text:"Be there 11:30 latest"}],
 };
 const SEED_RXN={m1:{fire:12,hype:7,there:4},m2:{fire:6,hype:3,there:8},m3:{fire:31,hype:18,there:22},m4:{fire:3,hype:5,there:9},m5:{fire:8,hype:4,there:3},m6:{fire:2,hype:6,there:5},m7:{fire:1,hype:0,there:2},m8:{fire:28,hype:41,there:19}};
 const STORIES=[
@@ -764,14 +764,14 @@ const NEIGHBORHOODS=[
  {name:'Troy Hill',lat:40.4610,lng:-79.9880},{name:'Manchester',lat:40.4560,lng:-80.0230},
  {name:'Regent Square',lat:40.4320,lng:-79.8930},{name:'Swissvale',lat:40.4210,lng:-79.8850},
 ];
-const SIM_NAMES=['Priya S.','Marcus T.','Leila A.','Sam B.','Riley P.','Chris L.','Nat W.','Drew K.','Jade F.','Omar H.','Zoe C.','Malik J.'];
+const SIM_NAMES=['Bob','Cole','Nina','Sam','Riley','Chris L.','Nat W.','Drew K.','Jade F.','Omar H.','Zoe C.','Malik J.'];
 const SIM_CHATS=[
- {mid:'m8',who:'Priya S.',av:'av6',text:'line is moving fast, get here'},
- {mid:'m8',who:'Marcus T.',av:'av2',text:'this view is INSANE 🌃'},
- {mid:'m3',who:'Pat O.',av:'av5',text:'first stop packed already'},
- {mid:'m8',who:'Leila A.',av:'av3',text:'open bar ends at midnight hurry'},
- {mid:'m1',who:'Riley P.',av:'av4',text:'sound check done, this is gonna be special'},
- {mid:'m3',who:'Sam B.',av:'av1',text:'wristbands almost gone fyi'},
+ {mid:'m8',who:'Bob',av:'av6',text:'line is moving fast, get here'},
+ {mid:'m8',who:'Cole',av:'av2',text:'this view is INSANE 🌃'},
+ {mid:'m3',who:'Pat',av:'av5',text:'first stop packed already'},
+ {mid:'m8',who:'Nina',av:'av3',text:'open bar ends at midnight hurry'},
+ {mid:'m1',who:'Riley',av:'av4',text:'sound check done, this is gonna be special'},
+ {mid:'m3',who:'Sam',av:'av1',text:'wristbands almost gone fyi'},
 ];
 const TICKER_POOL=[
  '41 people locked in across Pittsburgh right now',
@@ -1028,7 +1028,7 @@ function simReaction(){
 function simPush(){
   const msgs=[
    ['⚡','<b>Larimer Rooftop Party</b> hit 40 people and it\'s moving fast'],
-   ['👥','<b>Casey W.</b> just went live on the map'],
+   ['👥','<b>Quinn</b> just went live on the map'],
    ['🎉','New move nearby: check the Strip District'],
    ['🔥','Your streak is alive. 6 weekends straight'],
   ];
@@ -1122,7 +1122,7 @@ function submitCreate(){
     time:'Tonight · '+(document.getElementById('ci-time').value||'TBD'),
     lat:40.432+Math.random()*.03,lng:-79.995+Math.random()*.05,
     att:1,max:parseInt(document.getElementById('ci-max').value)||10,hot:false,
-    host:'Jordan K.',hostAv:'av1',addr:'Address in the group chat',desc:'Fresh move, just dropped. Be early.'};
+    host:'Jay',hostAv:'av1',addr:'Address in the group chat',desc:'Fresh move, just dropped. Be early.'};
   MOVES.unshift(nm);S.rsvps.add(nm.id);S.rxn[nm.id]={fire:0,hype:0,there:0};
   demoEvt('created_move');
   closeCreate();buildFeed();confettiBurst();
@@ -1335,6 +1335,10 @@ document.addEventListener('click',e=>{
   }
   else if(act==='sb-open'){openSubmitSpot();}
   else if(act==='rq-open'){openReviewQueue();}
+  // The review queue is a moderator tool. It used to sit next to "Add a spot"
+  // on the Ask screen, which showed every member other people's pending
+  // submissions, addresses and rejection reasons. It is reachable from the URL
+  // now, so it can still be demoed without shipping moderation to the feed.
   else if(act==='sb-check'){runSubmitCheck();}
   else if(act==='sb-cat'){
     S.submitCat=arg;
@@ -1371,9 +1375,9 @@ document.addEventListener('click',e=>{
   else if(act==='chat-send'){
     const inp=document.getElementById(`chat-in-${arg}`);
     if(inp?.value.trim()){
-      (MSGS[arg]||(MSGS[arg]=[])).push({who:'Jordan K.',av:'av1',text:inp.value.trim()});
+      (MSGS[arg]||(MSGS[arg]=[])).push({who:'Jay',av:'av1',text:inp.value.trim()});
       const list=document.querySelector('#sheet-body .msg-list');
-      if(list)list.insertAdjacentHTML('beforeend',`<div class="msg"><div class="msg-av av1">J</div><div class="msg-body"><div class="msg-who">Jordan K.</div><div class="msg-text">${inp.value.trim().replace(/</g,'&lt;')}</div></div></div>`);
+      if(list)list.insertAdjacentHTML('beforeend',`<div class="msg"><div class="msg-av av1">J</div><div class="msg-body"><div class="msg-who">Jay</div><div class="msg-text">${inp.value.trim().replace(/</g,'&lt;')}</div></div></div>`);
       inp.value='';demoEvt('sent_chat');
     }
     e.stopPropagation();
@@ -2049,11 +2053,11 @@ function triageSpot(sub, opts){
 // Submissions live here until they clear. Nothing enters SPOTS unconfirmed.
 const SPOT_QUEUE=[
   {id:'q1',name:"Connor's rooftop",cat:'view',lat:40.4471,lng:-79.9612,
-   blurb:'my boy has roof access, we go up after work all the time',by:'Devon T.',trusted:false},
+   blurb:'my boy has roof access, we go up after work all the time',by:'Luca',trusted:false},
   {id:'q2',name:'Panhandle Trail Tunnel',cat:'urbex',lat:40.4102,lng:-80.0921,
-   blurb:'Old railway tunnel off the Panhandle Trail, walkable and covered in graffiti.',by:'Mia R.',trusted:true},
+   blurb:'Old railway tunnel off the Panhandle Trail, walkable and covered in graffiti.',by:'Brook',trusted:true},
   {id:'q3',name:'Riverview Park Overlook',cat:'view',lat:40.4790,lng:-80.0180,
-   blurb:'Quiet overlook above the observatory, you can see the whole North Side from here.',by:'Alex M.',trusted:true},
+   blurb:'Quiet overlook above the observatory, you can see the whole North Side from here.',by:'Mike',trusted:true},
 ];
 
 // ══════════════════ SPOT FINDER ══════════════════
@@ -2255,6 +2259,8 @@ function runSubmitCheck(){
   demoEvt('submitted_spot');
 }
 
+// Open with #review in the URL. Deliberately not a button.
+window.addEventListener('hashchange',()=>{ if(location.hash==='#review')openReviewQueue(); });
 function openReviewQueue(){
   const rows=SPOT_QUEUE.map(q=>{
     const {verdict,checks}=triageSpot(q,{trusted:q.trusted});
