@@ -2211,6 +2211,26 @@ function drawMap(){
   // Hot and fuller moves get label priority; colliding labels collapse to dots
   // and reappear as you zoom in, like a real map app.
   const placed=[];
+  // Friends and the "you" marker are drawn after the pins but sit on top of
+  // them, so their footprints are reserved here, before any card is placed.
+  // Without this the declutter only knew about other cards, and a label would
+  // sit straight under a friend's head with their name tag through the middle
+  // of it — which is most of what made the map look broken.
+  ctx.font=`800 ${9*us}px 'WTM Sans',system-ui,sans-serif`;
+  FRIENDS_LIST.filter(f=>f.online).forEach(f=>{
+    const{x,y}=ll2xy(f.lat,f.lng,W,H);
+    if(x<-60||x>W+60||y<-60||y>H+60)return;
+    const rad=15*us;
+    const nw=ctx.measureText(f.name.split(' ')[0]).width+10*us;
+    // the head, plus the bob it animates through, plus the name tag under it
+    placed.push({x:x-rad-3,y:y-rad-4*us,w:rad*2+6,h:rad+22*us+8*us});
+    placed.push({x:x-nw/2-3,y:y+rad+1*us,w:nw+6,h:16*us});
+  });
+  {
+    const{x,y}=ll2xy(ME.lat,ME.lng,W,H);
+    const rad=18*us;
+    placed.push({x:x-rad-8,y:y-rad-8,w:rad*2+16,h:rad*2+26*us});
+  }
   const ordered=[...MOVES].sort((a,b)=>(b.hot?1:0)-(a.hot?1:0)||(b.att/b.max)-(a.att/a.max));
   ordered.forEach(m=>{
     const{x,y}=ll2xy(m.lat,m.lng,W,H);
@@ -2237,16 +2257,35 @@ function drawMap(){
     const label=m.title.length>20?m.title.slice(0,18)+'…':m.title;
     const tw=ctx.measureText(label).width;
     const pad=9*us,cardH=27*us,cardW=tw+pad*2;
-    // keep the card fully on screen instead of letting it clip off the edge
-    const lx=Math.max(6,Math.min(W-cardW-6,x-cardW/2)),ly=y-22*us;
-    const rect={x:lx-4,y:ly-cardH-4,w:cardW+8,h:cardH+8};
-    const collides=placed.some(r=>rect.x<r.x+r.w&&rect.x+rect.w>r.x&&rect.y<r.y+r.h&&rect.y+rect.h>r.y);
-
-    if(collides&&sc<2.6){
+    // Try the four placements a person would try by hand before giving up on
+    // the label. Dropping straight to a dot on the first collision left eight
+    // live moves showing two names, which reads as an empty city.
+    // `ly` is the card's bottom edge; the card is drawn upward from it.
+    const gap=22*us, side=14*us;
+    const cands=[
+      {lx:x-cardW/2,      ly:y-gap},              // above
+      {lx:x-cardW/2,      ly:y+gap+cardH},        // below
+      {lx:x+side,         ly:y+cardH/2},          // right
+      {lx:x-cardW-side,   ly:y+cardH/2},          // left
+    ];
+    const hits=r=>placed.some(q=>r.x<q.x+q.w&&r.x+r.w>q.x&&r.y<q.y+q.h&&r.y+r.h>q.y);
+    let spot=null;
+    for(const c of cands){
+      const lx=Math.max(6,Math.min(W-cardW-6,c.lx));
+      const ly=Math.max(cardH+6,Math.min(H-6,c.ly));
+      const rect={x:lx-4,y:ly-cardH-4,w:cardW+8,h:cardH+8};
+      if(!hits(rect)){spot={lx,ly,rect};break;}
+    }
+    if(!spot&&sc<2.6){
       // dot-only: label returns on zoom
       pins.push({x,y,r:30,id:m.id});
       return;
     }
+    if(!spot){
+      const lx=Math.max(6,Math.min(W-cardW-6,x-cardW/2)),ly=y-gap;
+      spot={lx,ly,rect:{x:lx-4,y:ly-cardH-4,w:cardW+8,h:cardH+8}};
+    }
+    const lx=spot.lx, ly=spot.ly, rect=spot.rect;
     placed.push(rect);
 
     ctx.save();
@@ -2266,9 +2305,12 @@ function drawMap(){
       ctx.strokeStyle='#fff';ctx.lineWidth=1.5*us;ctx.stroke();
     }
     ctx.fillStyle='#2A2533';ctx.fillText(label,lx+pad,ly-9*us);
-    // stem, kept attached to the card even when the card was nudged inward
+    // stem, kept attached to the card even when the card was nudged inward or
+    // placed below or beside the dot rather than above it
     const stemX=Math.max(lx+12,Math.min(lx+cardW-12,x));
-    ctx.beginPath();ctx.moveTo(x,y-6*us);ctx.lineTo(stemX,ly);
+    const above=(ly<=y);
+    const stemY=above?ly:ly-cardH;
+    ctx.beginPath();ctx.moveTo(x,y+(above?-6*us:6*us));ctx.lineTo(stemX,stemY);
     ctx.strokeStyle='rgba(60,50,30,.25)';ctx.lineWidth=1.2*us;ctx.stroke();
     pins.push({x:lx+cardW/2,y:ly-cardH/2,r:Math.max(46,cardW*.5),id:m.id});
   });
@@ -2329,7 +2371,9 @@ function drawMap(){
       ctx.beginPath();ctx.arc(0,s*1.25,s*1.05,Math.PI*1.15,Math.PI*1.85);ctx.stroke();
       ctx.restore();
     }
-    ctx.font=`800 ${9.5*us}px 'WTM Sans',system-ui,sans-serif`;
+    // textAlign is whatever the friends loop left behind, so set it: this
+    // label is centred on the marker and its pill is drawn from the centre.
+    ctx.font=`800 ${9.5*us}px 'WTM Sans',system-ui,sans-serif`;ctx.textAlign='center';
     const nw=ctx.measureText('YOU').width+12*us;
     ctx.fillStyle=ME_RING;
     roundedRect(ctx,x-nw/2,y+rad+4*us,nw,15*us,7.5*us);ctx.fill();
