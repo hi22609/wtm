@@ -6,8 +6,9 @@ This is the one file that is kept current. Everything else in `WTM_REPORTS/` is 
 snapshot of what was known on the night it was written, and some of it has since been
 overtaken. Where an older report contradicts this file, **this file is right.**
 
-Read this first. Then `OPEN_DEFECTS.md` for what is visibly wrong right now, and
-`DECISIONS_FOR_MICHAEL.md` for what is still open.
+Read this first. Then `OPEN_DEFECTS.md` for what is visibly wrong right now,
+`DECISIONS_FOR_MICHAEL.md` for what is still open, and `IDEAS.md` for what's on the board but
+not yet scheduled.
 
 ---
 
@@ -70,6 +71,13 @@ In `DECISIONS_FOR_MICHAEL.md`, which is current. The short version:
 
 Blocked on Michael, nobody else can do it: **GitHub Settings → Pages → Source → "GitHub
 Actions"**, which is what publishes the demo with a real vector map.
+
+## On the board, not yet scheduled
+
+`IDEAS.md` is where future feature ideas go so they don't get lost between sessions. Currently:
+
+- **Eats of the Week** — a weekly-rotating spotlight of 4 food spots on the Map (new / popular /
+  trendy / good), eventually sponsorable. Drafted, not built. Full write-up in `IDEAS.md`.
 
 ## The two rules
 

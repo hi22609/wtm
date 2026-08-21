@@ -57,21 +57,23 @@ worth fixing before you go further.
 
 ## Where to read next
 
-Everything is in `WTM_REPORTS/`. **Two of those files are kept current. The rest are dated
+Everything is in `WTM_REPORTS/`. **Three of those files are kept current. The rest are dated
 snapshots** of what was known the night they were written, and several have been overtaken —
-each one carries a banner saying so. Read the current two first:
+each one carries a banner saying so. Read the current three first:
 
 1. **`STATE.md`** — what is true right now. Start here. Where any other report disagrees with
    it, this one is right.
 2. **`DECISIONS_FOR_MICHAEL.md`** — everything still open, with the reasoning and the cost
    attached. Read it before proposing anything.
+3. **`IDEAS.md`** — the board. Future features nobody has built yet, so a good idea from three
+   sessions ago doesn't quietly disappear. Add to it, don't just build past it.
 
 Then, as background:
 
-3. **`00_ORIENTATION.md`** — where the code is and how it got there.
-4. **`07_VERIFICATION.md`** — what has been executed versus what is still only claimed.
+4. **`00_ORIENTATION.md`** — where the code is and how it got there.
+5. **`07_VERIFICATION.md`** — what has been executed versus what is still only claimed.
    Anything marked `[UNVERIFIED]` is exactly that.
-5. **`02_AUDIT.md`** — the security and correctness findings. Its headline is out of date; the
+6. **`02_AUDIT.md`** — the security and correctness findings. Its headline is out of date; the
    individual findings are not.
 
 ## Two rules that are not negotiable
