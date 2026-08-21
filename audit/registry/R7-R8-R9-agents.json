@@ -1,0 +1,878 @@
+{
+ "R7 \u2014 EMPTY STATES": {
+  "registry": "R7 \u2014 EMPTY STATES",
+  "scanned": "Read all 21 route files under /home/user/wtm/wtm/app and 16 files under /home/user/wtm/wtm/src (all 4 FlatLists, 0 SectionLists, every ScrollView+.map and every .map() over query data, plus the hooks that feed them: useNearbyMoves, useActivity, useMove, useMoveChat, useReactions, useSpots, useInvites, useWaitlist, queryClient). Grepped the whole app/ and src/ tree for FlatList|SectionList|ListEmptyComponent|.map( to build the collection list. Also read 6 supabase migrations (005, 006, 008, 010, 014, 016) to confirm RPC signatures/limits (get_move_attendees p_limit default 5, nearby_moves, nearby_spots, get_user_moves) and node_modules/@tanstack/query-core@5.101.4 build/modern/query.js:184-192 to confirm in-flight fetch dedupe. For each collection I recorded: does a ListEmptyComponent or length===0 branch exist, what it renders, whether it has an action, and what renders while the query is undefined/errored. Nothing was executed \u2014 the app has never been built.",
+  "findings": [
+   {
+    "title": "Attendees screen renders a blank list: no ListEmptyComponent, and the isLoading flag it fetches is discarded",
+    "location": "app/move/[id]/attendees.tsx:15-25 (query), :38 (header count), :42-64 (FlatList)",
+    "reproduction": "Map tab -> tap a pin for a move with 7+ people going -> tap the pin card -> move detail -> 'See all' (app/move/[id].tsx:224-228) -> route /move/<id>/attendees. From mount until the get_move_attendees RPC resolves, `attendees` is the `= []` default; if the RPC fails (queryClient.ts:8 retries twice, ~3s, e.g. airplane mode or an RLS denial) it stays [] permanently.",
+    "consequence": "The header reads \"Who's going (0)\" over a fully blank black screen. There is no spinner, no message and no retry \u2014 `isLoading` is destructured on line 15 and never referenced again in the 67-line file. The loading state, the failed state and a genuinely empty attendee list are pixel-identical, and the only exit is the back arrow.",
+    "fix": "Use the flag that is already fetched and add an empty component:\n\n-  const { data: attendees = [], isLoading } = useQuery({\n+  const { data: attendees = [], isLoading, isError, refetch } = useQuery({\n...\n-        <Text style={{ color: '#FAFAFA', fontSize: 18, fontWeight: '800' }}>\n-          Who's going ({attendees.length})\n-        </Text>\n+        <Text style={{ color: '#FAFAFA', fontSize: 18, fontWeight: '800' }}>\n+          Who's going{isLoading ? '' : ` (${attendees.length})`}\n+        </Text>\n...\n       <FlatList\n         data={attendees}\n         keyExtractor={(item) => item.user_id}\n-        contentContainerStyle={{ padding: 16, gap: 2 }}\n+        contentContainerStyle={{ padding: 16, gap: 2, flexGrow: 1 }}\n+        ListEmptyComponent={\n+          isLoading ? (\n+            <ActivityIndicator color=\"#FF6B35\" style={{ paddingVertical: 48 }} />\n+          ) : (\n+            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', gap: 10 }}>\n+              <Text style={{ fontSize: 32 }}>\ud83c\udfaf</Text>\n+              <Text style={{ color: '#A0A0A0', fontSize: 15 }}>\n+                {isError ? \"Couldn't load who's going\" : 'Nobody has joined yet'}\n+              </Text>\n+              {isError && (\n+                <TouchableOpacity onPress={() => refetch()} style={{ paddingVertical: 8 }}>\n+                  <Text style={{ color: '#FF6B35', fontWeight: '700' }}>Retry</Text>\n+                </TouchableOpacity>\n+              )}\n+            </View>\n+          )\n+        }\n\n(add ActivityIndicator to the react-native import on line 2).",
+    "confidence": "CONFIRMED"
+   },
+   {
+    "title": "Map shows \"No moves in view\" when the fetch failed, and hangs on a spinner with no empty state when the spots fetch throws",
+    "location": "app/(tabs)/index.tsx:66-84 (fetchLayer), :87-91 (effect), :139 (isEmpty), :268-288 (empty card + spinner)",
+    "reproduction": "Moves branch: Map tab, airplane mode on, drag the map. onRegionChangeComplete (:102-106) debounces into fetchLayer; line 71 destructures only `{ data }` from supabase.rpc('nearby_moves'), so the transport error is dropped, `data` is null and line 78 does setMoves([]).\nSpots branch: Map tab, airplane mode on, tap the '\ud83d\udccd Spots' layer tab (:218-222). The effect on :87-91 sets isLoading true and calls fetchLayer; fetchNearbySpots throws on error (src/hooks/useSpots.ts:26), the rejection propagates out of the un-try/caught async body, so line 83 `setIsLoading(false)` is never reached and nothing catches the rejected promise.",
+    "consequence": "Moves branch: every pin already on screen disappears and the user is told \"No moves in view \u2014 Pan around, widen the vibe, or set the first one.\" That is a factual claim about the city that the app has no basis for; panning further (the advice given) issues more failing requests. Spots branch: the orange ActivityIndicator at :284-288 stays on screen with no pins, no empty card (isEmpty at :139 requires !isLoading) and no error \u2014 until some later pan happens to succeed, i.e. indefinitely while offline.",
+    "fix": "Give fetchLayer one try/finally and a distinct error state:\n\n   const fetchLayer = useCallback(async (region: Region) => {\n     const radiusM = Math.min(Math.max(regionToMeters(region), 5000), 50_000);\n-    if (layer === 'moves') {\n-      const { data } = await supabase.rpc('nearby_moves', { ... });\n-      setMoves((data ?? []) as NearbyMove[]);\n-    } else {\n-      const data = await fetchNearbySpots(region.latitude, region.longitude, radiusM, spotCategory);\n-      setSpots(data);\n-    }\n-    setIsLoading(false);\n+    try {\n+      if (layer === 'moves') {\n+        const { data, error } = await supabase.rpc('nearby_moves', { ... });\n+        if (error) throw error;\n+        setMoves((data ?? []) as NearbyMove[]);\n+      } else {\n+        setSpots(await fetchNearbySpots(region.latitude, region.longitude, radiusM, spotCategory));\n+      }\n+      setLoadFailed(false);\n+    } catch {\n+      setLoadFailed(true);\n+    } finally {\n+      setIsLoading(false);\n+    }\n   }, [layer, category, spotCategory]);\n\nwith `const [loadFailed, setLoadFailed] = useState(false);`, `const isEmpty = !isLoading && !loadFailed && (...)` on :139, and a second overlay next to the empty card that reads \"Couldn't load the map\" with a Retry button calling fetchLayer(lastRegion.current ?? { latitude: coords.lat, longitude: coords.lng, ...DEFAULT_DELTA }).",
+    "confidence": "CONFIRMED"
+   },
+   {
+    "title": "Feed cards always render an empty avatar pile, so the \"+N\" overflow badge stands in for faces that are never shown",
+    "location": "src/components/moves/MoveCard.tsx:199 (attendees={[]}); src/components/moves/AttendeePile.tsx:13-14, :22-64",
+    "reproduction": "Feed tab (or Profile tab -> My moves) with any move that has at least one person going. MoveCard hard-codes `attendees={[]}`, so in AttendeePile `display = [].slice(0,3)` is empty and `overflow = totalCount - 0 = totalCount`, which is > 0 for every non-empty move.",
+    "consequence": "Every feed card's social-proof row is a grey circle reading \"+4\" followed by the text \"4 going\" \u2014 the same number twice, where \"+N\" is an overflow badge whose meaning is \"N more than the faces beside me\" and there are no faces beside it. A move with one attendee renders \"+1  1 going\". The avatar branch at AttendeePile.tsx:25-40 is unreachable from the only consumer that passes real data (move/[id].tsx imports AttendeePile on line 14 but never renders it).",
+    "fix": "Feed rows already carry avatars in NearbyMove.crew_going (types/app.ts:117-122), which MoveCard reads on line 40. Pass them:\n\n-              <AttendeePile attendees={[]} totalCount={move.attendee_count} size={26} />\n+              <AttendeePile\n+                attendees={crewGoing.map((c) => ({\n+                  user_id: c.id,\n+                  username: c.username,\n+                  display_name: c.display_name,\n+                  avatar_url: c.avatar_url,\n+                }))}\n+                totalCount={move.attendee_count}\n+                size={26}\n+              />\n\nand make the badge honest when there is still nothing to overflow (AttendeePile.tsx:41):\n\n-        {overflow > 0 && (\n+        {display.length > 0 && overflow > 0 && (",
+    "confidence": "CONFIRMED"
+   },
+   {
+    "title": "Profile's \"My moves\" section renders a blank region while loading and stays blank forever if the RPC fails",
+    "location": "app/(tabs)/profile/index.tsx:21-32 (query), :145-158 (empty branch + map)",
+    "reproduction": "Profile tab, first open in a session (the ['moves','by-user',uid] key is cold). While get_user_moves is in flight `myMoves` is undefined; with the device offline it is still undefined after the two retries configured in src/lib/queryClient.ts:8.",
+    "consequence": "The \"My moves\" heading sits above an empty gap that runs straight into the Sign out button. The \ud83c\udfaf \"You haven't created any moves yet / Set the first one.\" state is gated on `myMoves?.length === 0`, which is false for undefined, so a user whose moves failed to load is shown neither their moves, nor the empty state, nor any error or retry \u2014 and cannot tell the difference between \"I have no moves\" and \"this failed\". app/user/[id].tsx:90 defaults the same query to `= []`, so the equivalent section on someone else's profile does render text; the two screens disagree.",
+    "fix": "-  const { data: myMoves } = useQuery({\n+  const { data: myMoves, isLoading: movesLoading, isError: movesError, refetch: refetchMoves } = useQuery({\n...\n-          {myMoves?.length === 0 && (\n+          {movesLoading && (\n+            <View style={{ paddingHorizontal: 16 }}>\n+              <MoveCardSkeleton />\n+            </View>\n+          )}\n+          {movesError && !movesLoading && (\n+            <TouchableOpacity onPress={() => refetchMoves()} style={{ paddingVertical: 24, alignItems: 'center' }}>\n+              <Text style={{ color: '#A0A0A0', fontSize: 15 }}>Couldn't load your moves.</Text>\n+              <Text style={{ color: '#FF6B35', fontSize: 15, fontWeight: '700', marginTop: 4 }}>Retry</Text>\n+            </TouchableOpacity>\n+          )}\n+          {!movesLoading && !movesError && !myMoves?.length && (\n\n(import MoveCardSkeleton from '@/components/ui/Skeleton').",
+    "confidence": "CONFIRMED"
+   },
+   {
+    "title": "Prefetch and screen share one cache key with different row limits, so the attendee grid truncates to 5 and \"See all\" disappears when a move is opened from the feed",
+    "location": "src/hooks/useMove.ts:24-35 (prefetch, p_limit 5, key ['rsvps', id]) and :54-67 (useMoveAttendees, key ignores `limit`); consumers app/move/[id].tsx:35, :224-228, :241",
+    "reproduction": "Feed tab -> tap any move card with more than 6 people going. MoveCard.tsx:62 calls prefetchMove(qc, move.id) synchronously before router.push, starting a get_move_attendees fetch with p_limit 5 under key ['rsvps', id]. The detail screen then mounts useMoveAttendees(id, 12), which subscribes to that same key while the prefetch is still in flight; query-core 5.101.4 (build/modern/query.js:184-192) returns the in-flight retryer promise instead of starting a fetch with the limit-12 function, so the 5-row payload is what lands. The result is fresh under the 2-minute default staleTime (queryClient.ts:6), so refetchOnMount does not correct it.",
+    "consequence": "On a move with 20 attendees the \"Who's going\" grid shows 5 avatars, and because \"See all\" is gated on `attendees.length > 6` the link is not rendered at all \u2014 /move/<id>/attendees is unreachable from the feed. Opening the identical move from a Map pin card or an Activity row (neither prefetches) fetches 12 and shows the link, so the same move renders two different attendee sections depending on how the user got there.",
+    "fix": "Make the limit part of the key (prefix invalidations such as queryKeys.rsvps.forMove(id) still match):\n\n src/hooks/useMove.ts\n export function useMoveAttendees(moveId: string, limit = 5) {\n   return useQuery({\n-    queryKey: queryKeys.rsvps.forMove(moveId),\n+    queryKey: [...queryKeys.rsvps.forMove(moveId), limit],\n\n and align the prefetch with what the detail screen actually asks for:\n\n   qc.prefetchQuery({\n-    queryKey: queryKeys.rsvps.forMove(moveId),\n+    queryKey: [...queryKeys.rsvps.forMove(moveId), 12],\n     queryFn: async () => {\n       const { data, error } = await supabase.rpc('get_move_attendees', {\n         p_move_id: moveId,\n-        p_limit: 5,\n+        p_limit: 12,\n       });",
+    "confidence": "CONFIRMED"
+   },
+   {
+    "title": "Feed empty state claims the city is empty when a category or radius filter is what emptied it",
+    "location": "src/components/feed/FeedList.tsx:8-18 (EmptyState), :61; filters set in src/components/feed/FilterBar.tsx:26-54, :63-87 and rendered above the list in app/(tabs)/list.tsx:55-56",
+    "reproduction": "Feed tab -> tap the '\ud83c\udfc0 Sports' category pill -> tap the '1 mi' radius pill. useNearbyMoves refetches with filter_cat='sports', radius_m=1609; with no sports move within a mile, nearby_moves returns [] and ListEmptyComponent renders.",
+    "consequence": "The user is told \"No moves yet \u2014 Be the first to set the move for today. Post something and get people moving.\" while moves they were looking at seconds earlier are simply outside the active filter. The message never mentions the filter and contains no control to clear it, and unlike the Activity tab's empty state (app/(tabs)/activity.tsx:174-183) it has no button at all. The map screen handles the same condition correctly at app/(tabs)/index.tsx:276-279 (\"Pan around, widen the vibe, or set the first one.\").",
+    "fix": "Make EmptyState read the filter store it is already filtered by:\n\n+import { useRouter } from 'expo-router';\n+import { useFilterStore } from '@/store/filterStore';\n\n function EmptyState() {\n+  const router = useRouter();\n+  const { category, radiusMeters, setCategory, setRadius } = useFilterStore();\n+  const filtered = category !== null || radiusMeters !== 8047;\n   return (\n     <View className=\"flex-1 items-center justify-center gap-4 py-20\">\n       <Text style={{ fontSize: 48 }}>\ud83c\udfd9\ufe0f</Text>\n-      <Text className=\"text-ink font-bold text-xl\">No moves yet</Text>\n-      <Text className=\"text-ink-muted text-center text-base\" style={{ maxWidth: 240, lineHeight: 22 }}>\n-        Be the first to set the move for today. Post something and get people moving.\n-      </Text>\n+      <Text className=\"text-ink font-bold text-xl\">\n+        {filtered ? 'Nothing matches that filter' : 'No moves yet'}\n+      </Text>\n+      <Text className=\"text-ink-muted text-center text-base\" style={{ maxWidth: 240, lineHeight: 22 }}>\n+        {filtered\n+          ? 'Widen the vibe or the radius \u2014 there may be moves just outside it.'\n+          : 'Be the first to set the move for today. Post something and get people moving.'}\n+      </Text>\n+      <TouchableOpacity\n+        onPress={() => {\n+          if (filtered) { setCategory(null); setRadius(8047); } else { router.push('/create'); }\n+        }}\n+        style={{ marginTop: 8, backgroundColor: '#FF6B35', paddingHorizontal: 24, paddingVertical: 12, borderRadius: 24 }}\n+      >\n+        <Text style={{ color: '#fff', fontWeight: '700', fontSize: 14 }}>\n+          {filtered ? 'Clear filters' : 'Set the move'}\n+        </Text>\n+      </TouchableOpacity>\n     </View>\n   );\n }\n\n(add TouchableOpacity to the react-native import on line 2; 8047 is the default radius in src/store/filterStore.ts:13 \u2014 import it as a constant rather than repeating the literal.)",
+    "confidence": "CONFIRMED"
+   }
+  ],
+  "inventory": [
+   {
+    "item": "Nearby moves feed (FlatList, infinite)",
+    "location": "src/components/feed/FeedList.tsx:48-74, empty component at :8-18, mounted by app/(tabs)/list.tsx:56",
+    "renders": "ListEmptyComponent present: centered \ud83c\udfd9\ufe0f + \"No moves yet\" + \"Be the first to set the move for today. Post something and get people moving.\" No button, and the copy is identical whether or not a category/radius filter is active (see finding). Loading is covered by 3 skeletons (:39-45)."
+   },
+   {
+    "item": "Activity feed (FlatList)",
+    "location": "app/(tabs)/activity.tsx:149-189, empty component at :161-185",
+    "renders": "Best empty state in the app: circle icon + \"All clear\" + \"When people join your moves or tag you as crew, it shows up here.\" + orange \"Create a move\" button routing to /create (valid route: app/(tabs)/create.tsx). Loading is a full-screen ActivityIndicator (:119-125)."
+   },
+   {
+    "item": "Attendees list, /move/<id>/attendees (FlatList)",
+    "location": "app/move/[id]/attendees.tsx:42-64",
+    "renders": "NOTHING. No ListEmptyComponent, no length===0 branch; `isLoading` is destructured at :15 and never used. Blank body under a header reading \"Who's going (0)\" during load, on error, and when genuinely empty. FINDING."
+   },
+   {
+    "item": "Move detail attendee grid (View + .map over query data)",
+    "location": "app/move/[id].tsx:231-258, data from useMoveAttendees(id, 12) at :35",
+    "renders": "length===0 branch: dark card with \ud83c\udfaf + \"Be the first to join\". Non-empty branch renders up to 12 avatars; \"See all\" link only when length > 6 (:224-228), which the prefetch/limit collision suppresses when entered from the feed (see finding)."
+   },
+   {
+    "item": "Move chat messages (FlatList)",
+    "location": "src/components/moves/MoveChat.tsx:125-148",
+    "renders": "length===0 branch (:126-134): \ud83d\udcac + \"No messages yet\" + \"Be the first to say something\", with the composer still mounted below (:152-189) so the empty state has an action. Loading is an ActivityIndicator (:98-104). Chat is only mounted for isGoing || isCreator; everyone else gets the \ud83d\udd12 \"Join to see the chat\" panel (app/move/[id].tsx:285-293)."
+   },
+   {
+    "item": "Map move markers (MapView + .map over local state)",
+    "location": "app/(tabs)/index.tsx:158-167, empty overlay at :268-282, isEmpty at :139",
+    "renders": "Floating card: \ud83d\uddfa\ufe0f + \"No moves in view\" + \"Pan around, widen the vibe, or set the first one.\" No button. Also renders on a dropped RPC error, since :71 discards the error (see finding)."
+   },
+   {
+    "item": "Map spot markers (MapView + .map over local state)",
+    "location": "app/(tabs)/index.tsx:168-177, same empty overlay at :268-282",
+    "renders": "Floating card: \ud83d\udc8e + \"No spots dropped yet\" + \"Know a fire spot? Long-press the map to drop it.\" \u2014 copy names the gesture, and long-press is wired at :121-128. Never reached when fetchNearbySpots throws, because isLoading is then never cleared (see finding)."
+   },
+   {
+    "item": "Profile \u2192 My moves (ScrollView + .map over query data)",
+    "location": "app/(tabs)/profile/index.tsx:145-158",
+    "renders": "Empty branch only for `myMoves?.length === 0`: \ud83c\udfaf + \"You haven't created any moves yet. / Set the first one.\" (the orange \"Set the first one\" is plain Text, not a link). Renders nothing at all while the query is undefined \u2014 loading or failed. FINDING."
+   },
+   {
+    "item": "User profile \u2192 Upcoming moves (ScrollView + .map over query data)",
+    "location": "app/user/[id].tsx:215-223, query defaults to [] at :90",
+    "renders": "length===0 branch: dim centered text \"No upcoming moves\". No action, which is correct here \u2014 it is someone else's profile. On query failure the `= []` default makes it show the same text."
+   },
+   {
+    "item": "Invite friends \u2192 \"In because of you\" referral list (.map over query data)",
+    "location": "app/invite-friends.tsx:129-159",
+    "renders": "Section is omitted entirely when referrals.length === 0 (`referrals.length > 0 &&`). Not a blank screen: the invite-code card, Share button and footer copy still fill the screen, so this reads as deliberate progressive disclosure."
+   },
+   {
+    "item": "AttendeePile avatar row",
+    "location": "src/components/moves/AttendeePile.tsx:16-20 (totalCount===0), :22-64",
+    "renders": "totalCount===0: \"Be the first to join\". Otherwise an avatar row \u2014 but its only live consumer passes attendees={[]} (MoveCard.tsx:199), so it always degrades to a grey \"+N\" bubble next to \"N going\". FINDING."
+   },
+   {
+    "item": "Hype reaction pills (.map over query data)",
+    "location": "src/components/moves/HypeReactions.tsx:59-70, data from src/hooks/useReactions.ts:14-32",
+    "renders": "Always 5 pills once loaded \u2014 useReactions rebuilds the row from the EMOJIS constant (:25-29), so zero-count emojis still render (count text hidden below 1). While the query is loading or after it errors, `data = []` makes the row render zero children \u2014 a silent 0-height gap, no message. Not a finding: transient and unobtrusive."
+   },
+   {
+    "item": "Feed filter pills \u2014 category + radius (ScrollView + .map)",
+    "location": "src/components/feed/FilterBar.tsx:26-54 and :63-87",
+    "renders": "Constant-derived (CATEGORY_META, RADIUS_OPTIONS in src/types/app.ts) \u2014 cannot be empty."
+   },
+   {
+    "item": "Map filter pills (ScrollView + .map)",
+    "location": "app/(tabs)/index.tsx:232-250, arrays built at :26-42",
+    "renders": "Constant-derived from CATEGORY_META / SPOT_CATEGORY_META \u2014 cannot be empty."
+   },
+   {
+    "item": "Create-move category picker (.map)",
+    "location": "src/components/moves/CategoryPicker.tsx:16-49",
+    "renders": "Constant-derived (11 CATEGORY_META entries) \u2014 cannot be empty."
+   },
+   {
+    "item": "Add-spot category grid (.map)",
+    "location": "app/add-spot.tsx:173-198",
+    "renders": "Constant-derived (8 SPOT_CATEGORY_META entries) \u2014 cannot be empty."
+   },
+   {
+    "item": "Age-gate birth-year grid (.map)",
+    "location": "app/(auth)/verify-age.tsx:98-123, array at :16-19",
+    "renders": "Array.from length 10 \u2014 cannot be empty. The yes/no birthday row at :137 is a 2-element literal."
+   },
+   {
+    "item": "Welcome screen vibe pills (.map)",
+    "location": "app/(auth)/welcome.tsx:58-69",
+    "renders": "Inline 6-element literal \u2014 cannot be empty."
+   },
+   {
+    "item": "Report-reason action sheets (.map into Alert buttons)",
+    "location": "app/user/[id].tsx:55-71 and app/move/[id].tsx:301-313",
+    "renders": "3-element literals passed to Alert.alert \u2014 cannot be empty; not a rendered collection."
+   }
+  ]
+ },
+ "R8 \u2014 LOADING STATES": {
+  "registry": "R8 \u2014 LOADING STATES",
+  "scanned": "Read all 14 files in src/hooks, all 21 route files in app/, and src/components/{feed/FeedList,feed/FilterBar,moves/MoveCard,moves/RSVPButton,moves/MoveChat,moves/HypeReactions,moves/AttendeePile,ui/Skeleton}.tsx, plus src/lib/queryClient.ts and src/store/{auth,location,filter}Store.ts. Traced 18 useQuery/useInfiniteQuery boundaries, 11 useMutation boundaries, and 9 hand-rolled async boundaries (map fetchLayer, session/profile init, location init, deep-link invite validation, image uploads, auth submits) to the exact JSX rendered while each is pending. Verified placeholderData/keepPreviousData and enabled semantics against the installed @tanstack/query-core 5.101.4 (build/modern/queryObserver.js:265-283, 306-331: placeholderData forces status='success' so isLoading is false; a disabled query stays status='pending' with isLoading false). Verified nearby_moves/nearby_spots signatures and the rsvps unique(move_id,user_id) constraint in supabase/migrations to establish consequences. No app was built or run; every claim below is read off source.",
+  "findings": [
+   {
+    "title": "The feed's empty state (\"No moves yet\") is rendered from a Pittsburgh-fallback query that runs before GPS resolves",
+    "location": "src/hooks/useNearbyMoves.ts:34-56 (no `enabled`, `const { lat, lng } = coords ?? PITTSBURGH` at :43) + src/components/feed/FeedList.tsx:39-45 and :61",
+    "reproduction": "Cold start on a device outside Pittsburgh. `useLocationStore.coords` starts null (src/store/locationStore.ts:18) and `useLocationInit` only fills it after the permission dialog plus `getCurrentPositionAsync({accuracy: Balanced})` returns \u2014 seconds indoors. Tap the Feed tab during that window: useNearbyMoves fires `nearby_moves` against PITTSBURGH (40.4406,-79.9959). nearby_moves also filters `starts_at >= now() and <= now() + 24h` (supabase/migrations/016_one_nearby_moves.sql:122-126), so for a non-Pittsburgh user it returns []. isLoading goes false, `moves` is [], and FeedList renders ListEmptyComponent. When coords then resolve, the queryKey changes (:46) and `placeholderData: keepPreviousData` (:55) re-serves the previous *empty* pages \u2014 query-core sets status='success', so isLoading stays false and the same empty state is still on screen through the second fetch. The same happens on the third key change when `uid` resolves from authStore, and on any FilterBar category/radius tap whose previous result was empty.",
+    "consequence": "A first-time user's first look at the core feed says \"No moves yet \u2014 Be the first to set the move for today\" on a night when there are moves two blocks away. It is not a flicker: it persists for the whole GPS acquisition plus the refetch, and it is indistinguishable from a genuine empty city. Users who tap a category filter that has no cached page get the same message instead of skeletons.",
+    "fix": "Don't query the fallback until the location attempt has settled, and treat placeholder data as loading. (1) src/store/locationStore.ts: add `resolved: false` and `setResolved: (resolved) => set({ resolved })`. (2) src/hooks/useLocation.ts requestLocation(): wrap the body in `try { ... } finally { setFetching(false); useLocationStore.getState().setResolved(true); }` so a GPS/permission throw still settles it. (3) src/hooks/useNearbyMoves.ts: `const resolved = useLocationStore((s) => s.resolved);` and add `enabled: resolved` to the useInfiniteQuery \u2014 the Pittsburgh fallback then only serves the deliberate permission-denied case that list.tsx:50 already advertises. (4) src/components/feed/FeedList.tsx:21 and :39: destructure `isPending, isPlaceholderData` and change the guard to `if (isPending || isPlaceholderData) { return <skeletons/> }` \u2014 isPending is true while the query is disabled and while a new key is in flight behind placeholder data, so the empty state can only render on a settled, real result.",
+    "confidence": "CONFIRMED"
+   },
+   {
+    "title": "\"See all\" attendees screen renders a blank list and a \"(0)\" header while loading \u2014 isLoading is destructured and never used",
+    "location": "app/move/[id]/attendees.tsx:15-25 (isLoading bound), :38 (header count), :42-64 (FlatList with no loading branch and no ListEmptyComponent)",
+    "reproduction": "Open any move with more than 6 attendees, tap \"See all\" (app/move/[id].tsx:225). The screen's query uses key ['attendees', id] \u2014 a different key from queryKeys.rsvps.forMove(id) that the detail screen and prefetchMove populate, so it is always a cold fetch. For the duration of the get_move_attendees RPC the header reads \"Who's going (0)\" and the body is empty black.",
+    "consequence": "Tapping \"See all\" on a 40-person move lands on a screen that states the move has 0 attendees, then pops the list in. On a slow connection the user reads it as a broken or empty guest list and backs out.",
+    "fix": "Use the flag that is already bound. Header: `Who's going{isLoading ? '' : ` (${attendees.length})`}`. Body: `{isLoading ? <View style={{flex:1,alignItems:'center',justifyContent:'center'}}><ActivityIndicator color=\"#FF6B35\" /></View> : <FlatList ... />}` (import ActivityIndicator from react-native). Also change the queryKey to `queryKeys.rsvps.forMove(id)`-style reuse or include the limit so the prefetched page can seed it.",
+    "confidence": "CONFIRMED"
+   },
+   {
+    "title": "Move detail treats \"RSVP status still loading\" as \"you are not going\" in three places at once",
+    "location": "src/components/moves/RSVPButton.tsx:22-23 and :65-77 (undefined status falls through to the `Join Move` branch); app/move/[id].tsx:36-37, :282-294 (chat gate), :350-354 (RSVP button), :355-370 (crew-share button)",
+    "reproduction": "Cold start, tap a move you already joined. `prefetchMove` (src/hooks/useMove.ts:10-36) warms only the detail and attendee caches \u2014 never queryKeys.rsvps.myStatus \u2014 so useMyRsvpStatus starts on mount, strictly after the prefetched detail. The screen therefore paints past the skeleton (app/move/[id].tsx:87) with `myStatus === undefined`: `isGoing` is false, so the chat renders \"\ud83d\udd12 Join to see the chat\", the bottom bar shows the plain share icon instead of \"Bring the crew\", and RSVPButton renders the full orange \"Join Move\". The same happens on the Map tab: app/(tabs)/index.tsx:316 mounts RSVPButton with no `knownStatus`, even though `selectedMove.my_status` is already in hand (src/types/app.ts:110).",
+    "consequence": "A user who is already going is told they are not. If they tap the mislabeled \"Join Move\" during that window, the insert violates `unique(move_id, user_id)` (supabase/migrations/005_rsvps.sql:10); with the global `mutations: { retry: 1 }` (src/lib/queryClient.ts:14) it fails twice, then onError fires an error haptic, rolls the optimistic +1 attendee count back, and shows no message. Meanwhile the crew chat they belong to is hidden behind a lock screen.",
+    "fix": "(1) app/(tabs)/index.tsx:316 \u2192 `<RSVPButton moveId={selectedMove.id} isFull={selectedMove.is_full} compact knownStatus={selectedMove.my_status} />` \u2014 the row already carries it, which also removes an RPC per pin tap. (2) src/hooks/useMove.ts prefetchMove: add a third `qc.prefetchQuery` for `queryKeys.rsvps.myStatus(moveId)` calling `my_rsvp_status`. (3) src/components/moves/RSVPButton.tsx:22 \u2192 `const { data: fetchedStatus, isPending: statusPending } = useMyRsvpStatus(hasKnown ? '' : moveId);` and fold `!hasKnown && statusPending` into the existing `isLoading` at :32 so the button renders its ActivityIndicator (already wired at :94) and stays `disabled` instead of claiming \"Join Move\". (4) app/move/[id].tsx:36 \u2192 take `isPending: statusPending` from useMyRsvpStatus and render the chat body as a spinner while `statusPending`, rather than the \"Join to see the chat\" lock.",
+    "confidence": "CONFIRMED"
+   },
+   {
+    "title": "Drop-a-Spot loses its pending state during the cover-photo upload, so a second tap creates a duplicate spot",
+    "location": "app/add-spot.tsx:46-75 (handleSubmit) and :96-112 (button gated only on `createSpot.isPending`)",
+    "reproduction": "Long-press the map to open /add-spot, add a cover photo, fill name + category, tap \"Drop it\". `createSpot.mutateAsync` resolves as soon as the row is inserted, so `createSpot.isPending` flips back to false at :52 \u2014 the button returns to the orange enabled \"Drop it\" label. The `uploadImage` + `spots.update` at :64-65 then run for as long as the photo takes to upload, and only after that does :71 navigate away. Any tap during those seconds re-enters handleSubmit.",
+    "consequence": "On mobile data a user who thinks the first tap missed taps again and gets two identical spots at the same coordinates on the map, both auto-fired by the creator (src/hooks/useSpots.ts:156); the app then navigates to the second one while the photo lands on the first. The sibling screen already solved this: app/(tabs)/create.tsx:65, :120-123, :134 keeps a separate `isUploading` flag.",
+    "fix": "Mirror create.tsx. Add `const [isUploading, setIsUploading] = useState(false);`, set it around the upload block (`setIsUploading(true)` before :64, `setIsUploading(false)` in a finally), define `const busy = createSpot.isPending || isUploading;`, and use `busy` at :98 (`disabled={!canSubmit || busy}`), :102 and :105 in place of `createSpot.isPending`. Also `setIsUploading(false)` in the catch at :72.",
+    "confidence": "CONFIRMED"
+   },
+   {
+    "title": "Map's Spots layer spins forever when nearby_spots fails \u2014 the loading flag is never cleared on the throw path",
+    "location": "app/(tabs)/index.tsx:66-84 (fetchLayer: `setIsLoading(false)` only at :83, after an unguarded await) and :87-91, :95-100, :102-106 (three call sites, none with a .catch); src/hooks/useSpots.ts:26 (`if (error) throw error`)",
+    "reproduction": "Tap \"\ud83d\udccd Spots\" on the map with the network down (or any condition where the nearby_spots RPC returns an error \u2014 postgrest-js converts a failed fetch into `{ error }`). The layer effect at :87-91 sets isLoading true, fetchLayer awaits fetchNearbySpots, which throws, so line 83 never runs and the rejection is unhandled.",
+    "consequence": "The user sits on a pin-less map with the orange spinner at :284-288 pinned at 48% height indefinitely \u2014 no error, no retry control, no empty state. It only clears if they pan the map (which re-triggers fetchLayer via the debounce) or switch back to Moves. The Moves branch has the inverse defect: :71-78 destructures only `data` and ignores `error`, so a failed request calls `setMoves([])` and the map confidently reports \"No moves in view\" (:268-282).",
+    "fix": "Give fetchLayer a settled path and an error flag: wrap the body in `try { ... } catch (e) { setLoadError(true); } finally { setIsLoading(false); }`, and in the moves branch destructure `const { data, error } = await supabase.rpc(...)` and `if (error) throw error;` so both layers take the same path. Render `loadError` as a tappable \"Couldn't load \u2014 tap to retry\" card in place of the empty-state card at :268, clearing it at the top of fetchLayer. Separately, add `setIsLoading(true)` inside onRegionChangeComplete's timeout at :105 so a pan out of an empty area doesn't keep \"No moves in view\" on screen while the next region loads.",
+    "confidence": "CONFIRMED"
+   },
+   {
+    "title": "Move and Spot detail screens render the shimmer skeleton permanently when the query errors",
+    "location": "app/move/[id].tsx:87-98 (`if (isLoading || !move)`); app/spot/[id].tsx:62-72 (`if (isLoading || !spot)`)",
+    "reproduction": "Open a move or spot whose row is gone or unreadable \u2014 a shared link to a deleted move, or a spot whose `get_spot` returns no row (src/hooks/useSpots.ts:36 throws 'spot_not_found'). After the two default retries (src/lib/queryClient.ts:8-9, ~6s), status is 'error': isLoading is false and data is undefined, so the guard's `!move` / `!spot` arm keeps rendering the same Skeleton block forever.",
+    "consequence": "The screen shimmers indefinitely, promising content that will never arrive, and the skeleton branch renders no back button \u2014 the user has to guess at the OS back gesture. The identical situation is handled correctly one screen over: app/user/[id].tsx:111-117 renders \"User not found\".",
+    "fix": "Split the guard. `if (isLoading) return <skeleton/>;` then `if (isError || !move) return (<SafeAreaView \u2026><TouchableOpacity onPress={() => router.back()}><Ionicons name=\"arrow-back\" \u2026/></TouchableOpacity><Text style={{color:'#606060'}}>This move isn't available anymore</Text></SafeAreaView>);` taking `isError` from `useMove(id)` / `useSpot(id)`.",
+    "confidence": "CONFIRMED"
+   },
+   {
+    "title": "Invite-friends renders a failed invite query as a definitive \"No invites left\"",
+    "location": "app/invite-friends.tsx:20-22 (`invite?.invites_left ?? 0`, `invite?.max_uses ?? 5`) and :67-69 (only `isLoading` is branched on), :83-90, :111-124",
+    "reproduction": "Profile \u2192 \"Invite friends\" with the get_my_invite RPC failing (offline, or the row missing). The spinner shows through both retries, then isLoading goes false with `invite === undefined`: `invitesLeft` falls back to 0 and `totalInvites` to 5, so the card renders the code as \"\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\", a red \"0 of 5 left\" pill, and a greyed-out, `disabled` button reading \"No invites left\".",
+    "consequence": "In an invite-only product, a transient network failure tells the user they have exhausted their invites and disables sharing. There is no retry affordance; they must back out and re-enter the screen.",
+    "fix": "Take `isError` from useMyInvite and branch on it before the fallbacks: `if (isError || (!isLoading && !invite)) return <retry card/>` with a `refetch()` button, and drop the `?? 0` / `?? 5` defaults so a missing invite can never be rendered as a real quota.",
+    "confidence": "CONFIRMED"
+   }
+  ],
+  "inventory": [
+   {
+    "item": "useNearbyMoves (useInfiniteQuery) \u2014 feed",
+    "location": "src/hooks/useNearbyMoves.ts:45-56 \u2192 src/components/feed/FeedList.tsx:39-45",
+    "renders": "First load ever: 3 MoveCardSkeletons. Key change (coords, uid, category, radius): placeholderData keepPreviousData \u2192 previous pages, isLoading false, RefreshControl spinner via isRefetching; if previous pages were empty, the \"No moves yet\" EmptyState renders through the fetch (Finding 1)."
+   },
+   {
+    "item": "useNearbyMoves \u2014 next page",
+    "location": "src/components/feed/FeedList.tsx:62-66",
+    "renders": "ActivityIndicator footer while isFetchingNextPage. Correct."
+   },
+   {
+    "item": "Map layer fetch (hand-rolled supabase.rpc, not react-query)",
+    "location": "app/(tabs)/index.tsx:66-106, 284-288",
+    "renders": "Centred ActivityIndicator while `isLoading` state is true; two parallel fetchLayer calls fire on mount (:87-91 and :95-100). No isLoading on pan-refetch (:102-106), so the previous region's \"No moves in view\" card persists during the debounce+fetch. No error path (Finding 5)."
+   },
+   {
+    "item": "useActivityFeed",
+    "location": "src/hooks/useActivity.ts:15-32 \u2192 app/(tabs)/activity.tsx:119-125",
+    "renders": "Full-screen ActivityIndicator while isLoading. Correct. While the query is disabled (no userId) isLoading is false and the \"All clear\" empty state renders, but AuthGate keeps the splash up over that window."
+   },
+   {
+    "item": "useUnreadCount",
+    "location": "src/hooks/useActivity.ts:62-77 \u2192 app/(tabs)/_layout.tsx:20-41, app/(tabs)/activity.tsx:99",
+    "renders": "Nothing (badge hidden, `= 0` default) until it resolves. Acceptable \u2014 a badge has no loading form."
+   },
+   {
+    "item": "useMove",
+    "location": "src/hooks/useMove.ts:38-52 \u2192 app/move/[id].tsx:87-98",
+    "renders": "Skeleton block (Skeleton.tsx). Error \u2192 skeleton forever (Finding 6)."
+   },
+   {
+    "item": "useMoveAttendees",
+    "location": "src/hooks/useMove.ts:54-67 \u2192 app/move/[id].tsx:35, 231-238",
+    "renders": "`data = []` default with no isLoading branch \u2192 the \"\ud83c\udfaf Be the first to join\" card renders while the RPC is in flight, and the \"See all\" link (gated on length > 6) is hidden. Note the queryKey omits the `limit` arg, so the 12-row request reuses the prefetched 5-row page."
+   },
+   {
+    "item": "useMyRsvpStatus",
+    "location": "src/hooks/useMove.ts:69-81 \u2192 src/components/moves/RSVPButton.tsx:22-23; app/move/[id].tsx:36-37",
+    "renders": "undefined during load \u2192 \"Join Move\", \"\ud83d\udd12 Join to see the chat\", and the non-crew share icon (Finding 3)."
+   },
+   {
+    "item": "useMoveChat (useInfiniteQuery)",
+    "location": "src/hooks/useMoveChat.ts:16-49 \u2192 src/components/moves/MoveChat.tsx:98-104",
+    "renders": "ActivityIndicator while isLoading. Correct. `fetchOlder` (:143) has no footer indicator while the older page loads."
+   },
+   {
+    "item": "useReactions query",
+    "location": "src/hooks/useReactions.ts:14-32 \u2192 src/components/moves/HypeReactions.tsx:59-70",
+    "renders": "`= []` default \u2192 an empty zero-height row on the move detail screen, then 5 pills pop in and shift the layout below. No skeleton."
+   },
+   {
+    "item": "useWaitlist position",
+    "location": "src/hooks/useWaitlist.ts:12-22 \u2192 src/components/moves/RSVPButton.tsx:70",
+    "renders": "\"On waitlist\" until the position arrives, then \"Waitlist #N\". Degrades correctly."
+   },
+   {
+    "item": "useSpot",
+    "location": "src/hooks/useSpots.ts:30-41 \u2192 app/spot/[id].tsx:62-72",
+    "renders": "Skeleton block. Error \u2192 skeleton forever (Finding 6)."
+   },
+   {
+    "item": "useIsBlocked",
+    "location": "src/hooks/useSafety.ts:8-24 \u2192 app/user/[id].tsx:19, 119-145",
+    "renders": "`= false` default \u2192 the full profile (name, avatar, their moves) of a user you blocked renders until the query resolves, then swaps to the \"You've blocked @x\" screen."
+   },
+   {
+    "item": "Own upcoming moves (inline useQuery)",
+    "location": "app/(tabs)/profile/index.tsx:21-32, 145-158",
+    "renders": "Nothing \u2014 `myMoves?.length === 0` is false while undefined, so an empty gap sits under the \"My moves\" heading with no skeleton, then cards appear."
+   },
+   {
+    "item": "Public profile (inline useQuery)",
+    "location": "app/user/[id].tsx:74-88, 103-117",
+    "renders": "Full-screen ActivityIndicator, then \"User not found\" on error. The best-handled boundary in the app."
+   },
+   {
+    "item": "Another user's moves (inline useQuery)",
+    "location": "app/user/[id].tsx:90-101, 215-218",
+    "renders": "`= []` default \u2192 \"No upcoming moves\" renders while the get_user_moves RPC is in flight."
+   },
+   {
+    "item": "Attendees list (inline useQuery)",
+    "location": "app/move/[id]/attendees.tsx:15-25, 38, 42-64",
+    "renders": "Blank list body and a \"Who's going (0)\" header; isLoading is bound but never referenced (Finding 2)."
+   },
+   {
+    "item": "useMyInvite",
+    "location": "src/hooks/useInvites.ts:6-17 \u2192 app/invite-friends.tsx:16, 67-69; app/(tabs)/profile/index.tsx:19, 129",
+    "renders": "invite-friends: ActivityIndicator while isLoading, but the hero copy at :63 already claims \"You've got 5 spots\" from the `?? 5` fallback; error \u2192 \"0 of 5 left\" + disabled button (Finding 7). Profile card: falls back to \"Bring your people in\" \u2014 fine."
+   },
+   {
+    "item": "useMyReferrals",
+    "location": "src/hooks/useInvites.ts:19-30 \u2192 app/invite-friends.tsx:17, 129-159",
+    "renders": "Section hidden until the array is non-empty; it sits inside the useMyInvite isLoading gate, so no separate flash."
+   },
+   {
+    "item": "useSearchUsers",
+    "location": "src/hooks/useSearchUsers.ts:12-33",
+    "renders": "No consumer anywhere in app/ or src/ \u2014 dead async boundary."
+   },
+   {
+    "item": "useRSVP joinMutation / leaveMutation",
+    "location": "src/hooks/useRSVP.ts:32-95, 97-147 \u2192 src/components/moves/RSVPButton.tsx:32-33, 88-95",
+    "renders": "Button dims to 0.7, becomes `disabled`, and swaps its label for an ActivityIndicator; counts move optimistically first. Correct."
+   },
+   {
+    "item": "useWaitlist joinMutation / leaveMutation",
+    "location": "src/hooks/useWaitlist.ts:24-55 \u2192 src/components/moves/RSVPButton.tsx:32-33",
+    "renders": "Same disabled+spinner path as RSVP. Correct."
+   },
+   {
+    "item": "useReactions toggleMutation",
+    "location": "src/hooks/useReactions.ts:34-72 \u2192 src/components/moves/HypeReactions.tsx:67",
+    "renders": "No spinner, but onMutate flips the pill and count optimistically plus a light haptic, so a double-tap simply toggles back. Acceptable."
+   },
+   {
+    "item": "useMoveChat sendMutation",
+    "location": "src/hooks/useMoveChat.ts:104-114 \u2192 src/components/moves/MoveChat.tsx:91-96, 177, 184-187",
+    "renders": "Send button disabled and swapped for an ActivityIndicator; `send()` also early-returns on isPending. Correct."
+   },
+   {
+    "item": "useCreateMove",
+    "location": "src/hooks/useCreateMove.ts:13-53 \u2192 app/(tabs)/create.tsx:134, 152-167",
+    "renders": "Header button disabled with an ActivityIndicator, and the separate `isUploading` flag (:65, 120-123) keeps it pending through the cover upload. Correct \u2014 this is the pattern add-spot is missing."
+   },
+   {
+    "item": "useCreateSpot",
+    "location": "src/hooks/useSpots.ts:133-165 \u2192 app/add-spot.tsx:96-112",
+    "renders": "Spinner only while the insert is in flight; the button re-enables during the cover upload (Finding 4)."
+   },
+   {
+    "item": "useFireSpot / useSaveSpot",
+    "location": "src/hooks/useSpots.ts:44-87, 89-131 \u2192 app/spot/[id].tsx:31-43",
+    "renders": "No spinner; onMutate flips i_fired/i_saved and the count optimistically with a haptic. Acceptable."
+   },
+   {
+    "item": "useBlockUser",
+    "location": "src/hooks/useSafety.ts:26-54 \u2192 app/user/[id].tsx:29, 41, 133",
+    "renders": "No pending feedback anywhere. Block: the screen router.back()s immediately (:42) so the round trip is invisible. Unblock from the blocked screen (:133): the \"You've blocked @x\" panel stays unchanged with no spinner until onSuccess writes the cache; extra taps issue duplicate deletes (harmless)."
+   },
+   {
+    "item": "Session restore + profile fetch",
+    "location": "src/hooks/useSession.ts:9-40 \u2192 app/_layout.tsx:23-25",
+    "renders": "Splash screen held until isLoading flips. But fetchProfile ignores its error (`const { data } = await \u2026`) and calls setLoading(false) with profile null, and nothing ever refetches \u2014 AuthGate:39 then returns early forever, hiding the splash over a tab bar where app/(tabs)/profile/index.tsx:48 and profile/edit.tsx:63 both `return null` (blank black screen, no sign-out control) until the app is restarted."
+   },
+   {
+    "item": "Location permission + GPS fix",
+    "location": "src/hooks/useLocation.ts:6-27",
+    "renders": "No UI of its own; `isFetching` is exposed by useLocation() but no screen reads it. A throw from requestForegroundPermissionsAsync or getCurrentPositionAsync leaves isFetching stuck true and coords null."
+   },
+   {
+    "item": "Deep-link invite validation",
+    "location": "app/i/[code].tsx:26-64, 66-81",
+    "renders": "\"Checking your invite\u2026\" + ActivityIndicator, and waits on auth isLoading before deciding. Correct."
+   },
+   {
+    "item": "Profile save (hand-rolled)",
+    "location": "app/(tabs)/profile/edit.tsx:31-61, 77-88",
+    "renders": "Save button disabled with an ActivityIndicator via isSaving, cleared before the error Alert. Correct."
+   },
+   {
+    "item": "Auth submits (sign-in, sign-up, invite, verify-age)",
+    "location": "app/(auth)/sign-in.tsx:99-108; sign-up.tsx:179-187; invite.tsx:117-128; verify-age.tsx:166-176",
+    "renders": "Every one disables its CTA and swaps in an ActivityIndicator for the round trip. Correct."
+   },
+   {
+    "item": "Skeleton.tsx components",
+    "location": "src/components/ui/Skeleton.tsx:18-57",
+    "renders": "Used in exactly 3 places: FeedList.tsx:42 (MoveCardSkeleton x3), app/move/[id].tsx:91-94, app/spot/[id].tsx:66-68. Every other loading boundary in the app is either a bare ActivityIndicator or nothing."
+   }
+  ]
+ },
+ "R9 \u2014 TOUCH TARGETS": {
+  "registry": "R9 \u2014 TOUCH TARGETS",
+  "scanned": "Read all 23 files in /home/user/wtm/wtm/app and all 12 component files in /home/user/wtm/wtm/src that contain onPress/Pressable/TouchableOpacity/TouchableHighlight/Button (grep found zero Pressable, zero TouchableHighlight, zero RN <Button> \u2014 every control in this app is a TouchableOpacity or an Animated TouchableOpacity). For each of the 71 interactive elements I computed the rendered box from its own style: explicit width/height where given, otherwise padding*2 + content box (Ionicons render as a Text glyph of exactly `size` pt; label Text with no lineHeight override renders at ~1.2*fontSize on both iOS SF Pro and Android Roboto) + borderWidth*2. I also grepped the whole tree for `hitSlop` (exactly ONE occurrence, app/user/[id].tsx:159) and `pressRetentionOffset` (zero), and grepped every `lineHeight` to confirm no button label overrides the default metric \u2014 none do; all 21 lineHeight uses are on paragraph/body text. Excluded from findings: src/components/ui/Button.tsx (its `sm` variant is h-9 = 36pt, but grep confirms the component has zero call sites and never renders), and the two RN <Switch> controls in app/(tabs)/create.tsx (native OS control, fixed 51x31 on iOS, not stylable). RESULT: NOT A PASS \u2014 34 of 71 targets compute under 44x44pt, and the single hitSlop in the codebase only reaches 38pt.",
+  "findings": [
+   {
+    "title": "Password visibility toggle is a bare 20pt icon with no padding and no hitSlop \u2014 20x20pt",
+    "location": "app/(auth)/sign-in.tsx:85-87 and app/(auth)/sign-up.tsx:164-166",
+    "reproduction": "Cold launch \u2192 Welcome \u2192 tap \"Already have an account? Sign in\" \u2192 type anything into the Password field \u2192 tap the eye icon at the right edge of the password row. Same control on the sign-up path: Welcome \u2192 \"I have an invite code\" \u2192 enter a valid code \u2192 Validate \u2192 tap the eye icon on the PASSWORD field.",
+    "consequence": "Arithmetic: `<TouchableOpacity onPress={...}>` at sign-in.tsx:85 carries NO style prop at all, so the touchable shrink-wraps its only child, `<Ionicons size={20}>`, which renders as a 20pt glyph \u2014 a 20x20pt target (\u224820x24 including text line box). That is 45% of the 44pt minimum on the horizontal axis. It sits flush against the right inner edge of a 52pt-tall input row whose only other child is a flex:1 TextInput, so every miss lands on the TextInput and re-opens the keyboard instead of revealing the password. A user who mistyped their password gets no reliable way to check it and is pushed toward repeated failed sign-in attempts.",
+    "fix": "Add hitSlop to both. 20 + 12 + 12 = 44pt exactly, and it costs no layout because the row has `gap: 8` and 16pt of paddingHorizontal to absorb it:\n\n  <TouchableOpacity\n    onPress={() => setShowPassword((s) => !s)}\n    hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}\n  >\n    <Ionicons name={showPassword ? 'eye-off' : 'eye'} size={20} color=\"#606060\" />\n  </TouchableOpacity>",
+    "confidence": "CONFIRMED"
+   },
+   {
+    "title": "Every hand-rolled back/close button is a bare 24pt (or 26pt) icon with no padding \u2014 24x24pt, and headerShown:false means it is the only visible way back",
+    "location": "app/(auth)/sign-in.tsx:44-46; app/(auth)/sign-up.tsx:103-105; app/(auth)/invite.tsx:67-69; app/(tabs)/profile/edit.tsx:71-73; app/move/[id]/attendees.tsx:34-36; app/user/[id].tsx:153-155; app/user/[id].tsx:123-125; app/invite-friends.tsx:51-53; app/add-spot.tsx:90-92",
+    "reproduction": "Any of nine routes. Most severe: Profile tab \u2192 tap \"Edit\" \u2192 tap the back arrow at top-left of Edit Profile. Also: Move detail \u2192 \"See all\" \u2192 back arrow on the attendees list; Profile \u2192 Invite friends card \u2192 back arrow; long-press the map \u2192 Drop a Spot \u2192 the X at top-left.",
+    "consequence": "Arithmetic: each of these is `<TouchableOpacity onPress={() => router.back()}>` wrapping `<Ionicons size={24}>` with either no style or a style that sets only margin (e.g. sign-in.tsx:44 sets `marginBottom: 32`, which is outside the touch box). Margin is not padding, so the target is the glyph: 24x24pt \u2014 55% of 44pt on both axes. add-spot.tsx:90 uses `size={26}` \u2192 26x26pt. Both root and (auth) Stacks set `headerShown: false` (app/_layout.tsx:53, app/(auth)/_layout.tsx:6), so there is no native back chevron to fall back on. app/(tabs)/profile/edit.tsx is registered as a Tabs.Screen with `href: null` (app/(tabs)/_layout.tsx:124), not a Stack screen, so there is no iOS edge-swipe-back for it either \u2014 a missed tap on that 24pt arrow strands the user on Edit Profile with no other exit. Compounding it, these arrows sit in the top-left corner where the thumb is least accurate on a one-handed grip.",
+    "fix": "Add hitSlop to each (24 + 10 + 10 = 44pt; for the 26pt close in add-spot use 9). Nothing shifts, because every one of these sits in a header row with >=16pt of surrounding padding:\n\n  <TouchableOpacity\n    onPress={() => router.back()}\n    hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}\n  >\n    <Ionicons name=\"arrow-back\" size={24} color=\"#FAFAFA\" />\n  </TouchableOpacity>",
+    "confidence": "CONFIRMED"
+   },
+   {
+    "title": "Radius filter pills are 26pt tall \u2014 the smallest padded control in the app",
+    "location": "src/components/feed/FilterBar.tsx:66-85",
+    "reproduction": "Feed tab (or Map tab \u2192 list icon top-right) \u2192 the second horizontal pill row under the category row \u2192 tap \"1 mi\" / \"3 mi\" / \"5 mi\" / \"10 mi\" / \"25 mi\".",
+    "consequence": "Arithmetic: paddingVertical 5 * 2 = 10, plus label at fontSize 12 with no lineHeight override \u2248 14.4pt, plus borderWidth 1 * 2 = 2 \u2192 26.4pt tall. That is 60% of 44pt, and it holds under any plausible font metric (even at 1.35x the label the total is 28pt). No hitSlop. The pill also sits inside a horizontal ScrollView, so any vertical drift during the tap is interpreted as the start of a scroll gesture and cancels the press. This control selects the search radius for the entire feed \u2014 a user trying to widen from 1mi to 25mi on an empty feed repeatedly hits nothing or scrolls the row sideways.",
+    "fix": "Preserve the slim visual and extend the target vertically \u2014 26 + 9 + 9 = 44. Do NOT slop horizontally: contentContainerStyle sets `gap: 6`, so left/right slop would overlap the neighbouring pill and steal its taps.\n\n  <TouchableOpacity\n    key={opt.meters}\n    onPress={() => setRadius(opt.meters)}\n    hitSlop={{ top: 9, bottom: 9 }}\n    style={{ /* unchanged */ }}\n  >\n\nIf you would rather change the visual than reason about slop, replace `paddingVertical: 5` with `minHeight: 44, justifyContent: 'center'` and keep paddingHorizontal 12.",
+    "confidence": "CONFIRMED"
+   },
+   {
+    "title": "Category/layer filter pills are 31-34pt tall across both the feed and the map",
+    "location": "src/components/feed/FilterBar.tsx:29-52 (31pt); app/(tabs)/index.tsx:396-409 FilterPill (34pt); app/(tabs)/index.tsx:378-388 LayerTab (32pt)",
+    "reproduction": "Map tab (the app's landing screen after auth) \u2192 tap \"\ud83d\udd7a Moves\" / \"\ud83d\udccd Spots\" in the centered segmented control under the header, then tap any emoji pill in the row below it (\"\ud83d\udd25 All\", \"\ud83c\udf7a Bars\", \u2026). Same category pills on the Feed tab via FilterBar.",
+    "consequence": "Arithmetic \u2014 FilterBar.tsx:29 category pill: paddingVertical 7*2 = 14, tallest child is the emoji Text at fontSize 14 \u2248 16.8pt, plus borderWidth 1*2 = 2 (inactive) \u2192 32.8pt; active pills set borderWidth 0 \u2192 30.8pt. index.tsx:396 FilterPill: paddingVertical 8*2 = 16, emoji fontSize 13 \u2248 15.6, border 1*2 = 2 \u2192 33.6pt. index.tsx:378 LayerTab: paddingVertical 8*2 = 16, label fontSize 13 \u2248 15.6, no border \u2192 31.6pt. All 70-76% of 44pt, none with hitSlop. The map pills are worse than the feed pills because they are absolutely positioned over a live MapView: a missed tap is not a no-op \u2014 it falls through to the MapView's `onPress={clearSelection}` (index.tsx:151) or, if held, to `onLongPress` (index.tsx:152) which fires a Heavy haptic and pushes the user to /add-spot. So a fat-fingered attempt to filter the map can navigate the user to the Drop a Spot form instead.",
+    "fix": "Vertical hitSlop only (horizontal is blocked by `gap: 8` between pills in both ScrollViews). FilterBar category pill needs +11 top/bottom, map FilterPill +6, LayerTab +7:\n\n  // src/components/feed/FilterBar.tsx:29\n  <TouchableOpacity ... hitSlop={{ top: 11, bottom: 11 }}>\n\n  // app/(tabs)/index.tsx:396 (FilterPill)\n  <TouchableOpacity onPress={onPress} hitSlop={{ top: 6, bottom: 6 }} style={{ ... }}>\n\n  // app/(tabs)/index.tsx:378 (LayerTab)\n  <TouchableOpacity onPress={onPress} hitSlop={{ top: 7, bottom: 7 }} style={{ ... }}>",
+    "confidence": "CONFIRMED"
+   },
+   {
+    "title": "RSVPButton compact is 36pt tall \u2014 the primary conversion action on every feed card and every map card",
+    "location": "src/components/moves/RSVPButton.tsx:82 (`height: compact ? 36 : 48`), rendered compact at src/components/moves/MoveCard.tsx:207 and app/(tabs)/index.tsx:316",
+    "reproduction": "Feed tab \u2192 scroll the move list \u2192 tap \"Join Move\" on any card's footer row. Or: Map tab \u2192 tap any move pin \u2192 tap \"Join Move\" in the bottom card.",
+    "consequence": "Arithmetic: explicit `height: 36` when `compact` is true \u2014 no computation needed, it is 36pt, 82% of 44. Width is fine (paddingHorizontal 14*2 + icon 15 + gap 6 + \"Join Move\" \u2248 104pt), so this fails on the vertical axis only. No hitSlop. This is the app's core action, and in the feed it lives inside a FlatList (`src/components/feed/FeedList.tsx:48`) where a tap with any vertical drift is claimed by the scroll responder \u2014 an 8pt-short target makes that materially more likely. On the map card (index.tsx:316) the button sits 96pt off the bottom of the screen inside a floating card, directly above the 80pt tab bar.",
+    "fix": "The compact button is 8pt short, so 4pt of vertical slop on each side is exactly enough (36 + 4 + 4 = 44). Add it to the AnimatedTouchable at RSVPButton.tsx:80, where it applies to both call sites at once:\n\n  <AnimatedTouchable\n    style={[animStyle, { height: compact ? 36 : 48, ... }]}\n    hitSlop={compact ? { top: 4, bottom: 4 } : undefined}\n    onPress={handlePress}\n    ...\n  >\n\nAlternatively change `height: compact ? 36 : 48` to `height: compact ? 44 : 48` and `borderRadius: compact ? 22 : 24`; the MoveCard footer row is `alignItems: 'center'` with no fixed height, so it absorbs 8pt without reflow.",
+    "confidence": "CONFIRMED"
+   },
+   {
+    "title": "Hype reaction pills are 35pt tall and 47pt wide when the count is zero",
+    "location": "src/components/moves/HypeReactions.tsx:27-48",
+    "reproduction": "Feed tab \u2192 any move card \u2192 tap one of the emoji reaction pills in the bottom row of the card (rendered by MoveCard.tsx:212). Or: Move detail screen \u2192 the reaction row below the description (app/move/[id].tsx:216).",
+    "consequence": "Arithmetic: paddingVertical 7*2 = 14, tallest child is the emoji Text at fontSize 16 \u2248 19.2pt, borderWidth 1*2 = 2 \u2192 35.2pt tall. Width when `total === 0` (the count Text is conditionally omitted at line 40): paddingHorizontal 13*2 = 26 + emoji \u2248 19 + border 2 = 47pt; the `gap: 5` contributes nothing because there is only one child. So an un-reacted pill is \u224847x35 \u2014 it fails vertically. Every move starts with all counts at zero, meaning the *first* reaction on any move is always the hardest to hit. Like the RSVP button these render inside the feed FlatList, so a short target plus scroll-responder competition means taps get swallowed.",
+    "fix": "Add vertical hitSlop to the AnimatedTouch at line 27 (35 + 5 + 5 = 45). Horizontal slop is unsafe \u2014 the parent View at line 60 sets `gap: 8` between pills, so more than 4pt of left/right slop would overlap the adjacent emoji and toggle the wrong reaction:\n\n  <AnimatedTouch\n    onPress={handlePress}\n    activeOpacity={1}\n    hitSlop={{ top: 5, bottom: 5, left: 4, right: 4 }}\n    style={[style, { ... }]}\n  >",
+    "confidence": "CONFIRMED"
+   },
+   {
+    "title": "Header submit buttons (\"Post it\", \"Drop it\", \"Save\", \"Edit\") are 30-34pt tall",
+    "location": "app/(tabs)/create.tsx:150-167 (34pt); app/add-spot.tsx:96-112 (33pt); app/(tabs)/profile/edit.tsx:75-88 (31pt); app/(tabs)/profile/index.tsx:64-75 (30pt)",
+    "reproduction": "Create tab \u2192 fill in title, pick a vibe, type a location \u2192 tap \"Post it\" at top-right. Long-press the map \u2192 fill the form \u2192 tap \"Drop it\" at top-right. Profile tab \u2192 tap \"Edit\" at top-right \u2192 change your display name \u2192 tap \"Save\" at top-right.",
+    "consequence": "Arithmetic. create.tsx:150 \"Post it\": paddingVertical 8*2 = 16 + label fontSize 15 \u2248 18 \u2192 34pt. add-spot.tsx:96 \"Drop it\": 8*2 = 16 + fontSize 14 \u2248 16.8 \u2192 32.8pt. profile/edit.tsx:75 \"Save\": paddingVertical 7*2 = 14 + fontSize 14 \u2248 16.8 \u2192 30.8pt. profile/index.tsx:64 \"Edit\": 7*2 = 14 + tallest child is the label at fontSize 13 \u2248 15.6 (the icon is only 14) \u2192 29.6pt. None has hitSlop; all four sit in the top-right corner, the least reachable zone on a phone held one-handed. These are the terminal actions of long forms \u2014 a user who has filled out the entire Set The Move form and cannot land the 34pt commit button has no other way to submit (there is no keyboard-accessory submit and the TextInputs at create.tsx:201 and :333 are `multiline`, so Return inserts a newline rather than submitting).",
+    "fix": "Add hitSlop to each; every one of these sits in a header row with 12pt paddingVertical and 20pt paddingHorizontal, so nothing overlaps:\n\n  // app/(tabs)/create.tsx:150 \u2014 34 + 5 + 5 = 44\n  <TouchableOpacity onPress={handleSubmit} disabled={!canSubmit || isLoading}\n    hitSlop={{ top: 5, bottom: 5, left: 8, right: 8 }} style={{ ... }}>\n\n  // app/add-spot.tsx:96      \u2192 hitSlop={{ top: 6, bottom: 6, left: 8, right: 8 }}\n  // app/(tabs)/profile/edit.tsx:75  \u2192 hitSlop={{ top: 7, bottom: 7, left: 8, right: 8 }}\n  // app/(tabs)/profile/index.tsx:64 \u2192 hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}",
+    "confidence": "CONFIRMED"
+   },
+   {
+    "title": "The map card dismiss (X) is 28x28pt and a miss falls through to the map underneath",
+    "location": "app/(tabs)/index.tsx:306-308 (selected move card) and app/(tabs)/index.tsx:339-341 (selected spot card)",
+    "reproduction": "Map tab \u2192 tap any move pin \u2192 the detail card slides up from the bottom \u2192 tap the X at the card's top-right to dismiss it. Same on the Spots layer: tap \"\ud83d\udccd Spots\" \u2192 tap any diamond pin \u2192 tap the X.",
+    "consequence": "Arithmetic: `style={{ padding: 4 }}` around `<Ionicons name=\"close\" size={20}>` \u2192 20 + 4*2 = 28x28pt, 64% of 44. No hitSlop. The X is nested inside an outer TouchableOpacity (index.tsx:293 / :324) whose onPress navigates to `/move/${id}` or `/spot/${id}`, and it is inset at the card's top-right corner. A miss on the 28pt X therefore does not do nothing \u2014 it hits the parent and pushes a full-screen detail route the user was trying to dismiss, forcing them back out through that screen's own 40pt back button (index of this same registry, finding 10).",
+    "fix": "28 + 8 + 8 = 44. The X sits at the card's inner top-right with 16pt of card padding around it, so slop stays inside the card and away from the parent's other children:\n\n  <TouchableOpacity\n    onPress={clearSelection}\n    hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}\n    style={{ padding: 4 }}\n  >\n    <Ionicons name=\"close\" size={20} color=\"#606060\" />\n  </TouchableOpacity>",
+    "confidence": "CONFIRMED"
+   },
+   {
+    "title": "Text-only links have no padding box: \"See all\" is 17pt tall",
+    "location": "app/move/[id].tsx:225-228 (\"See all\", \u224852x17); app/move/[id].tsx:299-320 (\"Report this move\", 28pt tall); app/(auth)/verify-age.tsx:181-186 (\"Wrong account? Sign out\", 32pt tall)",
+    "reproduction": "\"See all\": open any move with more than 6 attendees (Feed \u2192 tap a card \u2192 scroll to \"Who's going\") \u2192 tap \"See all\" at the right of that section header. \"Report this move\": same screen, scroll past the chat block, tap the grey \"Report this move\" line. \"Wrong account? Sign out\": sign up with a new account \u2192 the age gate appears \u2192 tap the grey line under the \"Let's go \ud83d\udd25\" button.",
+    "consequence": "Arithmetic. move/[id].tsx:225 is `<TouchableOpacity onPress={...}><Text style={{fontSize: 14, fontWeight:'600'}}>See all</Text></TouchableOpacity>` with no style prop anywhere \u2014 the target is the text box: 7 glyphs \u2248 52pt wide by \u224816.8pt tall. 17pt is 38% of the 44pt minimum, the smallest target in the app. move/[id].tsx:299 \"Report this move\" sets only `paddingVertical: 6` \u2192 12 + fontSize 13 \u2248 15.6 = 27.6pt. verify-age.tsx:181 sets `paddingVertical: 8` \u2192 16 + 15.6 = 31.6pt. None has hitSlop. \"See all\" is the sole route to /move/[id]/attendees \u2014 there is no other entry point in the codebase \u2014 so a user on a popular move cannot reliably reach the full attendee list. \"Report this move\" being a 28pt target matters more than its visual weight suggests: it is the app's only in-move safety escalation path, reached by a user who has just seen something they want gone.",
+    "fix": "Give each a real box rather than slop, since these are standalone lines with space around them:\n\n  // app/move/[id].tsx:225 \u2014 section header row is alignItems:'center', absorbs the height\n  <TouchableOpacity\n    onPress={() => router.push(`/move/${id}/attendees`)}\n    hitSlop={{ top: 14, bottom: 14, left: 12, right: 12 }}\n  >\n    <Text style={{ color: '#FF6B35', fontSize: 14, fontWeight: '600' }}>See all</Text>\n  </TouchableOpacity>\n\n  // app/move/[id].tsx:315 \u2014 replace `style={{ alignSelf: 'center', paddingVertical: 6 }}`\n  style={{ alignSelf: 'center', paddingVertical: 14, paddingHorizontal: 16 }}\n\n  // app/(auth)/verify-age.tsx:183 \u2014 replace `style={{ alignItems: 'center', paddingVertical: 8 }}`\n  style={{ alignItems: 'center', paddingVertical: 14 }}",
+    "confidence": "CONFIRMED"
+   },
+   {
+    "title": "Round icon buttons at 36-40pt: detail-screen back buttons, chat send, and the map/feed toggle",
+    "location": "app/move/[id].tsx:389-399 (40x40); app/spot/[id].tsx:253-263 (40x40); src/components/moves/MoveChat.tsx:175-188 (40x40); app/(tabs)/list.tsx:33-38 (36x36); app/user/[id].tsx:157-162 (22pt icon + hitSlop 8 = 38x38); app/spot/[id].tsx:194-205 (40pt tall row)",
+    "reproduction": "Feed \u2192 tap a move card \u2192 tap the round back arrow floating at the top-left over the hero image (40x40). Join that move \u2192 scroll to Move chat \u2192 type a message \u2192 tap the round orange send arrow (40x40). Feed tab \u2192 tap the map icon at top-right of the header (36x36). Any user profile \u2192 tap the \"\u2026\" at top-right (38x38 including its hitSlop).",
+    "consequence": "Explicit dimensions, no arithmetic needed \u2014 these are declared as `width: 40, height: 40` (move/[id].tsx:392, spot/[id].tsx:256, MoveChat.tsx:179) and `width: 36, height: 36` (list.tsx:35). All are 4-8pt short of 44 with no hitSlop. app/user/[id].tsx:157 is the ONLY control in the entire codebase that sets hitSlop, and it is undersized: `<Ionicons size={22}>` + `hitSlop={{top:8,bottom:8,left:8,right:8}}` = 22 + 16 = 38x38, still 6pt short on both axes \u2014 and it is the entry point to the block/report menu (openSafetyMenu at line 22). The two detail-screen back buttons are the only visible exit from full-screen routes (headerShown:false at app/_layout.tsx:53); on Android, where native-stack does not enable an edge-swipe-back gesture by default, a missed tap on that 40pt circle leaves only the hardware back key. spot/[id].tsx:194 (\"Dropped by\" \u2192 user profile) has no padding at all: its height is its tallest child, `<Avatar size={40}>`, so 40pt.",
+    "fix": "Two of these are a one-token change and the rest take a small slop:\n\n  // app/(tabs)/list.tsx:35 \u2014 36 -> 44, borderRadius 18 -> 22; header row is alignItems:'center'\n  style={{ width: 44, height: 44, borderRadius: 22, backgroundColor: '#1E1E1E', alignItems: 'center', justifyContent: 'center' }}\n\n  // app/move/[id].tsx:389 and app/spot/[id].tsx:253 \u2014 40 + 2 + 2 = 44\n  <TouchableOpacity onPress={() => router.back()} hitSlop={2} style={{ width: 40, height: 40, ... }}>\n\n  // src/components/moves/MoveChat.tsx:175 \u2014 40 + 2 + 2 = 44\n  <TouchableOpacity onPress={send} disabled={...} hitSlop={2} style={{ width: 40, height: 40, ... }}>\n\n  // app/user/[id].tsx:159 \u2014 widen the existing slop from 8 to 11 (22 + 22 = 44)\n  hitSlop={{ top: 11, bottom: 11, left: 11, right: 11 }}\n\n  // app/spot/[id].tsx:196 \u2014 add paddingVertical to the row\n  style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 2 }}",
+    "confidence": "CONFIRMED"
+   },
+   {
+    "title": "Activity empty-state \"Create a move\" button computes to ~41pt tall",
+    "location": "app/(tabs)/activity.tsx:174-183",
+    "reproduction": "Sign in as a brand-new account with no notifications \u2192 Activity tab \u2192 the \"All clear\" empty state \u2192 tap the orange \"Create a move\" button.",
+    "consequence": "Arithmetic: paddingVertical 12*2 = 24 + label fontSize 14 with no lineHeight override. At the iOS SF Pro default metric (~1.2x) that is 16.8pt \u2192 40.8pt total; at Android Roboto's ~1.17x it is 40.4pt. Marked HYPOTHESIS rather than CONFIRMED because this one sits close enough to the boundary that the exact font metric decides it: at a 1.4x line box the total reaches 43.6pt and at 1.45x it clears 44. Under the standard metrics it is 3pt short, with no hitSlop. Consequence is mild \u2014 it is a convenience shortcut on an empty screen, and the Create tab button (52x52 inside an 80pt tab bar) does the same thing \u2014 but it is the empty state's only call to action for a new user.",
+    "fix": "Bump paddingVertical from 12 to 14, which puts it at 44-45pt under any metric and shifts nothing (the parent is a centered column with `gap: 14`):\n\n  style={{\n    marginTop: 8,\n    backgroundColor: '#FF6B35',\n    paddingHorizontal: 24, paddingVertical: 14, borderRadius: 24,\n  }}",
+    "confidence": "HYPOTHESIS"
+   }
+  ],
+  "inventory": [
+   {
+    "item": "\"I have an invite code\" CTA",
+    "location": "app/(auth)/welcome.tsx:75-88",
+    "renders": "PASS \u2014 explicit height 56, full width"
+   },
+   {
+    "item": "\"Already have an account? Sign in\"",
+    "location": "app/(auth)/welcome.tsx:90-102",
+    "renders": "PASS \u2014 explicit height 48"
+   },
+   {
+    "item": "Back arrow",
+    "location": "app/(auth)/sign-in.tsx:44-46",
+    "renders": "FAIL 24x24 \u2014 Ionicons 24, style sets only marginBottom (outside touch box), no hitSlop"
+   },
+   {
+    "item": "Password eye toggle",
+    "location": "app/(auth)/sign-in.tsx:85-87",
+    "renders": "FAIL 20x20 \u2014 Ionicons 20, no style prop at all, no hitSlop"
+   },
+   {
+    "item": "\"Sign in\" submit",
+    "location": "app/(auth)/sign-in.tsx:97-112",
+    "renders": "PASS \u2014 explicit height 56"
+   },
+   {
+    "item": "Back arrow",
+    "location": "app/(auth)/sign-up.tsx:103-105",
+    "renders": "FAIL 24x24 \u2014 Ionicons 24, marginBottom only, no hitSlop"
+   },
+   {
+    "item": "Password eye toggle",
+    "location": "app/(auth)/sign-up.tsx:164-166",
+    "renders": "FAIL 20x20 \u2014 Ionicons 20, no style, no hitSlop"
+   },
+   {
+    "item": "\"Let's go\" submit",
+    "location": "app/(auth)/sign-up.tsx:177-190",
+    "renders": "PASS \u2014 explicit height 56"
+   },
+   {
+    "item": "Back arrow",
+    "location": "app/(auth)/invite.tsx:67-69",
+    "renders": "FAIL 24x24 \u2014 Ionicons 24, marginBottom only, no hitSlop"
+   },
+   {
+    "item": "\"Validate code\" submit",
+    "location": "app/(auth)/invite.tsx:115-134",
+    "renders": "PASS \u2014 explicit height 56"
+   },
+   {
+    "item": "Birth-year tiles (x10)",
+    "location": "app/(auth)/verify-age.tsx:101-121",
+    "renders": "PASS \u2014 paddingVertical 16*2 = 32 + fontSize 18 label \u2248 21.6 = 53.6pt tall; width 30.5% \u2248 102pt"
+   },
+   {
+    "item": "\"Yes\" / \"Not yet\" radio",
+    "location": "app/(auth)/verify-age.tsx:140-155",
+    "renders": "PASS \u2014 16*2 = 32 + fontSize 16 \u2248 19.2 = 51.2pt tall, flex:1 wide"
+   },
+   {
+    "item": "\"Let's go \ud83d\udd25\" CTA",
+    "location": "app/(auth)/verify-age.tsx:164-179",
+    "renders": "PASS \u2014 explicit height 58"
+   },
+   {
+    "item": "\"Wrong account? Sign out\"",
+    "location": "app/(auth)/verify-age.tsx:181-186",
+    "renders": "FAIL 32pt tall \u2014 paddingVertical 8*2 = 16 + fontSize 13 \u2248 15.6, no hitSlop"
+   },
+   {
+    "item": "Header list-view button",
+    "location": "app/(tabs)/index.tsx:193-202",
+    "renders": "PASS \u2014 explicit 44x44"
+   },
+   {
+    "item": "Recenter button",
+    "location": "app/(tabs)/index.tsx:255-265",
+    "renders": "PASS \u2014 explicit 44x44"
+   },
+   {
+    "item": "LayerTab \"\ud83d\udd7a Moves\" / \"\ud83d\udccd Spots\"",
+    "location": "app/(tabs)/index.tsx:378-388",
+    "renders": "FAIL 32pt tall \u2014 paddingVertical 8*2 = 16 + fontSize 13 label \u2248 15.6, no border, no hitSlop"
+   },
+   {
+    "item": "FilterPill (map category pills)",
+    "location": "app/(tabs)/index.tsx:396-409",
+    "renders": "FAIL 34pt tall \u2014 8*2 = 16 + emoji fontSize 13 \u2248 15.6 + borderWidth 1*2 = 2, no hitSlop"
+   },
+   {
+    "item": "Selected-move card body (opens detail)",
+    "location": "app/(tabs)/index.tsx:293-310",
+    "renders": "PASS \u2014 wraps a 16pt-padded card, well over 44 on both axes"
+   },
+   {
+    "item": "Selected-move card X",
+    "location": "app/(tabs)/index.tsx:306-308",
+    "renders": "FAIL 28x28 \u2014 Ionicons 20 + padding 4*2 = 8, no hitSlop; miss falls through to parent onPress"
+   },
+   {
+    "item": "Selected-spot card body",
+    "location": "app/(tabs)/index.tsx:324-343",
+    "renders": "PASS \u2014 full card"
+   },
+   {
+    "item": "Selected-spot card X",
+    "location": "app/(tabs)/index.tsx:339-341",
+    "renders": "FAIL 28x28 \u2014 Ionicons 20 + padding 4*2, no hitSlop"
+   },
+   {
+    "item": "\"Check it out\" spot CTA",
+    "location": "app/(tabs)/index.tsx:351-360",
+    "renders": "FAIL 36pt tall \u2014 explicit height 36 (width \u2248 109: paddingHorizontal 16*2 + label), no hitSlop"
+   },
+   {
+    "item": "MovePin marker onPress",
+    "location": "app/(tabs)/index.tsx:159-166 (pin at :413-429)",
+    "renders": "\u224842x45 \u2014 42x42 circle + 6pt tail overlapped -3; native map-SDK hit testing, not verifiable from source, excluded from findings"
+   },
+   {
+    "item": "SpotPin marker onPress",
+    "location": "app/(tabs)/index.tsx:168-175 (pin at :433-466)",
+    "renders": "\u224840x40 pre-rotation, rotated 45deg; rotated-view hit testing on a native marker not verifiable from source, excluded from findings"
+   },
+   {
+    "item": "MapView onPress / onLongPress",
+    "location": "app/(tabs)/index.tsx:151-152",
+    "renders": "PASS \u2014 full screen"
+   },
+   {
+    "item": "Header map-toggle button",
+    "location": "app/(tabs)/list.tsx:33-38",
+    "renders": "FAIL 36x36 \u2014 explicit width/height 36, no hitSlop"
+   },
+   {
+    "item": "\"Post it\" header submit",
+    "location": "app/(tabs)/create.tsx:150-167",
+    "renders": "FAIL 34pt tall \u2014 paddingVertical 8*2 = 16 + fontSize 15 \u2248 18, no hitSlop"
+   },
+   {
+    "item": "Cover-photo picker",
+    "location": "app/(tabs)/create.tsx:175-197",
+    "renders": "PASS \u2014 explicit height 160"
+   },
+   {
+    "item": "Start-time picker row",
+    "location": "app/(tabs)/create.tsx:255-271",
+    "renders": "PASS \u2014 explicit height 52"
+   },
+   {
+    "item": "End-time picker row",
+    "location": "app/(tabs)/create.tsx:284-297",
+    "renders": "PASS \u2014 explicit height 48"
+   },
+   {
+    "item": "Switch: \"Set end time\" / \"Limit spots\"",
+    "location": "app/(tabs)/create.tsx:275-280, 305-310",
+    "renders": "51x31 on iOS \u2014 native OS control at Apple's own standard size, not stylable; excluded from findings"
+   },
+   {
+    "item": "ActivityRow",
+    "location": "app/(tabs)/activity.tsx:37-86",
+    "renders": "PASS \u2014 paddingVertical 14*2 = 28 + 44pt avatar = 72pt tall, full width"
+   },
+   {
+    "item": "\"Create a move\" empty-state CTA",
+    "location": "app/(tabs)/activity.tsx:174-183",
+    "renders": "FAIL \u224841pt tall \u2014 paddingVertical 12*2 = 24 + fontSize 14 \u2248 16.8; borderline, metric-dependent"
+   },
+   {
+    "item": "\"Edit\" header button",
+    "location": "app/(tabs)/profile/index.tsx:64-75",
+    "renders": "FAIL 30pt tall \u2014 paddingVertical 7*2 = 14 + tallest child fontSize 13 label \u2248 15.6 (icon only 14), no hitSlop"
+   },
+   {
+    "item": "Invite-friends gradient card",
+    "location": "app/(tabs)/profile/index.tsx:113-134",
+    "renders": "PASS \u2014 padding 16*2 = 32 + 46pt inner tile = 78pt tall"
+   },
+   {
+    "item": "\"Sign out\"",
+    "location": "app/(tabs)/profile/index.tsx:162-174",
+    "renders": "PASS \u2014 padding 16*2 = 32 + 20pt icon = 52pt tall"
+   },
+   {
+    "item": "Back arrow",
+    "location": "app/(tabs)/profile/edit.tsx:71-73",
+    "renders": "FAIL 24x24 \u2014 Ionicons 24, no style, no hitSlop; screen is a Tabs.Screen (href:null) so no edge-swipe-back either"
+   },
+   {
+    "item": "\"Save\" header button",
+    "location": "app/(tabs)/profile/edit.tsx:75-88",
+    "renders": "FAIL 31pt tall \u2014 paddingVertical 7*2 = 14 + fontSize 14 \u2248 16.8, no hitSlop"
+   },
+   {
+    "item": "Avatar picker",
+    "location": "app/(tabs)/profile/edit.tsx:94-115",
+    "renders": "PASS \u2014 90x90 (Avatar size 90)"
+   },
+   {
+    "item": "\"See all\" attendees link",
+    "location": "app/move/[id].tsx:225-228",
+    "renders": "FAIL \u224852x17 \u2014 no style prop; target is the bare Text box (fontSize 14 \u2248 16.8pt tall). Smallest target in the app"
+   },
+   {
+    "item": "Attendee avatar tile (x12)",
+    "location": "app/move/[id].tsx:242-255",
+    "renders": "PASS \u2014 width 60; height = 46 avatar + gap 4 + fontSize 11 caption \u2248 13 = 63pt"
+   },
+   {
+    "item": "\"Report this move\"",
+    "location": "app/move/[id].tsx:299-320",
+    "renders": "FAIL 28pt tall \u2014 paddingVertical 6*2 = 12 + fontSize 13 \u2248 15.6, no hitSlop"
+   },
+   {
+    "item": "\"Cancel this move\" (creator)",
+    "location": "app/move/[id].tsx:325-337",
+    "renders": "PASS \u2014 padding 14*2 = 28 + 20pt icon = 48pt tall"
+   },
+   {
+    "item": "RSVPButton (full)",
+    "location": "app/move/[id].tsx:352 via RSVPButton.tsx:82",
+    "renders": "PASS \u2014 explicit height 48 when compact is false"
+   },
+   {
+    "item": "\"Bring the crew\"",
+    "location": "app/move/[id].tsx:356-370",
+    "renders": "PASS \u2014 explicit height 48"
+   },
+   {
+    "item": "Share button",
+    "location": "app/move/[id].tsx:372-382",
+    "renders": "PASS \u2014 explicit 48x48"
+   },
+   {
+    "item": "Floating back button",
+    "location": "app/move/[id].tsx:389-399",
+    "renders": "FAIL 40x40 \u2014 explicit width/height 40, no hitSlop; only visible exit (headerShown:false)"
+   },
+   {
+    "item": "Back arrow",
+    "location": "app/move/[id]/attendees.tsx:34-36",
+    "renders": "FAIL 24x24 \u2014 Ionicons 24, no style, no hitSlop"
+   },
+   {
+    "item": "Attendee list row",
+    "location": "app/move/[id]/attendees.tsx:47-62",
+    "renders": "PASS \u2014 padding 12*2 = 24 + 46pt avatar = 70pt tall"
+   },
+   {
+    "item": "Fire (\ud83d\udd25) button",
+    "location": "app/spot/[id].tsx:116-129",
+    "renders": "PASS \u2014 explicit height 56, flex:1 wide"
+   },
+   {
+    "item": "Save/bookmark button",
+    "location": "app/spot/[id].tsx:132-146",
+    "renders": "PASS \u2014 explicit 56x56"
+   },
+   {
+    "item": "Share button",
+    "location": "app/spot/[id].tsx:148-158",
+    "renders": "PASS \u2014 explicit 56x56"
+   },
+   {
+    "item": "\"Dropped by\" creator row",
+    "location": "app/spot/[id].tsx:194-205",
+    "renders": "FAIL 40pt tall \u2014 no padding; height = tallest child, Avatar size 40. Width is large (row)"
+   },
+   {
+    "item": "\"Set a move here\"",
+    "location": "app/spot/[id].tsx:217-236",
+    "renders": "PASS \u2014 explicit height 52"
+   },
+   {
+    "item": "Directions button",
+    "location": "app/spot/[id].tsx:238-247",
+    "renders": "PASS \u2014 explicit 52x52"
+   },
+   {
+    "item": "Floating back button",
+    "location": "app/spot/[id].tsx:253-263",
+    "renders": "FAIL 40x40 \u2014 explicit width/height 40, no hitSlop"
+   },
+   {
+    "item": "Back arrow (blocked state)",
+    "location": "app/user/[id].tsx:123-125",
+    "renders": "FAIL 24x24 \u2014 Ionicons 24, no style, no hitSlop"
+   },
+   {
+    "item": "\"Unblock\" button",
+    "location": "app/user/[id].tsx:132-141",
+    "renders": "PASS \u2014 explicit height 44 (exactly at the minimum)"
+   },
+   {
+    "item": "Back arrow",
+    "location": "app/user/[id].tsx:153-155",
+    "renders": "FAIL 24x24 \u2014 Ionicons 24, no style, no hitSlop"
+   },
+   {
+    "item": "\"\u2026\" safety menu",
+    "location": "app/user/[id].tsx:157-162",
+    "renders": "FAIL 38x38 \u2014 Ionicons 22 + hitSlop 8 each side = 38. The ONLY hitSlop in the codebase, and it is 6pt short of compensating"
+   },
+   {
+    "item": "Close (X) header button",
+    "location": "app/add-spot.tsx:90-92",
+    "renders": "FAIL 26x26 \u2014 Ionicons 26, no style, no hitSlop"
+   },
+   {
+    "item": "\"Drop it\" header submit",
+    "location": "app/add-spot.tsx:96-112",
+    "renders": "FAIL 33pt tall \u2014 paddingVertical 8*2 = 16 + fontSize 14 \u2248 16.8, no hitSlop"
+   },
+   {
+    "item": "Spot category tiles",
+    "location": "app/add-spot.tsx:176-196",
+    "renders": "PASS \u2014 padding 12*2 = 24 + emoji fontSize 24 \u2248 28.8 + gap 6 + label fontSize 11 \u2248 13 = 72pt tall; width 30%"
+   },
+   {
+    "item": "Spot photo picker",
+    "location": "app/add-spot.tsx:204-221",
+    "renders": "PASS \u2014 explicit height 140"
+   },
+   {
+    "item": "Back arrow",
+    "location": "app/invite-friends.tsx:51-53",
+    "renders": "FAIL 24x24 \u2014 Ionicons 24, no style, no hitSlop"
+   },
+   {
+    "item": "Invite-code copy card",
+    "location": "app/invite-friends.tsx:93-109",
+    "renders": "PASS \u2014 paddingVertical 20*2 = 40 + fontSize 32 code \u2248 38 + 8 + caption \u2248 16 = 102pt tall"
+   },
+   {
+    "item": "\"Share invite\"",
+    "location": "app/invite-friends.tsx:111-124",
+    "renders": "PASS \u2014 explicit height 54"
+   },
+   {
+    "item": "Referral row",
+    "location": "app/invite-friends.tsx:136-155",
+    "renders": "PASS \u2014 padding 12*2 = 24 + 42pt avatar = 66pt tall"
+   },
+   {
+    "item": "Category pill",
+    "location": "src/components/feed/FilterBar.tsx:29-52",
+    "renders": "FAIL 31-33pt tall \u2014 paddingVertical 7*2 = 14 + emoji fontSize 14 \u2248 16.8 + border 0 or 2, no hitSlop"
+   },
+   {
+    "item": "Radius pill",
+    "location": "src/components/feed/FilterBar.tsx:66-85",
+    "renders": "FAIL 26pt tall \u2014 paddingVertical 5*2 = 10 + fontSize 12 \u2248 14.4 + border 1*2 = 2. Smallest padded control in the app"
+   },
+   {
+    "item": "ReactionPill",
+    "location": "src/components/moves/HypeReactions.tsx:27-48",
+    "renders": "FAIL 35pt tall \u2014 paddingVertical 7*2 = 14 + emoji fontSize 16 \u2248 19.2 + border 2. Width 47pt when total is 0 (count Text omitted at :40)"
+   },
+   {
+    "item": "RSVPButton compact",
+    "location": "src/components/moves/RSVPButton.tsx:80-104",
+    "renders": "FAIL 36pt tall \u2014 explicit `height: compact ? 36 : 48`; rendered compact at MoveCard.tsx:207 and index.tsx:316"
+   },
+   {
+    "item": "CategoryPicker tile",
+    "location": "src/components/moves/CategoryPicker.tsx:19-47",
+    "renders": "PASS \u2014 padding 12*2 = 24 + emoji fontSize 24 \u2248 28.8 + gap 6 + label \u2248 13 = 72pt tall; width 30%"
+   },
+   {
+    "item": "MoveCard body",
+    "location": "src/components/moves/MoveCard.tsx:56-214",
+    "renders": "PASS \u2014 164pt image + 16pt-padded content block"
+   },
+   {
+    "item": "Chat send button",
+    "location": "src/components/moves/MoveChat.tsx:175-188",
+    "renders": "FAIL 40x40 \u2014 explicit width/height 40, no hitSlop"
+   },
+   {
+    "item": "ErrorBoundary \"Try again\"",
+    "location": "src/components/ui/ErrorBoundary.tsx:37-45",
+    "renders": "PASS \u2014 explicit height 48"
+   },
+   {
+    "item": "Button component, size sm",
+    "location": "src/components/ui/Button.tsx:73-97 (sizeStyles.sm = 'h-9' at :34)",
+    "renders": "Would be 36pt tall, but grep confirms ZERO call sites anywhere in app/ or src/ \u2014 never renders. Excluded from findings"
+   },
+   {
+    "item": "Tab bar buttons (5)",
+    "location": "app/(tabs)/_layout.tsx:70-88",
+    "renders": "PASS \u2014 tabBarStyle height 80; each of 5 tab pressables fills the bar height and ~1/5 of the width"
+   }
+  ]
+ }
+}

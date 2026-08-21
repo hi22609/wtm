@@ -1,0 +1,661 @@
+{
+ ")) errors.email =": [
+  "app/(auth)/sign-up.tsx:29"
+ ],
+ ").pop() ??": [
+  "src/lib/storage.ts:15"
+ ],
+ ", displayName:": [
+  "app/(auth)/sign-up.tsx:41"
+ ],
+ ", gradient: [": [
+  "src/types/app.ts:214",
+  "src/types/app.ts:215",
+  "src/types/app.ts:216",
+  "src/types/app.ts:217",
+  "src/types/app.ts:218",
+  "src/types/app.ts:219",
+  "src/types/app.ts:220",
+  "src/types/app.ts:221",
+  "src/types/app.ts:222",
+  "src/types/app.ts:223",
+  "src/types/app.ts:224",
+  "src/types/app.ts:276",
+  "src/types/app.ts:277",
+  "src/types/app.ts:278",
+  "src/types/app.ts:279",
+  "src/types/app.ts:280",
+  "src/types/app.ts:281",
+  "src/types/app.ts:282",
+  "src/types/app.ts:283"
+ ],
+ ", myId ??": [
+  "src/hooks/useSearchUsers.ts:27"
+ ],
+ ", password:": [
+  "app/(auth)/sign-up.tsx:41"
+ ],
+ ", schema:": [
+  "app/move/[id].tsx:45"
+ ],
+ ", table:": [
+  "app/move/[id].tsx:45"
+ ],
+ ", username:": [
+  "app/(auth)/sign-up.tsx:41"
+ ],
+ ", { count:": [
+  "src/hooks/useActivity.ts:72"
+ ],
+ "1 going": [
+  "src/components/moves/AttendeePile.tsx:63"
+ ],
+ "1 mi": [
+  "src/types/app.ts:287"
+ ],
+ "10 mi": [
+  "src/types/app.ts:290"
+ ],
+ "1h 30m": [
+  "src/utils/__tests__/time.test.ts:33"
+ ],
+ "25 mi": [
+  "src/types/app.ts:291",
+  "src/utils/__tests__/distance.test.ts:11"
+ ],
+ "3 mi": [
+  "src/types/app.ts:288"
+ ],
+ "3\u201320 chars, lowercase letters, numbers, underscore": [
+  "app/(auth)/sign-up.tsx:32"
+ ],
+ "5 mi": [
+  "src/types/app.ts:289"
+ ],
+ "5.0 mi": [
+  "src/utils/__tests__/distance.test.ts:8"
+ ],
+ "8+ characters": [
+  "app/(auth)/sign-up.tsx:160"
+ ],
+ "Activity": [
+  "app/(tabs)/_layout.tsx:113"
+ ],
+ "All": [
+  "app/(tabs)/index.tsx:27",
+  "app/(tabs)/index.tsx:36",
+  "src/components/feed/FilterBar.tsx:7"
+ ],
+ "An account with this email already exists.": [
+  "app/(auth)/sign-up.tsx:82"
+ ],
+ "Are you sure?": [
+  "app/(tabs)/profile/index.tsx:35"
+ ],
+ "Art & Culture": [
+  "src/types/app.ts:222"
+ ],
+ "Bar crawl, pickup game, rooftop hangout...": [
+  "app/(tabs)/create.tsx:204"
+ ],
+ "Bars & Nightlife": [
+  "src/types/app.ts:216"
+ ],
+ "Best time to go (optional)": [
+  "app/add-spot.tsx:225"
+ ],
+ "Block": [
+  "app/user/[id].tsx:38"
+ ],
+ "Block user": [
+  "app/user/[id].tsx:25"
+ ],
+ "Block user?": [
+  "app/user/[id].tsx:33"
+ ],
+ "Bring your people in": [
+  "app/(tabs)/profile/index.tsx:129"
+ ],
+ "Cancel": [
+  "app/(tabs)/profile/index.tsx:36",
+  "app/move/[id].tsx:312",
+  "app/user/[id].tsx:36",
+  "app/user/[id].tsx:50",
+  "app/user/[id].tsx:69"
+ ],
+ "Cancel move": [
+  "app/move/[id].tsx:76"
+ ],
+ "Cancel move?": [
+  "app/move/[id].tsx:73"
+ ],
+ "Cancelled": [
+  "app/move/[id].tsx:145"
+ ],
+ "Capacity": [
+  "app/(tabs)/create.tsx:302"
+ ],
+ "Chill": [
+  "src/types/app.ts:281"
+ ],
+ "City": [
+  "app/(tabs)/profile/index.tsx:109"
+ ],
+ "Community favorite": [
+  "app/spot/[id].tsx:103"
+ ],
+ "Copied!": [
+  "app/invite-friends.tsx:105"
+ ],
+ "Display name": [
+  "app/(auth)/sign-up.tsx:142"
+ ],
+ "EEE, MMM d 'at' h:mm a": [
+  "app/(tabs)/create.tsx:267",
+  "src/utils/time.ts:14"
+ ],
+ "EEEE, MMMM d 'at' h:mm a": [
+  "src/utils/time.ts:34"
+ ],
+ "Email": [
+  "app/(auth)/sign-in.tsx:62",
+  "app/(auth)/sign-up.tsx:148"
+ ],
+ "Error": [
+  "app/(tabs)/create.tsx:129",
+  "app/(tabs)/profile/edit.tsx:55",
+  "app/add-spot.tsx:73"
+ ],
+ "Failed to create move. Try again.": [
+  "app/(tabs)/create.tsx:129"
+ ],
+ "Failed to drop the spot. Try again.": [
+  "app/add-spot.tsx:73"
+ ],
+ "Failed to save. Try again.": [
+  "app/(tabs)/profile/edit.tsx:55"
+ ],
+ "Feed": [
+  "app/(tabs)/_layout.tsx:99"
+ ],
+ "Fire View": [
+  "src/types/app.ts:279"
+ ],
+ "Food": [
+  "src/types/app.ts:218"
+ ],
+ "Full": [
+  "app/move/[id].tsx:144"
+ ],
+ "Fully packed": [
+  "src/components/moves/MoveCard.tsx:174"
+ ],
+ "Gaming": [
+  "src/types/app.ts:221"
+ ],
+ "Give the spot a name and pick a category.": [
+  "app/add-spot.tsx:48"
+ ],
+ "Golden hour, weekday mornings, after rain...": [
+  "app/add-spot.tsx:229"
+ ],
+ "Happening now": [
+  "app/move/[id].tsx:143",
+  "src/utils/time.ts:9"
+ ],
+ "Harassment or hate": [
+  "app/user/[id].tsx:55"
+ ],
+ "How to get in, what to bring, what makes it fire...": [
+  "app/add-spot.tsx:245"
+ ],
+ "INSERT": [
+  "src/hooks/useActivity.ts:42",
+  "src/hooks/useMoveChat.ts:60"
+ ],
+ "Inappropriate content": [
+  "app/move/[id].tsx:301",
+  "app/user/[id].tsx:55"
+ ],
+ "Invalid code.": [
+  "app/(auth)/invite.tsx:51"
+ ],
+ "Invalid email or password.": [
+  "app/(auth)/sign-in.tsx:33"
+ ],
+ "Join Move": [
+  "src/components/moves/RSVPButton.tsx:76"
+ ],
+ "Join waitlist": [
+  "src/components/moves/RSVPButton.tsx:73"
+ ],
+ "Just Us": [
+  "src/types/app.ts:214"
+ ],
+ "Keep it": [
+  "app/move/[id].tsx:74"
+ ],
+ "Know a fire spot? Long-press the map to drop it.": [
+  "app/(tabs)/index.tsx:278"
+ ],
+ "Map": [
+  "app/(tabs)/_layout.tsx:92"
+ ],
+ "Missing info": [
+  "app/(tabs)/create.tsx:98",
+  "app/add-spot.tsx:48"
+ ],
+ "More details (optional)": [
+  "app/(tabs)/create.tsx:332"
+ ],
+ "Move is full": [
+  "app/move/[id].tsx:197"
+ ],
+ "Moves Created": [
+  "app/(tabs)/profile/index.tsx:107"
+ ],
+ "Music": [
+  "src/types/app.ts:219"
+ ],
+ "Name the spot": [
+  "app/add-spot.tsx:155"
+ ],
+ "No invites left": [
+  "app/invite-friends.tsx:122"
+ ],
+ "No moves in view": [
+  "app/(tabs)/index.tsx:273"
+ ],
+ "No spots dropped yet": [
+  "app/(tabs)/index.tsx:273"
+ ],
+ "Not yet": [
+  "app/(auth)/verify-age.tsx:136"
+ ],
+ "On waitlist": [
+  "src/components/moves/RSVPButton.tsx:70"
+ ],
+ "Other": [
+  "src/types/app.ts:224",
+  "src/types/app.ts:283"
+ ],
+ "Outdoor": [
+  "src/types/app.ts:220"
+ ],
+ "Pan around, widen the vibe, or set the first one.": [
+  "app/(tabs)/index.tsx:277"
+ ],
+ "Password": [
+  "app/(auth)/sign-in.tsx:79",
+  "app/(auth)/sign-up.tsx:157"
+ ],
+ "Password must be at least 8 characters": [
+  "app/(auth)/sign-up.tsx:30"
+ ],
+ "Photo Op": [
+  "src/types/app.ts:282"
+ ],
+ "Pick end time": [
+  "app/(tabs)/create.tsx:294"
+ ],
+ "Pittsburgh": [
+  "src/store/locationStore.ts:19"
+ ],
+ "Profile": [
+  "app/(tabs)/_layout.tsx:120"
+ ],
+ "Report received": [
+  "app/move/[id].tsx:307",
+  "app/user/[id].tsx:64"
+ ],
+ "Report this move": [
+  "app/move/[id].tsx:302"
+ ],
+ "Report user": [
+  "app/user/[id].tsx:49"
+ ],
+ "Reports are reviewed within 24 hours.": [
+  "app/move/[id].tsx:302",
+  "app/user/[id].tsx:58"
+ ],
+ "Say something\u2026": [
+  "src/components/moves/MoveChat.tsx:160"
+ ],
+ "Set a move here": [
+  "app/(tabs)/create.tsx:43"
+ ],
+ "Share invite": [
+  "app/invite-friends.tsx:122"
+ ],
+ "Show it off (optional)": [
+  "app/add-spot.tsx:203"
+ ],
+ "Sign out": [
+  "app/(tabs)/profile/index.tsx:35",
+  "app/(tabs)/profile/index.tsx:38"
+ ],
+ "Skate": [
+  "src/types/app.ts:277"
+ ],
+ "Smiling Moose, Frick Park, your place...": [
+  "app/(tabs)/create.tsx:230"
+ ],
+ "Social": [
+  "src/types/app.ts:223"
+ ],
+ "Someone": [
+  "app/(tabs)/activity.tsx:27"
+ ],
+ "Something went wrong": [
+  "app/(auth)/verify-age.tsx:63",
+  "app/move/[id].tsx:307",
+  "app/user/[id].tsx:64"
+ ],
+ "Something went wrong. Try again.": [
+  "app/(auth)/invite.tsx:16",
+  "app/(auth)/invite.tsx:45"
+ ],
+ "Spam or fake account": [
+  "app/user/[id].tsx:55"
+ ],
+ "Spam or fake event": [
+  "app/move/[id].tsx:301"
+ ],
+ "Sports": [
+  "src/types/app.ts:217"
+ ],
+ "Starting soon": [
+  "app/move/[id].tsx:159"
+ ],
+ "Street address (optional)": [
+  "app/(tabs)/create.tsx:242"
+ ],
+ "Sunset": [
+  "src/types/app.ts:278"
+ ],
+ "Swim": [
+  "src/types/app.ts:280"
+ ],
+ "Tap to copy": [
+  "app/invite-friends.tsx:105"
+ ],
+ "Thanks for keeping WTM safe.": [
+  "app/move/[id].tsx:308"
+ ],
+ "Thanks for keeping WTM safe. We review every report.": [
+  "app/user/[id].tsx:65"
+ ],
+ "That code doesn't exist. Check for typos.": [
+  "app/(auth)/invite.tsx:13"
+ ],
+ "That code has already been used.": [
+  "app/(auth)/invite.tsx:14"
+ ],
+ "That code has expired.": [
+  "app/(auth)/invite.tsx:15"
+ ],
+ "That invite link didn't work. Double-check the code.": [
+  "app/(auth)/invite.tsx:26"
+ ],
+ "That username is already taken.": [
+  "app/(auth)/sign-up.tsx:84"
+ ],
+ "The Scene": [
+  "src/types/app.ts:215"
+ ],
+ "The intel (optional)": [
+  "app/add-spot.tsx:241"
+ ],
+ "The rusty bridge, sunset rock, secret ledge...": [
+  "app/add-spot.tsx:159"
+ ],
+ "This will notify everyone who RSVPd.": [
+  "app/move/[id].tsx:73"
+ ],
+ "Title, category, and location are required.": [
+  "app/(tabs)/create.tsx:98"
+ ],
+ "Trending \ud83d\udd25": [
+  "src/components/moves/MoveCard.tsx:20",
+  "src/types/app.ts:111"
+ ],
+ "Try again in a minute.": [
+  "app/move/[id].tsx:309",
+  "app/user/[id].tsx:66"
+ ],
+ "Unblock": [
+  "app/user/[id].tsx:25"
+ ],
+ "Unsafe or illegal activity": [
+  "app/move/[id].tsx:301"
+ ],
+ "Urbex": [
+  "src/types/app.ts:276"
+ ],
+ "Username": [
+  "app/(auth)/sign-up.tsx:83",
+  "app/(auth)/sign-up.tsx:133"
+ ],
+ "Vibe": [
+  "app/(tabs)/create.tsx:218"
+ ],
+ "WTM is for ages 17\u201325. Come back on your 17th birthday.": [
+  "app/(auth)/verify-age.tsx:48"
+ ],
+ "What kind of spot?": [
+  "app/add-spot.tsx:171"
+ ],
+ "What's the move?": [
+  "app/(tabs)/create.tsx:200"
+ ],
+ "What's the vibe? Who should come? What to bring...": [
+  "app/(tabs)/create.tsx:336"
+ ],
+ "What's your vibe?": [
+  "app/(tabs)/profile/edit.tsx:163"
+ ],
+ "When?": [
+  "app/(tabs)/create.tsx:254"
+ ],
+ "Where at?": [
+  "app/(tabs)/create.tsx:226"
+ ],
+ "Yes": [
+  "app/(auth)/verify-age.tsx:135"
+ ],
+ "You won't see each other's moves, spots, or profiles.": [
+  "app/user/[id].tsx:34"
+ ],
+ "You're in": [
+  "src/components/moves/RSVPButton.tsx:67"
+ ],
+ "You're not eligible yet": [
+  "app/(auth)/verify-age.tsx:47"
+ ],
+ "Your Name": [
+  "app/(auth)/sign-up.tsx:145"
+ ],
+ "Your name": [
+  "app/(tabs)/profile/edit.tsx:128"
+ ],
+ "already registered": [
+  "app/(auth)/sign-up.tsx:81"
+ ],
+ "avatar upload failed": [
+  "app/(tabs)/profile/edit.tsx:41"
+ ],
+ "bg-brand active:bg-brand-600": [
+  "src/components/ui/Button.tsx:20"
+ ],
+ "bg-danger active:opacity-80": [
+  "src/components/ui/Button.tsx:23"
+ ],
+ "bg-surface-100 border border-surface-300 active:bg-surface-200": [
+  "src/components/ui/Button.tsx:21"
+ ],
+ "bg-surface-50 rounded-3xl overflow-hidden mb-4": [
+  "src/components/ui/Skeleton.tsx:46"
+ ],
+ "bg-transparent active:bg-surface-50": [
+  "src/components/ui/Button.tsx:22"
+ ],
+ "converts a mile exactly": [
+  "src/utils/__tests__/distance.test.ts:30"
+ ],
+ "creator auto-RSVP failed": [
+  "src/hooks/useCreateMove.ts:43"
+ ],
+ "d send a friend to.{": [
+  "app/add-spot.tsx:259"
+ ],
+ "e.g. PITTSB42": [
+  "app/(auth)/invite.tsx:90"
+ ],
+ "emoji, total, i_reacted": [
+  "src/hooks/useReactions.ts:19"
+ ],
+ "flags already-started moves as now": [
+  "src/utils/__tests__/time.test.ts:8"
+ ],
+ "flags moves within 2 hours as soon": [
+  "src/utils/__tests__/time.test.ts:11"
+ ],
+ "flex-1 items-center justify-center gap-4 py-20": [
+  "src/components/feed/FeedList.tsx:10"
+ ],
+ "flex-row gap-2 mt-1": [
+  "src/components/ui/Skeleton.tsx:51"
+ ],
+ "flex-row items-center justify-center gap-2": [
+  "src/components/ui/Button.tsx:81"
+ ],
+ "formats hours and minutes": [
+  "src/utils/__tests__/time.test.ts:30"
+ ],
+ "from your crew": [
+  "src/components/moves/MoveCard.tsx:191"
+ ],
+ "h-12 px-5 rounded-2xl": [
+  "src/components/ui/Button.tsx:35"
+ ],
+ "h-14 px-6 rounded-2xl": [
+  "src/components/ui/Button.tsx:36"
+ ],
+ "h-9 px-4 rounded-xl": [
+  "src/components/ui/Button.tsx:34"
+ ],
+ "h:mm a": [
+  "app/(tabs)/create.tsx:294",
+  "src/utils/time.ts:12",
+  "src/utils/time.ts:13"
+ ],
+ "id, username, display_name, avatar_url": [
+  "src/hooks/useSearchUsers.ts:25"
+ ],
+ "is false after the window ends": [
+  "src/utils/__tests__/time.test.ts:20"
+ ],
+ "is true inside an explicit window": [
+  "src/utils/__tests__/time.test.ts:17"
+ ],
+ "is zero for identical points": [
+  "src/utils/__tests__/distance.test.ts:19"
+ ],
+ "measures downtown Pittsburgh to Oakland at roughly 5km": [
+  "src/utils/__tests__/distance.test.ts:22"
+ ],
+ "move cover upload failed": [
+  "src/hooks/useCreateMove.ts:70"
+ ],
+ "p-4 gap-2": [
+  "src/components/ui/Skeleton.tsx:48"
+ ],
+ "px-4 pt-2": [
+  "src/components/feed/FeedList.tsx:41"
+ ],
+ "re in. Let": [
+  "app/(auth)/sign-up.tsx:113"
+ ],
+ "returns empty string with no end time": [
+  "src/utils/__tests__/time.test.ts:35"
+ ],
+ "rounds whole miles at 10+": [
+  "src/utils/__tests__/distance.test.ts:10"
+ ],
+ "s already in \u2014{": [
+  "app/(auth)/invite.tsx:138"
+ ],
+ "s fire, that": [
+  "src/hooks/useSpots.ts:155"
+ ],
+ "s happening tonight.{": [
+  "app/(auth)/welcome.tsx:49"
+ ],
+ "s id is what fills in \"you": [
+  "src/hooks/useNearbyMoves.ts:38"
+ ],
+ "says nearby when very close": [
+  "src/utils/__tests__/distance.test.ts:13"
+ ],
+ "shows feet under a mile": [
+  "src/utils/__tests__/distance.test.ts:4"
+ ],
+ "shows one decimal under 10 miles": [
+  "src/utils/__tests__/distance.test.ts:7"
+ ],
+ "spot cover upload failed": [
+  "app/add-spot.tsx:67"
+ ],
+ "t created any moves yet.{": [
+  "app/(tabs)/profile/index.tsx:149"
+ ],
+ "text-ink font-bold text-xl": [
+  "src/components/feed/FeedList.tsx:12"
+ ],
+ "text-ink font-medium": [
+  "src/components/ui/Button.tsx:28"
+ ],
+ "text-ink-muted font-medium": [
+  "src/components/ui/Button.tsx:29"
+ ],
+ "text-ink-muted text-center text-base": [
+  "src/components/feed/FeedList.tsx:13"
+ ],
+ "text-white font-semibold": [
+  "src/components/ui/Button.tsx:27",
+  "src/components/ui/Button.tsx:30"
+ ],
+ "user panned": [
+  "app/(tabs)/index.tsx:59"
+ ],
+ "username, display_name, avatar_url": [
+  "src/hooks/useMoveChat.ts:75"
+ ],
+ "uses a 30-minute grace period with no end time": [
+  "src/utils/__tests__/time.test.ts:23"
+ ],
+ "\ud83c\udf3f Outdoor": [
+  "app/(auth)/welcome.tsx:58"
+ ],
+ "\ud83c\udf55 Food": [
+  "app/(auth)/welcome.tsx:58"
+ ],
+ "\ud83c\udf7a Bars": [
+  "app/(auth)/welcome.tsx:58"
+ ],
+ "\ud83c\udfa8 Art": [
+  "app/(auth)/welcome.tsx:58"
+ ],
+ "\ud83c\udfb5 Music": [
+  "app/(auth)/welcome.tsx:58"
+ ],
+ "\ud83c\udfc0 Sports": [
+  "app/(auth)/welcome.tsx:58"
+ ],
+ "\ud83d\udccd Spots": [
+  "app/(tabs)/index.tsx:219"
+ ],
+ "\ud83d\udd7a Moves": [
+  "app/(tabs)/index.tsx:214"
+ ]
+}

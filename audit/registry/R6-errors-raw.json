@@ -1,0 +1,103 @@
+{
+ "// PostgrestBuilder is a thenable, not a Promise \u2014 it has no .catch().": [
+  "src/hooks/useMoveChat.ts:95"
+ ],
+ "Alert.alert(": [
+  "app/(auth)/verify-age.tsx:46",
+  "app/user/[id].tsx:32",
+  "app/user/[id].tsx:56"
+ ],
+ "Alert.alert('Cancel move?', 'This will notify everyone who RSVPd.', [": [
+  "app/move/[id].tsx:73"
+ ],
+ "Alert.alert('Error', 'Failed to save. Try again.');": [
+  "app/(tabs)/profile/edit.tsx:55"
+ ],
+ "Alert.alert('Error', err.message || 'Failed to create move. Try again.');": [
+  "app/(tabs)/create.tsx:129"
+ ],
+ "Alert.alert('Error', err.message || 'Failed to drop the spot. Try again.');": [
+  "app/add-spot.tsx:73"
+ ],
+ "Alert.alert('Missing info', 'Give the spot a name and pick a category.');": [
+  "app/add-spot.tsx:48"
+ ],
+ "Alert.alert('Missing info', 'Title, category, and location are required.');": [
+  "app/(tabs)/create.tsx:98"
+ ],
+ "Alert.alert('Report this move', 'Reports are reviewed within 24 hours.', [": [
+  "app/move/[id].tsx:302"
+ ],
+ "Alert.alert('Sign out', 'Are you sure?', [": [
+  "app/(tabs)/profile/index.tsx:35"
+ ],
+ "Alert.alert('Something went wrong', error.message);": [
+  "app/(auth)/verify-age.tsx:63"
+ ],
+ "Alert.alert(`@${username}`, undefined, [": [
+  "app/user/[id].tsx:23"
+ ],
+ "Alert.alert(ok ? 'Report received' : 'Something went wrong', ok": [
+  "app/move/[id].tsx:307",
+  "app/user/[id].tsx:64"
+ ],
+ "if (!data?.[0]) throw new Error('spot_not_found');": [
+  "src/hooks/useSpots.ts:36"
+ ],
+ "if (error) log.warn('activity', `mark_activity_read failed: ${error.message}`);": [
+  "src/hooks/useActivity.ts:84"
+ ],
+ "if (error) log.warn('chat', `mark_chat_read failed: ${error.message}`);": [
+  "src/hooks/useMoveChat.ts:100"
+ ],
+ "if (error.message.includes('already registered')) {": [
+  "app/(auth)/sign-up.tsx:81"
+ ],
+ "if (error.message.includes('move_full')) throw new Error('move_full');": [
+  "src/hooks/useRSVP.ts:38"
+ ],
+ "if (rsvpError) console.warn('creator auto-RSVP failed', rsvpError.message);": [
+  "src/hooks/useCreateMove.ts:43"
+ ],
+ "log.error('crash', error.message, info.componentStack);": [
+  "src/components/ui/ErrorBoundary.tsx:20"
+ ],
+ "log.warn('report', error.message);": [
+  "src/hooks/useSafety.ts:73"
+ ],
+ "onChangeText={(t) => { setEmail(t); setError(null); }}": [
+  "app/(auth)/sign-in.tsx:61"
+ ],
+ "onChangeText={(t) => { setPassword(t); setError(null); }}": [
+  "app/(auth)/sign-in.tsx:78"
+ ],
+ "setError('Invalid email or password.');": [
+  "app/(auth)/sign-in.tsx:33"
+ ],
+ "setError('Something went wrong. Try again.');": [
+  "app/(auth)/invite.tsx:45"
+ ],
+ "setError(REASON_MESSAGES[data.reason] ?? 'Invalid code.');": [
+  "app/(auth)/invite.tsx:51"
+ ],
+ "setError(null);": [
+  "app/(auth)/invite.tsx:35",
+  "app/(auth)/invite.tsx:87",
+  "app/(auth)/sign-in.tsx:23"
+ ],
+ "setServerError(error.message);": [
+  "app/(auth)/sign-up.tsx:86"
+ ],
+ "} catch (err) {": [
+  "app/(tabs)/profile/edit.tsx:40",
+  "app/add-spot.tsx:66",
+  "src/hooks/useCreateMove.ts:69"
+ ],
+ "} catch (err: any) {": [
+  "app/(tabs)/create.tsx:127",
+  "app/add-spot.tsx:72"
+ ],
+ "} else if (error.message.includes('Username')) {": [
+  "app/(auth)/sign-up.tsx:83"
+ ]
+}

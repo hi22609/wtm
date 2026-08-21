@@ -1,0 +1,796 @@
+{
+ "borderRadius": {
+  "10": [
+   "app/add-spot.tsx:134"
+  ],
+  "100": [
+   "app/(auth)/welcome.tsx:62",
+   "app/(tabs)/index.tsx:210",
+   "app/(tabs)/index.tsx:381",
+   "app/(tabs)/index.tsx:400",
+   "app/(tabs)/index.tsx:456",
+   "app/invite-friends.tsx:84",
+   "src/components/feed/FilterBar.tsx:38",
+   "src/components/feed/FilterBar.tsx:72",
+   "src/components/ui/Badge.tsx:27"
+  ],
+  "1000": [
+   "app/(auth)/welcome.tsx:25"
+  ],
+  "12": [
+   "app/(auth)/sign-up.tsx:120",
+   "app/(tabs)/activity.tsx:137",
+   "app/(tabs)/index.tsx:443",
+   "app/(tabs)/list.tsx:44",
+   "app/(tabs)/profile/index.tsx:68",
+   "app/move/[id].tsx:416",
+   "app/spot/[id].tsx:169",
+   "src/components/moves/MoveCard.tsx:184"
+  ],
+  "14": [
+   "app/(auth)/sign-in.tsx:55",
+   "app/(auth)/sign-in.tsx:72",
+   "app/(auth)/sign-up.tsx:224",
+   "app/(tabs)/create.tsx:207",
+   "app/(tabs)/create.tsx:233",
+   "app/(tabs)/create.tsx:245",
+   "app/(tabs)/create.tsx:258",
+   "app/(tabs)/create.tsx:287",
+   "app/(tabs)/create.tsx:314",
+   "app/(tabs)/create.tsx:340",
+   "app/(tabs)/profile/edit.tsx:110",
+   "app/(tabs)/profile/edit.tsx:131",
+   "app/(tabs)/profile/edit.tsx:143",
+   "app/(tabs)/profile/edit.tsx:168",
+   "app/(tabs)/profile/index.tsx:121",
+   "app/add-spot.tsx:163",
+   "app/add-spot.tsx:233",
+   "app/add-spot.tsx:250"
+  ],
+  "15": [
+   "src/components/moves/MoveChat.tsx:34",
+   "src/components/moves/MoveChat.tsx:39"
+  ],
+  "16": [
+   "app/(auth)/invite.tsx:96",
+   "app/(tabs)/index.tsx:183",
+   "app/(tabs)/profile/edit.tsx:80",
+   "app/(tabs)/profile/index.tsx:167",
+   "app/add-spot.tsx:178",
+   "app/invite-friends.tsx:95",
+   "app/invite-friends.tsx:141",
+   "app/move/[id].tsx:328",
+   "app/move/[id]/attendees.tsx:51",
+   "src/components/moves/CategoryPicker.tsx:25"
+  ],
+  "18": [
+   "app/(auth)/verify-age.tsx:108",
+   "app/(auth)/verify-age.tsx:147",
+   "app/(tabs)/index.tsx:270",
+   "app/(tabs)/index.tsx:354",
+   "app/(tabs)/list.tsx:35",
+   "app/add-spot.tsx:101",
+   "app/move/[id].tsx:206",
+   "app/move/[id].tsx:233",
+   "app/move/[id].tsx:411",
+   "app/spot/[id].tsx:119",
+   "app/spot/[id].tsx:135",
+   "app/spot/[id].tsx:151",
+   "app/spot/[id].tsx:164",
+   "app/spot/[id].tsx:184",
+   "app/user/[id].tsx:195",
+   "src/components/moves/MoveChat.tsx:56"
+  ],
+  "2": [
+   "src/components/moves/MoveCard.tsx:161",
+   "src/components/moves/MoveCard.tsx:167"
+  ],
+  "20": [
+   "app/(tabs)/create.tsx:156",
+   "app/(tabs)/create.tsx:178",
+   "app/(tabs)/profile/index.tsx:104",
+   "app/(tabs)/profile/index.tsx:118",
+   "app/add-spot.tsx:117",
+   "app/add-spot.tsx:207",
+   "app/move/[id].tsx:263",
+   "app/move/[id].tsx:392",
+   "app/spot/[id].tsx:256",
+   "src/components/moves/HypeReactions.tsx:33",
+   "src/components/moves/MoveCard.tsx:98",
+   "src/components/moves/MoveCard.tsx:110",
+   "src/components/moves/MoveCard.tsx:115",
+   "src/components/moves/MoveCard.tsx:120",
+   "src/components/moves/MoveCard.tsx:125",
+   "src/components/moves/MoveChat.tsx:167",
+   "src/components/moves/MoveChat.tsx:179"
+  ],
+  "21": [
+   "app/(tabs)/index.tsx:418"
+  ],
+  "22": [
+   "app/(tabs)/activity.tsx:55",
+   "app/(tabs)/activity.tsx:60",
+   "app/(tabs)/index.tsx:196",
+   "app/(tabs)/index.tsx:259",
+   "app/user/[id].tsx:135"
+  ],
+  "24": [
+   "app/(tabs)/activity.tsx:179",
+   "app/(tabs)/index.tsx:371",
+   "app/invite-friends.tsx:74",
+   "app/move/[id].tsx:359",
+   "app/move/[id].tsx:375",
+   "src/components/moves/MoveCard.tsx:67",
+   "src/components/ui/ErrorBoundary.tsx:41"
+  ],
+  "26": [
+   "app/(tabs)/_layout.tsx:49",
+   "app/spot/[id].tsx:230",
+   "app/spot/[id].tsx:241"
+  ],
+  "27": [
+   "app/invite-friends.tsx:116"
+  ],
+  "28": [
+   "app/(auth)/invite.tsx:121",
+   "app/(auth)/sign-in.tsx:102",
+   "app/(auth)/sign-up.tsx:181",
+   "app/(auth)/welcome.tsx:80"
+  ],
+  "29": [
+   "app/(auth)/verify-age.tsx:169"
+  ],
+  "3": [
+   "app/(tabs)/index.tsx:426"
+  ],
+  "32": [
+   "app/(tabs)/activity.tsx:164"
+  ],
+  "4": [
+   "app/(tabs)/activity.tsx:84"
+  ],
+  "45": [
+   "app/(tabs)/profile/edit.tsx:98"
+  ],
+  "500": [
+   "app/i/[code].tsx:71",
+   "app/invite-friends.tsx:46"
+  ],
+  "8": [
+   "app/(tabs)/_layout.tsx:32",
+   "app/add-spot.tsx:145"
+  ]
+ },
+ "borderWidth": {
+  "0.5": [
+   "src/components/moves/MoveCard.tsx:101"
+  ],
+  "1": [
+   "app/(auth)/sign-in.tsx:56",
+   "app/(auth)/sign-in.tsx:73",
+   "app/(auth)/sign-up.tsx:122",
+   "app/(auth)/sign-up.tsx:224",
+   "app/(auth)/welcome.tsx:64",
+   "app/(tabs)/create.tsx:180",
+   "app/(tabs)/create.tsx:209",
+   "app/(tabs)/create.tsx:236",
+   "app/(tabs)/create.tsx:248",
+   "app/(tabs)/create.tsx:261",
+   "app/(tabs)/create.tsx:290",
+   "app/(tabs)/create.tsx:317",
+   "app/(tabs)/create.tsx:342",
+   "app/(tabs)/index.tsx:183",
+   "app/(tabs)/index.tsx:197",
+   "app/(tabs)/index.tsx:211",
+   "app/(tabs)/index.tsx:260",
+   "app/(tabs)/index.tsx:270",
+   "app/(tabs)/index.tsx:372",
+   "app/(tabs)/index.tsx:402",
+   "app/(tabs)/list.tsx:45",
+   "app/(tabs)/profile/edit.tsx:133",
+   "app/(tabs)/profile/edit.tsx:146",
+   "app/(tabs)/profile/edit.tsx:170",
+   "app/(tabs)/profile/index.tsx:70",
+   "app/(tabs)/profile/index.tsx:105",
+   "app/(tabs)/profile/index.tsx:169",
+   "app/add-spot.tsx:117",
+   "app/add-spot.tsx:165",
+   "app/add-spot.tsx:209",
+   "app/add-spot.tsx:235",
+   "app/add-spot.tsx:252",
+   "app/invite-friends.tsx:75",
+   "app/invite-friends.tsx:96",
+   "app/invite-friends.tsx:142",
+   "app/move/[id].tsx:207",
+   "app/move/[id].tsx:265",
+   "app/move/[id].tsx:330",
+   "app/move/[id].tsx:378",
+   "app/move/[id].tsx:395",
+   "app/move/[id].tsx:413",
+   "app/spot/[id].tsx:166",
+   "app/spot/[id].tsx:185",
+   "app/spot/[id].tsx:259",
+   "app/user/[id].tsx:136",
+   "app/user/[id].tsx:196",
+   "src/components/feed/FilterBar.tsx:74",
+   "src/components/moves/HypeReactions.tsx:35",
+   "src/components/moves/MoveCard.tsx:125",
+   "src/components/moves/MoveCard.tsx:186",
+   "src/components/moves/MoveChat.tsx:169"
+  ],
+  "1.5": [
+   "app/(auth)/verify-age.tsx:111",
+   "app/(auth)/verify-age.tsx:149",
+   "app/(tabs)/_layout.tsx:35",
+   "app/move/[id].tsx:363",
+   "app/spot/[id].tsx:121",
+   "app/spot/[id].tsx:137",
+   "app/spot/[id].tsx:153",
+   "app/spot/[id].tsx:242",
+   "src/components/moves/RSVPButton.tsx:87"
+  ],
+  "2": [
+   "app/(tabs)/profile/edit.tsx:111",
+   "app/add-spot.tsx:179",
+   "src/components/moves/AttendeePile.tsx:48",
+   "src/components/moves/CategoryPicker.tsx:27"
+  ],
+  "2.5": [
+   "app/(tabs)/index.tsx:420",
+   "app/(tabs)/index.tsx:441"
+  ]
+ },
+ "gap": {
+  "0": [
+   "src/components/feed/FilterBar.tsx:19",
+   "src/components/moves/MoveChat.tsx:111"
+  ],
+  "10": [
+   "app/(auth)/verify-age.tsx:83",
+   "app/(auth)/verify-age.tsx:97",
+   "app/(auth)/verify-age.tsx:133",
+   "app/(auth)/welcome.tsx:56",
+   "app/(tabs)/create.tsx:264",
+   "app/(tabs)/create.tsx:376",
+   "app/(tabs)/profile/index.tsx:166",
+   "app/add-spot.tsx:172",
+   "app/add-spot.tsx:270",
+   "app/move/[id].tsx:170",
+   "app/move/[id].tsx:240",
+   "app/move/[id].tsx:329",
+   "app/spot/[id].tsx:114",
+   "app/spot/[id].tsx:215",
+   "src/components/moves/CategoryPicker.tsx:15",
+   "src/components/moves/MoveChat.tsx:153"
+  ],
+  "12": [
+   "app/(auth)/invite.tsx:81",
+   "app/(auth)/verify-age.tsx:129",
+   "app/(auth)/welcome.tsx:74",
+   "app/(tabs)/create.tsx:316",
+   "app/(tabs)/index.tsx:371",
+   "app/(tabs)/profile/edit.tsx:93",
+   "app/invite-friends.tsx:140",
+   "app/move/[id].tsx:90",
+   "app/move/[id].tsx:348",
+   "app/move/[id]/attendees.tsx:30",
+   "app/spot/[id].tsx:65",
+   "app/spot/[id].tsx:196",
+   "app/user/[id].tsx:127",
+   "src/components/moves/MoveCard.tsx:134"
+  ],
+  "13": [
+   "app/(tabs)/activity.tsx:45"
+  ],
+  "14": [
+   "app/(auth)/sign-in.tsx:53",
+   "app/(auth)/sign-up.tsx:131",
+   "app/(auth)/verify-age.tsx:163",
+   "app/(tabs)/activity.tsx:162",
+   "app/(tabs)/profile/index.tsx:118",
+   "app/invite-friends.tsx:130",
+   "app/move/[id].tsx:219",
+   "app/move/[id].tsx:412",
+   "app/move/[id]/attendees.tsx:50",
+   "app/spot/[id].tsx:165",
+   "src/components/moves/MoveCard.tsx:140",
+   "src/components/ui/ErrorBoundary.tsx:28"
+  ],
+  "16": [
+   "app/(auth)/welcome.tsx:30",
+   "app/(tabs)/profile/edit.tsx:120",
+   "app/(tabs)/profile/index.tsx:79",
+   "app/(tabs)/profile/index.tsx:80",
+   "app/invite-friends.tsx:74",
+   "app/user/[id].tsx:172"
+  ],
+  "2": [
+   "app/(tabs)/profile/index.tsx:86",
+   "app/move/[id].tsx:421",
+   "app/move/[id]/attendees.tsx:45",
+   "app/move/[id]/attendees.tsx:55"
+  ],
+  "20": [
+   "app/i/[code].tsx:67",
+   "app/move/[id].tsx:153",
+   "app/spot/[id].tsx:99",
+   "app/user/[id].tsx:170"
+  ],
+  "22": [
+   "app/add-spot.tsx:115"
+  ],
+  "24": [
+   "app/(auth)/invite.tsx:71",
+   "app/(auth)/sign-in.tsx:48",
+   "app/(auth)/sign-up.tsx:107",
+   "app/(tabs)/create.tsx:172",
+   "app/(tabs)/profile/edit.tsx:91"
+  ],
+  "28": [
+   "app/invite-friends.tsx:56"
+  ],
+  "3": [
+   "app/(tabs)/activity.tsx:69",
+   "app/user/[id].tsx:178",
+   "src/components/moves/MoveChat.tsx:48"
+  ],
+  "36": [
+   "app/(auth)/verify-age.tsx:80"
+  ],
+  "4": [
+   "app/(tabs)/index.tsx:187",
+   "app/(tabs)/index.tsx:295",
+   "app/(tabs)/index.tsx:326",
+   "app/(tabs)/index.tsx:345",
+   "app/(tabs)/list.tsx:25",
+   "app/(tabs)/profile/index.tsx:182",
+   "app/move/[id].tsx:245",
+   "app/user/[id].tsx:183",
+   "src/components/moves/MoveCard.tsx:136",
+   "src/components/moves/MoveCard.tsx:141",
+   "src/components/moves/MoveCard.tsx:145"
+  ],
+  "5": [
+   "app/(tabs)/index.tsx:399",
+   "app/invite-friends.tsx:82",
+   "app/invite-friends.tsx:102",
+   "src/components/feed/FilterBar.tsx:35",
+   "src/components/moves/HypeReactions.tsx:31",
+   "src/components/moves/MoveCard.tsx:100",
+   "src/components/moves/MoveCard.tsx:159"
+  ],
+  "6": [
+   "app/(auth)/sign-up.tsx:108",
+   "app/(auth)/sign-up.tsx:218",
+   "app/(tabs)/index.tsx:270",
+   "app/(tabs)/index.tsx:296",
+   "app/(tabs)/index.tsx:327",
+   "app/(tabs)/profile/edit.tsx:121",
+   "app/(tabs)/profile/edit.tsx:138",
+   "app/(tabs)/profile/edit.tsx:145",
+   "app/(tabs)/profile/edit.tsx:156",
+   "app/(tabs)/profile/index.tsx:67",
+   "app/add-spot.tsx:185",
+   "app/move/[id].tsx:156",
+   "app/spot/[id].tsx:100",
+   "src/components/feed/FilterBar.tsx:61",
+   "src/components/moves/AttendeePile.tsx:23",
+   "src/components/moves/CategoryPicker.tsx:34",
+   "src/components/moves/MoveCard.tsx:108",
+   "src/components/moves/MoveChat.tsx:126",
+   "src/components/moves/RSVPButton.tsx:86"
+  ],
+  "7": [
+   "app/move/[id].tsx:362",
+   "src/components/moves/MoveCard.tsx:183"
+  ],
+  "8": [
+   "app/(auth)/invite.tsx:72",
+   "app/(auth)/sign-in.tsx:74",
+   "app/(auth)/sign-up.tsx:119",
+   "app/(auth)/sign-up.tsx:226",
+   "app/(auth)/welcome.tsx:32",
+   "app/(tabs)/create.tsx:192",
+   "app/(tabs)/index.tsx:230",
+   "app/(tabs)/list.tsx:46",
+   "app/(tabs)/profile/index.tsx:146",
+   "app/add-spot.tsx:216",
+   "app/invite-friends.tsx:57",
+   "app/invite-friends.tsx:117",
+   "app/invite-friends.tsx:134",
+   "app/move/[id].tsx:142",
+   "app/move/[id].tsx:157",
+   "app/move/[id].tsx:234",
+   "app/move/[id].tsx:285",
+   "app/spot/[id].tsx:101",
+   "app/spot/[id].tsx:122",
+   "app/spot/[id].tsx:231",
+   "src/components/feed/FilterBar.tsx:24",
+   "src/components/moves/HypeReactions.tsx:60",
+   "src/components/moves/MoveCard.tsx:198",
+   "src/components/moves/MoveChat.tsx:25",
+   "src/components/moves/MoveChat.tsx:114"
+  ]
+ },
+ "marginBottom": {
+  "12": [
+   "app/(tabs)/profile/index.tsx:141",
+   "app/user/[id].tsx:210",
+   "src/components/moves/MoveChat.tsx:26"
+  ],
+  "14": [
+   "src/components/moves/MoveCard.tsx:67"
+  ],
+  "24": [
+   "app/(tabs)/_layout.tsx:52"
+  ],
+  "32": [
+   "app/(auth)/invite.tsx:67",
+   "app/(auth)/sign-in.tsx:44",
+   "app/(auth)/sign-up.tsx:103"
+  ],
+  "6": [
+   "app/(tabs)/_layout.tsx:86"
+  ],
+  "8": [
+   "app/(tabs)/list.tsx:43"
+  ]
+ },
+ "marginHorizontal": {
+  "16": [
+   "app/(tabs)/list.tsx:43",
+   "app/(tabs)/profile/index.tsx:108"
+  ],
+  "20": [
+   "app/(tabs)/activity.tsx:91",
+   "app/(tabs)/profile/index.tsx:165"
+  ]
+ },
+ "marginTop": {
+  "-16": [
+   "app/spot/[id].tsx:99"
+  ],
+  "-20": [
+   "app/move/[id].tsx:153"
+  ],
+  "-3": [
+   "app/(tabs)/index.tsx:426"
+  ],
+  "10": [
+   "app/(tabs)/index.tsx:206"
+  ],
+  "16": [
+   "app/(auth)/welcome.tsx:56"
+  ],
+  "2": [
+   "app/user/[id].tsx:183"
+  ],
+  "24": [
+   "app/user/[id].tsx:207"
+  ],
+  "28": [
+   "app/(tabs)/profile/index.tsx:138"
+  ],
+  "8": [
+   "app/(auth)/sign-up.tsx:183",
+   "app/(tabs)/activity.tsx:177",
+   "app/(tabs)/profile/index.tsx:165",
+   "app/invite-friends.tsx:102",
+   "app/user/[id].tsx:135",
+   "src/components/ui/ErrorBoundary.tsx:41"
+  ]
+ },
+ "marginVertical": {
+  "40": [
+   "app/invite-friends.tsx:68"
+  ]
+ },
+ "padding": {
+  "12": [
+   "app/(tabs)/list.tsx:43",
+   "app/add-spot.tsx:185",
+   "app/invite-friends.tsx:141",
+   "app/move/[id]/attendees.tsx:51",
+   "src/components/moves/CategoryPicker.tsx:34"
+  ],
+  "14": [
+   "app/move/[id].tsx:329",
+   "app/move/[id].tsx:411",
+   "app/spot/[id].tsx:164"
+  ],
+  "16": [
+   "app/(tabs)/create.tsx:208",
+   "app/(tabs)/create.tsx:341",
+   "app/(tabs)/index.tsx:270",
+   "app/(tabs)/index.tsx:371",
+   "app/(tabs)/profile/edit.tsx:169",
+   "app/(tabs)/profile/index.tsx:104",
+   "app/(tabs)/profile/index.tsx:118",
+   "app/(tabs)/profile/index.tsx:167",
+   "app/add-spot.tsx:164",
+   "app/add-spot.tsx:251",
+   "app/move/[id].tsx:207",
+   "app/move/[id].tsx:388",
+   "app/move/[id]/attendees.tsx:45",
+   "app/spot/[id].tsx:184",
+   "app/spot/[id].tsx:252",
+   "app/user/[id].tsx:195",
+   "src/components/moves/MoveCard.tsx:134"
+  ],
+  "20": [
+   "app/(tabs)/create.tsx:172",
+   "app/add-spot.tsx:115",
+   "app/invite-friends.tsx:74",
+   "app/move/[id].tsx:90",
+   "app/move/[id].tsx:233",
+   "app/spot/[id].tsx:65"
+  ],
+  "24": [
+   "app/(auth)/invite.tsx:66",
+   "app/(auth)/sign-in.tsx:43",
+   "app/(auth)/sign-up.tsx:99",
+   "app/(auth)/welcome.tsx:29",
+   "app/(tabs)/profile/edit.tsx:91",
+   "app/invite-friends.tsx:56",
+   "app/move/[id].tsx:285"
+  ],
+  "3": [
+   "app/(tabs)/index.tsx:210"
+  ],
+  "32": [
+   "app/user/[id].tsx:127",
+   "src/components/ui/ErrorBoundary.tsx:28"
+  ],
+  "4": [
+   "app/(tabs)/index.tsx:306",
+   "app/(tabs)/index.tsx:339"
+  ]
+ },
+ "paddingBottom": {
+  "100": [
+   "app/(tabs)/create.tsx:172",
+   "app/(tabs)/profile/index.tsx:54",
+   "app/user/[id].tsx:168",
+   "src/components/feed/FeedList.tsx:52"
+  ],
+  "12": [
+   "app/move/[id].tsx:268",
+   "src/components/moves/MoveChat.tsx:115"
+  ],
+  "120": [
+   "app/(tabs)/activity.tsx:160",
+   "app/move/[id].tsx:109"
+  ],
+  "130": [
+   "app/spot/[id].tsx:78"
+  ],
+  "32": [
+   "app/(auth)/verify-age.tsx:80",
+   "app/move/[id].tsx:345",
+   "app/spot/[id].tsx:212"
+  ],
+  "4": [
+   "app/(tabs)/activity.tsx:130",
+   "src/components/feed/FilterBar.tsx:61"
+  ],
+  "60": [
+   "app/add-spot.tsx:115"
+  ],
+  "8": [
+   "app/(auth)/welcome.tsx:74"
+  ]
+ },
+ "paddingHorizontal": {
+  "10": [
+   "app/(tabs)/activity.tsx:138",
+   "app/add-spot.tsx:146",
+   "app/invite-friends.tsx:84",
+   "src/components/moves/MoveCard.tsx:99",
+   "src/components/moves/MoveCard.tsx:110",
+   "src/components/moves/MoveCard.tsx:115",
+   "src/components/moves/MoveCard.tsx:120",
+   "src/components/moves/MoveCard.tsx:125",
+   "src/components/moves/MoveCard.tsx:185",
+   "src/components/ui/Badge.tsx:23"
+  ],
+  "12": [
+   "app/(tabs)/profile/index.tsx:69",
+   "src/components/feed/FilterBar.tsx:70"
+  ],
+  "13": [
+   "app/(tabs)/index.tsx:400",
+   "src/components/moves/HypeReactions.tsx:32"
+  ],
+  "14": [
+   "app/(auth)/sign-up.tsx:121",
+   "app/(auth)/welcome.tsx:60",
+   "app/(tabs)/index.tsx:183",
+   "src/components/feed/FilterBar.tsx:36",
+   "src/components/moves/MoveChat.tsx:59"
+  ],
+  "16": [
+   "app/(auth)/sign-in.tsx:57",
+   "app/(auth)/sign-in.tsx:74",
+   "app/(auth)/sign-up.tsx:226",
+   "app/(tabs)/create.tsx:234",
+   "app/(tabs)/create.tsx:246",
+   "app/(tabs)/create.tsx:259",
+   "app/(tabs)/create.tsx:288",
+   "app/(tabs)/create.tsx:315",
+   "app/(tabs)/index.tsx:182",
+   "app/(tabs)/index.tsx:230",
+   "app/(tabs)/index.tsx:354",
+   "app/(tabs)/profile/edit.tsx:79",
+   "app/(tabs)/profile/edit.tsx:132",
+   "app/(tabs)/profile/edit.tsx:144",
+   "app/(tabs)/profile/index.tsx:154",
+   "app/add-spot.tsx:101",
+   "app/add-spot.tsx:234",
+   "app/invite-friends.tsx:50",
+   "app/move/[id].tsx:268",
+   "app/move/[id].tsx:359",
+   "app/user/[id].tsx:214",
+   "src/components/feed/FeedList.tsx:52",
+   "src/components/feed/FilterBar.tsx:24",
+   "src/components/feed/FilterBar.tsx:61",
+   "src/components/moves/MoveChat.tsx:27",
+   "src/components/moves/MoveChat.tsx:115",
+   "src/components/moves/MoveChat.tsx:154",
+   "src/components/moves/MoveChat.tsx:167"
+  ],
+  "18": [
+   "app/(tabs)/create.tsx:155",
+   "app/(tabs)/index.tsx:381"
+  ],
+  "20": [
+   "app/(auth)/invite.tsx:98",
+   "app/(tabs)/activity.tsx:44",
+   "app/(tabs)/activity.tsx:130",
+   "app/(tabs)/create.tsx:145",
+   "app/(tabs)/list.tsx:19",
+   "app/(tabs)/profile/edit.tsx:69",
+   "app/(tabs)/profile/index.tsx:59",
+   "app/(tabs)/profile/index.tsx:79",
+   "app/(tabs)/profile/index.tsx:141",
+   "app/(tabs)/profile/index.tsx:146",
+   "app/add-spot.tsx:88",
+   "app/move/[id].tsx:153",
+   "app/move/[id].tsx:345",
+   "app/move/[id]/attendees.tsx:31",
+   "app/spot/[id].tsx:99",
+   "app/spot/[id].tsx:212",
+   "app/user/[id].tsx:122",
+   "app/user/[id].tsx:135",
+   "app/user/[id].tsx:151",
+   "app/user/[id].tsx:170",
+   "app/user/[id].tsx:210"
+  ],
+  "24": [
+   "app/(auth)/verify-age.tsx:80",
+   "app/(tabs)/activity.tsx:179",
+   "src/components/ui/ErrorBoundary.tsx:40"
+  ],
+  "3": [
+   "app/(tabs)/_layout.tsx:34"
+  ],
+  "4": [
+   "app/(tabs)/create.tsx:273",
+   "app/(tabs)/create.tsx:303",
+   "src/components/moves/MoveChat.tsx:69"
+  ],
+  "5": [
+   "app/(tabs)/index.tsx:457"
+  ],
+  "8": [
+   "src/components/ui/Badge.tsx:23"
+  ]
+ },
+ "paddingLeft": {
+  "4": [
+   "src/components/moves/MoveChat.tsx:50"
+  ]
+ },
+ "paddingTop": {
+  "12": [
+   "app/(tabs)/activity.tsx:130",
+   "src/components/moves/MoveChat.tsx:154"
+  ],
+  "16": [
+   "app/move/[id].tsx:268",
+   "app/move/[id].tsx:345",
+   "app/spot/[id].tsx:212"
+  ],
+  "4": [
+   "src/components/feed/FeedList.tsx:52"
+  ],
+  "60": [
+   "app/(auth)/verify-age.tsx:80"
+  ],
+  "8": [
+   "app/(tabs)/index.tsx:182",
+   "app/invite-friends.tsx:56"
+  ],
+  "80": [
+   "app/(tabs)/activity.tsx:162"
+  ]
+ },
+ "paddingVertical": {
+  "1": [
+   "app/(tabs)/index.tsx:457"
+  ],
+  "10": [
+   "app/(auth)/sign-up.tsx:121",
+   "src/components/moves/MoveChat.tsx:60",
+   "src/components/moves/MoveChat.tsx:167"
+  ],
+  "12": [
+   "app/(tabs)/activity.tsx:179",
+   "app/(tabs)/create.tsx:145",
+   "app/(tabs)/index.tsx:230",
+   "app/(tabs)/list.tsx:19",
+   "app/(tabs)/profile/edit.tsx:69",
+   "app/(tabs)/profile/index.tsx:59",
+   "app/add-spot.tsx:88",
+   "app/invite-friends.tsx:50",
+   "src/components/feed/FilterBar.tsx:24"
+  ],
+  "14": [
+   "app/(tabs)/activity.tsx:43",
+   "app/move/[id]/attendees.tsx:31",
+   "app/user/[id].tsx:122",
+   "app/user/[id].tsx:151"
+  ],
+  "16": [
+   "app/(auth)/verify-age.tsx:107",
+   "app/(auth)/verify-age.tsx:147",
+   "src/components/feed/FeedList.tsx:64"
+  ],
+  "20": [
+   "app/invite-friends.tsx:95"
+  ],
+  "24": [
+   "app/(tabs)/profile/index.tsx:146",
+   "app/user/[id].tsx:216",
+   "src/components/moves/MoveChat.tsx:126"
+  ],
+  "3": [
+   "app/(tabs)/activity.tsx:138",
+   "src/components/ui/Badge.tsx:23"
+  ],
+  "32": [
+   "src/components/moves/MoveChat.tsx:100"
+  ],
+  "4": [
+   "app/invite-friends.tsx:84"
+  ],
+  "5": [
+   "app/add-spot.tsx:146",
+   "src/components/feed/FilterBar.tsx:71",
+   "src/components/moves/MoveCard.tsx:99",
+   "src/components/moves/MoveCard.tsx:110",
+   "src/components/moves/MoveCard.tsx:115",
+   "src/components/moves/MoveCard.tsx:120",
+   "src/components/moves/MoveCard.tsx:125",
+   "src/components/ui/Badge.tsx:23"
+  ],
+  "6": [
+   "app/move/[id].tsx:315",
+   "src/components/moves/MoveCard.tsx:185"
+  ],
+  "7": [
+   "app/(auth)/welcome.tsx:61",
+   "app/(tabs)/profile/edit.tsx:80",
+   "app/(tabs)/profile/index.tsx:69",
+   "src/components/feed/FilterBar.tsx:37",
+   "src/components/moves/HypeReactions.tsx:32"
+  ],
+  "8": [
+   "app/(auth)/verify-age.tsx:183",
+   "app/(tabs)/create.tsx:155",
+   "app/(tabs)/index.tsx:183",
+   "app/(tabs)/index.tsx:381",
+   "app/(tabs)/index.tsx:400",
+   "app/add-spot.tsx:101"
+  ]
+ }
+}
