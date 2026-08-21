@@ -491,7 +491,7 @@ input,textarea{-webkit-user-select:text;user-select:text}
   <canvas id="wlc-bg" class="wlc-canvas"></canvas>
   <div class="wlc-body">
     <div style="display:flex;flex-direction:column;align-items:center;gap:6px">
-      <div class="wlc-logo">WTM</div>
+      <div class="wlc-logo">WTM?</div>
       <div class="wlc-sub">What's The Move</div>
     </div>
     <div class="wlc-tagline">Find what's happening tonight.<br>See where your friends are at.<br>Lock in. No more group chat limbo.</div>
@@ -560,7 +560,7 @@ input,textarea{-webkit-user-select:text;user-select:text}
 <div id="scr-ask" class="scr">
   <div class="ask-head">
     <div class="ask-title">Ask</div>
-    <div class="ask-sub">Say what you want to do. WTM finds the spot.</div>
+    <div class="ask-sub">Say what you want to do. WTM? finds the spot.</div>
   </div>
   <div class="ask-bar">
     <input class="ask-in" id="ask-in" placeholder="find me a skate spot near me"
@@ -689,7 +689,7 @@ input,textarea{-webkit-user-select:text;user-select:text}
 <!-- LIVE PUSH BANNER -->
 <div id="live-banner"><div class="lb-inner" id="lb-inner">
   <div class="lb-icon" id="lb-icon">🔥</div>
-  <div><div class="lb-app">WTM · now</div><div class="lb-text" id="lb-text"></div></div>
+  <div><div class="lb-app">WTM? · now</div><div class="lb-text" id="lb-text"></div></div>
 </div></div>
 
 <canvas id="confetti"></canvas>
@@ -2352,7 +2352,7 @@ function submitAsk(q){
     // Say so plainly, and offer the nearest thing rather than nothing.
     box.innerHTML=`<div class="ask-empty">
       <p class="ask-empty-h">Nothing matches that yet.</p>
-      <p>WTM knows ${SPOTS.length} spots around Pittsburgh so far. Try naming what you want to
+      <p>WTM? knows ${SPOTS.length} spots around Pittsburgh so far. Try naming what you want to
       do rather than a place: skate, swim, shoot photos, watch the sunset, or just sit somewhere quiet.</p>
       ${best?`<p class="ask-empty-h" style="margin-top:16px">Closest thing I have</p>
         ${askCard(best)}`:''}

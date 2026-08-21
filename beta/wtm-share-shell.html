@@ -1,7 +1,7 @@
 <!doctype html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>WTM · What's The Move</title>
+<title>WTM? · What's The Move</title>
 <style>
 __FONTS__
 
@@ -234,7 +234,7 @@ textarea.fld{min-height:82px;resize:vertical}
 <div id="gate" role="dialog" aria-modal="true" aria-labelledby="gate-title">
   <div class="gate-card">
     <svg class="gate-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M17 11V8a5 5 0 0 0-10 0v3"/><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M12 15v2"/></svg>
-    <h2 id="gate-title">WTM is invite-only.</h2>
+    <h2 id="gate-title">WTM? is invite-only.</h2>
     <p>You are looking at the demo. The app itself runs on invites: somebody already in lets you in, and <b>their name stays attached to yours</b>.</p>
     <p>That chain is the product. It is what keeps a room full of strangers a room full of people somebody vouched for.</p>
     <button class="btn btn-primary" onclick="passGate()" autofocus>See the demo</button>
@@ -243,7 +243,7 @@ textarea.fld{min-height:82px;resize:vertical}
 
 <nav>
   <div class="nav-in">
-    <span class="wordmark">WT<i>M</i></span>
+    <span class="wordmark">WT<i>M</i>?</span>
     <button class="btn btn-primary" onclick="launch()">Open the demo</button>
   </div>
 </nav>
@@ -286,7 +286,7 @@ textarea.fld{min-height:82px;resize:vertical}
     <button class="btn btn-primary" style="width:100%;justify-content:center;padding:14px" onclick="launch()">Open the demo</button>
   </div>
   <div class="demo-wrap">
-    <div class="phone"><div class="phone-screen"><iframe id="frame" title="WTM demo" loading="lazy"></iframe></div></div>
+    <div class="phone"><div class="phone-screen"><iframe id="frame" title="WTM? demo" loading="lazy"></iframe></div></div>
   </div>
   <p class="demo-tip">Try the Map tab → pinch to zoom out</p>
 </section>
@@ -375,7 +375,7 @@ textarea.fld{min-height:82px;resize:vertical}
 
 <footer>
   <div class="wrap foot">
-    <span class="wordmark" id="mark" style="font-size:20px;cursor:pointer;user-select:none">WT<i>M</i></span>
+    <span class="wordmark" id="mark" style="font-size:20px;cursor:pointer;user-select:none">WT<i>M</i>?</span>
     <p>What's The Move · Beta · Pittsburgh PA</p>
   </div>
 </footer>
@@ -386,13 +386,13 @@ textarea.fld{min-height:82px;resize:vertical}
 
 <div id="fs">
   <div class="fs-bar">
-    <span class="wordmark" style="font-size:19px">WT<i>M</i></span>
+    <span class="wordmark" style="font-size:19px">WT<i>M</i>?</span>
     <span style="display:flex;gap:8px">
       <button class="btn btn-primary" onclick="closeFs();openFb()">Feedback</button>
       <button class="btn btn-quiet" onclick="closeFs()">Close</button>
     </span>
   </div>
-  <iframe id="fs-frame" title="WTM demo fullscreen"></iframe>
+  <iframe id="fs-frame" title="WTM? demo fullscreen"></iframe>
 </div>
 
 <script>
@@ -494,7 +494,7 @@ function buildReport(e){
     u.sent_chat?`sent ${u.sent_chat} message${u.sent_chat>1?'s':''}`:null,
     u.created_move?'created a move':null
   ].filter(Boolean).join(', ')||'looked around the page';
-  return ['WTM demo feedback','',
+  return ['WTM? demo feedback','',
     `From:    ${e.name}`,
     `Rating:  ${e.stars}/5`,
     e.tags.length?`Liked:   ${e.tags.join(', ')}`:null,
@@ -520,7 +520,7 @@ function submitFb(){
 
   const text=buildReport(entry);
   window._report=text;
-  const subj=encodeURIComponent('WTM demo feedback from '+entry.name);
+  const subj=encodeURIComponent('WTM? demo feedback from '+entry.name);
   const body=encodeURIComponent(text);
   document.getElementById('fb-card').innerHTML=`
     <button class="fb-x" onclick="closeFb()" aria-label="Close">✕</button>
